@@ -1,39 +1,57 @@
+from pathlib import Path
+
 from io_utils import parse_vrp_file
-from evaluate import (
-    distance_depot_to_client,
-    distance_between_clients,
-    total_demand,
-    lower_bound_vehicles
-)
+from evaluate import total_demand, lower_bound_vehicles
+from construction import find_minimum_vehicles
 
-def main_test_open_file():
-    instance = parse_vrp_file("data/data101.vrp")
 
-    print("Nom :", instance.name)
-    print("Type :", instance.problem_type)
-    print("Nombre de clients :", instance.nb_clients)
-    print("Capacité max :", instance.max_quantity)
-    print("Dépôt :", instance.depot)
-    print("Client 1 :", instance.clients[1])
-    print("Client 100 :", instance.clients[100])
+def load_all_instances(data_folder="data"):
+    data_path = Path(data_folder)
 
-def main_test_borne_inf():
-    instance = parse_vrp_file("data/data101.vrp")
+    if not data_path.exists():
+        raise FileNotFoundError(f"Dossier introuvable : {data_folder}")
 
-    print("Nom :", instance.name)
-    print("Type :", instance.problem_type)
-    print("Nombre de clients :", instance.nb_clients)
-    print("Capacité max :", instance.max_quantity)
-    print("Dépôt :", instance.depot)
-    print("Client 1 :", instance.clients[1])
-    print("Client 100 :", instance.clients[100])
+    instances = []
 
-    print("\n--- Tests utiles pour la question 2 ---")
-    print("Distance dépôt -> client 1 :", distance_depot_to_client(instance, 1))
-    print("Distance client 1 -> client 2 :", distance_between_clients(instance, 1, 2))
-    print("Demande totale :", total_demand(instance))
-    print("Borne inférieure véhicules :", lower_bound_vehicles(instance))
+    for file_path in sorted(data_path.glob("*.vrp")):
+        instance = parse_vrp_file(file_path)
+        instances.append(instance)
+
+    return instances
+
+
+def print_instances_summary(instances):
+    print("\n=== Résumé des instances ===")
+    print(f"{'Nom':15} {'Clients':>8} {'Capacité':>10} {'DemandeTot':>12} {'LB':>6}")
+
+    for inst in instances:
+        demand = total_demand(inst)
+        lb = lower_bound_vehicles(inst)
+
+        print(f"{inst.name:15} {inst.nb_clients:8d} {inst.max_quantity:10d} {demand:12d} {lb:6d}")
+
+
+def print_vehicle_search(instances):
+    print("\n=== Recherche du nombre de véhicules ===")
+    print(f"{'Nom':15} {'LB':>6} {'Trouvé':>8}")
+
+    for inst in instances:
+        lb = lower_bound_vehicles(inst)
+        found_k, routes = find_minimum_vehicles(inst)
+
+        if found_k is None:
+            found_str = "échec"
+        else:
+            found_str = str(found_k)
+
+        print(f"{inst.name:15} {lb:6d} {found_str:>8}")
+
+
+def main():
+    instances = load_all_instances("data")
+    print_instances_summary(instances)
+    print_vehicle_search(instances)
+
 
 if __name__ == "__main__":
-    #main_test_open_file()
-    main_test_borne_inf()
+    main()

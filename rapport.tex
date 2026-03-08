@@ -380,6 +380,35 @@ Dans cette phase, la distance intervient comme \textbf{critère de construction}
 \subsection{Remarque}
 Cette approche ne prouve pas mathématiquement que le nombre trouvé est optimal. En revanche, elle fournit une estimation cohérente du nombre minimal de véhicules, adaptée à la taille des instances étudiées. Cette estimation sera ensuite affinée indirectement par les métaheuristiques développées dans les phases suivantes.
 
+\subsection{Résultats obtenus sans fenêtres de temps}
+Nous avons appliqué notre méthode de construction gloutonne géographique à l'ensemble des instances, en commençant à chaque fois par la borne inférieure
+\[
+LB = \left\lceil \frac{\sum_{i \in C} q_i}{Q} \right\rceil.
+\]
+
+Pour chaque instance testée, une solution faisable a été obtenue dès cette borne inférieure. Cela signifie que, dans le cas sans fenêtres de temps, le nombre minimal de véhicules est exactement égal à \(LB\) pour toutes les instances considérées.
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Instance & Capacité & Demande totale & \(LB\) & Nombre minimal trouvé \\
+\midrule
+data101.vrp  & 200  & 1458 & 8 & 8 \\
+data102.vrp  & 200  & 1458 & 8 & 8 \\
+data1101.vrp & 200  & 1724 & 9 & 9 \\
+data1102.vrp & 200  & 1724 & 9 & 9 \\
+data111.vrp  & 200  & 1458 & 8 & 8 \\
+data112.vrp  & 200  & 1458 & 8 & 8 \\
+data1201.vrp & 1000 & 1724 & 2 & 2 \\
+data1202.vrp & 1000 & 1724 & 2 & 2 \\
+data201.vrp  & 1000 & 1458 & 2 & 2 \\
+data202.vrp  & 1000 & 1458 & 2 & 2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+On remarque donc que, pour ces jeux de données et sans tenir compte des fenêtres temporelles, la contrainte de capacité suffit à expliquer le nombre minimal de véhicules.
+
 % --------------------------------------------------
 \section{Génération d'une solution initiale}
 % --------------------------------------------------
