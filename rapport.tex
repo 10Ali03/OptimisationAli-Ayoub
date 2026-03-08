@@ -409,6 +409,26 @@ data202.vrp  & 1000 & 1458 & 2 & 2 \\
 
 On remarque donc que, pour ces jeux de données et sans tenir compte des fenêtres temporelles, la contrainte de capacité suffit à expliquer le nombre minimal de véhicules.
 
+\subsection{Influence des fenêtres de temps sur la borne inférieure}
+
+La borne inférieure utilisée dans notre étude est basée uniquement sur la capacité des véhicules :
+
+\[
+LB = \left\lceil \frac{\sum_{i \in C} q_i}{Q} \right\rceil.
+\]
+
+Cette borne ne dépend que de la demande totale et de la capacité des véhicules. Elle est donc indépendante des distances et des fenêtres temporelles.
+
+Ainsi, l'introduction des fenêtres de temps ne modifie pas cette borne inférieure. En revanche, elle restreint fortement l'ensemble des tournées faisables. Certaines combinaisons de clients compatibles en termes de capacité peuvent devenir impossibles à réaliser lorsque leurs fenêtres de service sont incompatibles.
+
+Par conséquent, le nombre minimal de véhicules nécessaire avec fenêtres de temps est généralement supérieur ou égal à la borne inférieure :
+
+\[
+k_{TW} \ge LB.
+\]
+
+L'objectif de la seconde partie de la question 2 est donc de déterminer expérimentalement le nombre minimal de véhicules lorsque les contraintes temporelles sont prises en compte.
+
 % --------------------------------------------------
 \section{Génération d'une solution initiale}
 % --------------------------------------------------
