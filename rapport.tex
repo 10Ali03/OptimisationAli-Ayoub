@@ -1,0 +1,464 @@
+\documentclass[11pt,a4paper]{article}
+
+% --------------------------------------------------
+% PACKAGES
+% --------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}
+
+\geometry{margin=2.5cm}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+% --------------------------------------------------
+% HYPERREF
+% --------------------------------------------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    urlcolor=blue!60!black,
+    citecolor=blue!60!black,
+    pdftitle={Projet Optimisation Discrète - VRPTW},
+    pdfauthor={Nom1 - Nom2}
+}
+
+% --------------------------------------------------
+% CODE STYLE
+% --------------------------------------------------
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    columns=fullflexible,
+    keepspaces=true
+}
+
+% --------------------------------------------------
+% HEADER / FOOTER
+% --------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Projet Optimisation Discrète}
+\fancyhead[R]{VRPTW}
+\fancyfoot[C]{\thepage}
+
+% --------------------------------------------------
+% TITLE FORMAT
+% --------------------------------------------------
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+
+% --------------------------------------------------
+% DOCUMENT
+% --------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\scshape\LARGE Polytech Lyon \par}
+    \vspace{1cm}
+    {\scshape\Large Optimisation Discrète \par}
+    \vspace{1.5cm}
+    {\huge\bfseries Projet : Vehicle Routing Problem with Time Windows\par}
+    \vspace{1.5cm}
+    {\Large Rapport de projet\par}
+    \vspace{2cm}
+    
+    \begin{tabular}{rl}
+        Étudiants : & Nom Prénom \\
+                    & Nom Prénom \\
+        Enseignant : & Stéphane Bonnevay \\
+        Date : & \today
+    \end{tabular}
+    
+    \vfill
+    
+    \begin{minipage}{0.9\textwidth}
+    \small
+    Ce rapport présente notre travail sur la résolution du problème de tournées de véhicules avec fenêtres de temps (VRPTW) à l'aide de métaheuristiques. Le sujet demande de modéliser le problème, de structurer le code, de déterminer le nombre minimal de véhicules, de générer des solutions aléatoires, puis d'implémenter et comparer deux métaheuristiques.
+    \end{minipage}
+    
+    \vfill
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% --------------------------------------------------
+\section{Introduction}
+% --------------------------------------------------
+
+Le projet étudié porte sur le \textbf{Vehicle Routing Problem with Time Windows (VRPTW)}. L'objectif est de déterminer un ensemble de tournées partant et revenant au dépôt, de manière à desservir chaque client exactement une fois, en respectant les contraintes du problème et en minimisant la distance totale parcourue.
+
+Le sujet demande explicitement :
+\begin{itemize}
+    \item de modéliser le problème et de structurer le code ;
+    \item de déterminer, pour chaque jeu de données, le nombre minimum de véhicules ;
+    \item de créer un générateur aléatoire de solutions ;
+    \item d'implémenter deux métaheuristiques ;
+    \item de comparer les résultats obtenus ;
+    \item de commencer sans tenir compte des fenêtres de temps, puis de les ajouter ensuite.
+\end{itemize}
+
+Dans un premier temps, nous considérons donc le problème \textbf{sans fenêtres temporelles}, ce qui revient à traiter un \textbf{Capacitated Vehicle Routing Problem (CVRP)}. Les fenêtres de temps seront prises en compte dans une seconde phase.
+
+% --------------------------------------------------
+\section{Organisation du projet}
+% --------------------------------------------------
+
+Afin de répondre progressivement aux différentes questions du sujet, nous avons découpé le travail en plusieurs phases.
+
+\subsection{Phase 1 : Fondations du projet}
+Cette phase regroupe :
+\begin{itemize}
+    \item la modélisation mathématique du problème ;
+    \item la définition de la structure du code.
+\end{itemize}
+
+\subsection{Phase 2 : Détermination du nombre minimal de véhicules}
+Cette phase est décomposée en deux sous-parties :
+\begin{itemize}
+    \item sans fenêtres de temps ;
+    \item avec fenêtres de temps.
+\end{itemize}
+
+\subsection{Phase 3 : Génération de solutions initiales}
+Le sujet demandant un générateur aléatoire, nous avons choisi de construire des \textbf{solutions aléatoires faisables}.
+
+\subsection{Phase 4 : Première métaheuristique}
+Cette partie sera complétée ultérieurement.
+
+\subsection{Phase 5 : Deuxième métaheuristique}
+Cette partie sera complétée ultérieurement.
+
+\subsection{Phase 6 : Protocole expérimental et comparaison}
+Cette partie sera complétée ultérieurement.
+
+% --------------------------------------------------
+\section{Modélisation du problème}
+% --------------------------------------------------
+
+\subsection{Description générale}
+On considère un dépôt unique et un ensemble de clients. Chaque client possède :
+\begin{itemize}
+    \item des coordonnées cartésiennes ;
+    \item une demande ;
+    \item éventuellement une fenêtre de temps ;
+    \item un temps de service.
+\end{itemize}
+
+Les véhicules sont supposés identiques et possèdent tous la même capacité maximale \(Q\).
+
+L'objectif principal est de minimiser la distance totale parcourue. Le nombre de véhicules n'étant pas fixé dans le sujet, il doit être déterminé.
+
+\subsection{Ensembles}
+\[
+V = \{0,1,\dots,n\}
+\]
+désigne l'ensemble des sommets, où :
+\begin{itemize}
+    \item \(0\) représente le dépôt ;
+    \item \(C = \{1,\dots,n\}\) représente l'ensemble des clients.
+\end{itemize}
+
+\subsection{Paramètres}
+\begin{itemize}
+    \item \(d_{ij}\) : distance entre les sommets \(i\) et \(j\) ;
+    \item \(q_i\) : demande du client \(i\) ;
+    \item \(Q\) : capacité maximale d'un véhicule ;
+    \item \(a_i\) : date de début de la fenêtre de temps du client \(i\) ;
+    \item \(b_i\) : date de fin de la fenêtre de temps du client \(i\) ;
+    \item \(s_i\) : durée de service chez le client \(i\).
+\end{itemize}
+
+\subsection{Variables de décision}
+Une modélisation classique consiste à utiliser des variables binaires :
+\[
+x_{ij} =
+\begin{cases}
+1 & \text{si un véhicule va directement de } i \text{ vers } j, \\
+0 & \text{sinon.}
+\end{cases}
+\]
+
+Pour la version avec fenêtres de temps, on introduit également :
+\[
+t_i = \text{instant de début de service au client } i.
+\]
+
+\subsection{Fonction objectif}
+L'objectif est de minimiser la distance totale parcourue :
+\[
+\min \sum_{i \in V} \sum_{j \in V,\, j \neq i} d_{ij} x_{ij}.
+\]
+
+\subsection{Contraintes principales}
+
+\subsubsection{Visite unique de chaque client}
+Chaque client doit être visité exactement une fois :
+\[
+\sum_{j \in V,\, j \neq i} x_{ij} = 1 \qquad \forall i \in C
+\]
+\[
+\sum_{i \in V,\, i \neq j} x_{ij} = 1 \qquad \forall j \in C
+\]
+
+\subsubsection{Conservation du flot}
+Si un véhicule arrive chez un client, il doit également en repartir :
+\[
+\sum_{j \in V} x_{ij} = \sum_{j \in V} x_{ji} \qquad \forall i \in C
+\]
+
+\subsubsection{Capacité}
+Pour chaque véhicule, la somme des demandes des clients affectés à sa tournée ne doit pas dépasser \(Q\).
+
+Cette contrainte sera traitée dans notre implémentation par le calcul explicite de la charge de chaque tournée.
+
+\subsubsection{Fenêtres de temps}
+Dans la seconde partie du projet, on ajoute :
+\[
+a_i \le t_i \le b_i
+\]
+et, pour tout déplacement de \(i\) vers \(j\),
+\[
+t_j \ge t_i + s_i + d_{ij}.
+\]
+
+\subsection{Remarque sur l'utilisation d'OR-Tools}
+Nous avons choisi d'utiliser OR-Tools uniquement pour des \textbf{tests sur petites instances} et pour la validation de certaines hypothèses. En effet, sur des instances plus grandes, l'utilisation directe d'un solveur exact peut devenir trop coûteuse en temps de calcul. La résolution principale du projet repose donc sur des méthodes heuristiques et métaheuristiques.
+
+% --------------------------------------------------
+\section{Structure du code}
+% --------------------------------------------------
+
+La structure du code a été pensée de manière modulaire, afin de séparer clairement les rôles de chaque composant.
+
+\begin{lstlisting}
+src/
+  main.py
+  model.py
+  io_utils.py
+  evaluate.py
+  solver.py
+  neighbors.py
+  meta/
+    simulated_annealing.py
+    tabu_search.py
+\end{lstlisting}
+
+\subsection{\texttt{main.py}}
+Point d'entrée du programme. Il permet de charger une instance, de lancer l'algorithme choisi et d'afficher ou sauvegarder les résultats.
+
+\subsection{\texttt{model.py}}
+Ce fichier contient les structures de données principales :
+\begin{itemize}
+    \item client ;
+    \item dépôt ;
+    \item instance ;
+    \item solution.
+\end{itemize}
+
+\subsection{\texttt{io\_utils.py}}
+Ce module est chargé de la lecture des fichiers \texttt{.vrp} et de la sauvegarde des solutions au format JSON.
+
+\subsection{\texttt{evaluate.py}}
+Ce fichier regroupe les fonctions de calcul :
+\begin{itemize}
+    \item distance totale ;
+    \item faisabilité d'une tournée ;
+    \item respect de la capacité ;
+    \item respect des fenêtres de temps.
+\end{itemize}
+
+\subsection{\texttt{solver.py}}
+Interface de haut niveau permettant de lancer les différentes méthodes de résolution.
+
+\subsection{\texttt{neighbors.py}}
+Ce module contiendra les opérateurs de voisinage utilisés par les métaheuristiques, par exemple :
+\begin{itemize}
+    \item déplacement d'un client ;
+    \item échange de clients ;
+    \item inversion de segment (\texttt{2-opt}) ;
+    \item opérateurs intra-route et inter-route.
+\end{itemize}
+
+\subsection{\texttt{meta/}}
+Ce dossier contiendra les deux métaheuristiques retenues dans le projet :
+\begin{itemize}
+    \item recuit simulé ;
+    \item recherche tabou.
+\end{itemize}
+
+% --------------------------------------------------
+\section{Détermination du nombre minimal de véhicules}
+% --------------------------------------------------
+
+\subsection{Principe général}
+Le sujet demande de déterminer, pour chaque jeu de données, le nombre minimum de véhicules à utiliser.
+
+Nous avons décidé de traiter cette question en deux temps :
+\begin{itemize}
+    \item d'abord sans fenêtres de temps ;
+    \item ensuite avec fenêtres de temps.
+\end{itemize}
+
+\subsection{Borne inférieure théorique}
+Une borne inférieure immédiate du nombre de véhicules est obtenue à partir de la somme des demandes :
+\[
+LB = \left\lceil \frac{\sum_{i \in C} q_i}{Q} \right\rceil.
+\]
+
+Cette borne est nécessaire mais pas toujours suffisante, car elle ne tient compte que de la capacité totale et pas de la répartition effective des clients dans les tournées.
+
+\subsection{Méthode envisagée}
+Pour une instance donnée :
+\begin{enumerate}[label=\arabic*.]
+    \item calculer la borne inférieure \(LB\) ;
+    \item essayer de construire des solutions faisables avec exactement \(LB\) véhicules ;
+    \item si aucune solution faisable n'est trouvée après un certain nombre d'essais, tester avec \(LB+1\), puis \(LB+2\), etc. ;
+    \item retenir le premier nombre de véhicules pour lequel une solution faisable est obtenue.
+\end{enumerate}
+
+Cette stratégie sera d'abord appliquée sans fenêtres de temps, puis avec fenêtres de temps.
+
+% --------------------------------------------------
+\section{Génération d'une solution initiale}
+% --------------------------------------------------
+
+Le sujet demande explicitement la création d'un générateur aléatoire de solutions. Nous avons donc choisi de construire une \textbf{solution aléatoire faisable}.
+
+\subsection{Choix retenu}
+Nous ne retenons pas une permutation totalement aléatoire des clients, car celle-ci produit très souvent des solutions infaisables. À la place, nous construisons la solution progressivement :
+
+\begin{enumerate}[label=\arabic*.]
+    \item ouvrir une nouvelle tournée ;
+    \item déterminer la liste des clients admissibles dans cette tournée ;
+    \item choisir aléatoirement l'un de ces clients ;
+    \item l'ajouter à la tournée ;
+    \item recommencer jusqu'à ce qu'aucun autre client admissible ne puisse être ajouté ;
+    \item ouvrir une nouvelle tournée ;
+    \item répéter jusqu'à ce que tous les clients soient servis.
+\end{enumerate}
+
+\subsection{Cas sans fenêtres de temps}
+Dans un premier temps, un client est admissible si son ajout ne fait pas dépasser la capacité du véhicule.
+
+\subsection{Cas avec fenêtres de temps}
+Dans un second temps, un client sera admissible si son ajout respecte à la fois :
+\begin{itemize}
+    \item la capacité du véhicule ;
+    \item la faisabilité temporelle de la tournée.
+\end{itemize}
+
+\subsection{Rôle de cette solution}
+Cette solution initiale n'a pas vocation à être optimale. Elle sert de point de départ aux métaheuristiques.
+
+% --------------------------------------------------
+\section{Choix des méthodes de résolution}
+% --------------------------------------------------
+
+Le projet demandant l'utilisation de deux métaheuristiques, nous avons retenu les approches suivantes :
+\begin{itemize}
+    \item le recuit simulé ;
+    \item la recherche tabou.
+\end{itemize}
+
+Ces deux méthodes sont particulièrement adaptées à une résolution par voisinage du problème de tournées de véhicules.
+
+\subsection{Voisinages envisagés}
+Les opérateurs suivants seront étudiés :
+\begin{itemize}
+    \item relocate ;
+    \item exchange ;
+    \item 2-opt ;
+    \item éventuellement des opérateurs inter-route plus complexes.
+\end{itemize}
+
+% --------------------------------------------------
+\section{Format des données}
+% --------------------------------------------------
+
+Les fichiers d'entrée sont des fichiers texte au format \texttt{.vrp}. Une instance contient :
+\begin{itemize}
+    \item le nom du fichier ;
+    \item le nombre de dépôts ;
+    \item le nombre de clients ;
+    \item la capacité maximale d'un véhicule ;
+    \item les informations sur le dépôt ;
+    \item les informations sur chaque client.
+\end{itemize}
+
+Exemple de structure :
+\begin{lstlisting}
+NAME: data101.vrp
+COMMENT:
+TYPE: vrptw
+COORDINATES: cartesian
+NB_DEPOTS: 1
+NB_CLIENTS: 100
+MAX_QUANTITY: 200
+
+DATA_DEPOTS [idName x y readyTime dueTime]:
+d1 35 35 0 230
+
+DATA_CLIENTS [idName x y readyTime dueTime demand service]:
+c1 41 49 161 171 10 10
+...
+\end{lstlisting}
+
+Chaque client est donc décrit par :
+\begin{itemize}
+    \item ses coordonnées \((x,y)\) ;
+    \item sa fenêtre de temps \([readyTime, dueTime]\) ;
+    \item sa demande ;
+    \item sa durée de service.
+\end{itemize}
+
+% --------------------------------------------------
+\section{Travail restant}
+% --------------------------------------------------
+
+Les parties suivantes restent à compléter :
+\begin{itemize}
+    \item implémentation détaillée du calcul de faisabilité ;
+    \item calcul expérimental du nombre minimal de véhicules sur chaque instance ;
+    \item définition précise des voisinages ;
+    \item implémentation du recuit simulé ;
+    \item implémentation de la recherche tabou ;
+    \item protocole expérimental ;
+    \item analyse comparative des résultats ;
+    \item prise en compte complète des fenêtres de temps.
+\end{itemize}
+
+% --------------------------------------------------
+\section{Conclusion provisoire}
+% --------------------------------------------------
+
+À ce stade, nous avons :
+\begin{itemize}
+    \item identifié clairement le problème à résoudre ;
+    \item proposé une première modélisation mathématique ;
+    \item structuré les grandes phases du projet ;
+    \item défini l'architecture logicielle ;
+    \item choisi d'utiliser OR-Tools uniquement sur petites instances ;
+    \item retenu une stratégie de génération aléatoire faisable pour construire les solutions initiales.
+\end{itemize}
+
+La suite du travail consistera à déterminer le nombre minimal de véhicules, puis à développer et comparer deux métaheuristiques adaptées au problème.
+
+\end{document}
