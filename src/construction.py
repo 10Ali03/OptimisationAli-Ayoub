@@ -4,6 +4,28 @@ from evaluate import distance_depot_to_client, distance_between_clients
 def route_load(instance, route):
     return sum(instance.clients[cid].demand for cid in route)
 
+def route_distance(instance, route):
+    if not route:
+        return 0.0
+
+    total = 0.0
+
+    # dépôt -> premier client
+    total += distance_depot_to_client(instance, route[0])
+
+    # clients intermédiaires
+    for i in range(len(route) - 1):
+        total += distance_between_clients(instance, route[i], route[i + 1])
+
+    # dernier client -> dépôt
+    total += distance_depot_to_client(instance, route[-1])
+
+    return total
+
+
+def solution_distance(instance, routes):
+    return sum(route_distance(instance, route) for route in routes)
+
 
 def choose_seeds(instance, k, unserved):
     """

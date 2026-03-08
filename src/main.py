@@ -33,7 +33,7 @@ def print_instances_summary(instances):
 
 def print_vehicle_search(instances):
     print("\n=== Recherche du nombre de véhicules ===")
-    print(f"{'Nom':15} {'LB':>6} {'Trouvé':>8}")
+    print(f"{'Nom':15} {'LB':>6} {'Trouvé':>8} {'Distance':>12}")
 
     for inst in instances:
         lb = lower_bound_vehicles(inst)
@@ -41,10 +41,13 @@ def print_vehicle_search(instances):
 
         if found_k is None:
             found_str = "échec"
+            dist_str = "-"
         else:
             found_str = str(found_k)
+            from construction import solution_distance
+            dist_str = f"{solution_distance(inst, routes):.2f}"
 
-        print(f"{inst.name:15} {lb:6d} {found_str:>8}")
+        print(f"{inst.name:15} {lb:6d} {found_str:>8} {dist_str:>12}")
 
 
 def main():
