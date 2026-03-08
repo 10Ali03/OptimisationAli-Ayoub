@@ -311,11 +311,20 @@ Ce dossier contiendra les deux métaheuristiques retenues dans le projet :
 \subsection{Principe général}
 Le sujet demande de déterminer, pour chaque jeu de données, le nombre minimum de véhicules à utiliser.
 
-Nous avons décidé de traiter cette question en deux temps :
+Nous avons choisi de traiter cette question en deux temps :
 \begin{itemize}
     \item d'abord sans fenêtres de temps ;
     \item ensuite avec fenêtres de temps.
 \end{itemize}
+
+Dans cette première étape, nous ne considérons donc que :
+\begin{itemize}
+    \item la capacité des véhicules ;
+    \item la nécessité de construire de vraies tournées partant et revenant au dépôt ;
+    \item la distance entre les clients et le dépôt.
+\end{itemize}
+
+Autrement dit, nous traitons d'abord une version de type \textbf{CVRP} avant d'ajouter les fenêtres de temps.
 
 \subsection{Borne inférieure théorique}
 Une borne inférieure immédiate du nombre de véhicules est obtenue à partir de la somme des demandes :
@@ -323,18 +332,53 @@ Une borne inférieure immédiate du nombre de véhicules est obtenue à partir d
 LB = \left\lceil \frac{\sum_{i \in C} q_i}{Q} \right\rceil.
 \]
 
-Cette borne est nécessaire mais pas toujours suffisante, car elle ne tient compte que de la capacité totale et pas de la répartition effective des clients dans les tournées.
+Cette borne est nécessaire mais pas toujours suffisante, car elle ne tient compte que de la capacité totale disponible. Elle ignore :
+\begin{itemize}
+    \item la répartition des demandes entre les tournées ;
+    \item la structure géographique des clients ;
+    \item la cohérence réelle des trajets.
+\end{itemize}
 
-\subsection{Méthode envisagée}
-Pour une instance donnée :
+Deux clients compatibles en termes de charge peuvent en effet être très éloignés, ce qui rend leur regroupement peu pertinent dans une même tournée.
+
+\subsection{Choix méthodologique}
+Nous avons décidé de ne pas déterminer le nombre minimal de véhicules uniquement à partir des demandes, comme dans un simple problème de remplissage. En effet, même sans fenêtres temporelles, il est nécessaire de tenir compte de la distance afin de construire des tournées réalistes.
+
+Notre méthode consiste donc à :
 \begin{enumerate}[label=\arabic*.]
     \item calculer la borne inférieure \(LB\) ;
-    \item essayer de construire des solutions faisables avec exactement \(LB\) véhicules ;
-    \item si aucune solution faisable n'est trouvée après un certain nombre d'essais, tester avec \(LB+1\), puis \(LB+2\), etc. ;
-    \item retenir le premier nombre de véhicules pour lequel une solution faisable est obtenue.
+    \item fixer \(k = LB\) ;
+    \item essayer de construire une solution faisable avec exactement \(k\) véhicules ;
+    \item si aucun ensemble de tournées faisables n'est obtenu, incrémenter \(k\) ;
+    \item retenir le premier \(k\) pour lequel tous les clients sont servis.
 \end{enumerate}
 
-Cette stratégie sera d'abord appliquée sans fenêtres de temps, puis avec fenêtres de temps.
+\subsection{Heuristique utilisée pour tester une valeur de \(k\)}
+Pour tester si \(k\) véhicules suffisent, nous utilisons une heuristique gloutonne géographique sous contrainte de capacité.
+
+Le principe est le suivant :
+\begin{enumerate}[label=\arabic*.]
+    \item initialiser \(k\) tournées vides ;
+    \item choisir un premier client pour chaque tournée ;
+    \item compléter chaque tournée en ajoutant à chaque étape un client non encore servi ;
+    \item parmi les clients admissibles, sélectionner celui qui minimise la distance au dernier client de la tournée ;
+    \item ne jamais dépasser la capacité maximale \(Q\) ;
+    \item s'arrêter lorsque plus aucun client ne peut être ajouté à la tournée courante.
+\end{enumerate}
+
+Un client est dit \textbf{admissible} si son ajout à la tournée ne fait pas dépasser la capacité du véhicule.
+
+\subsection{Critère de faisabilité}
+Pour une valeur donnée de \(k\), la solution est considérée comme faisable si :
+\begin{itemize}
+    \item tous les clients sont affectés à une unique tournée ;
+    \item la charge de chaque tournée est inférieure ou égale à \(Q\).
+\end{itemize}
+
+Dans cette phase, la distance intervient comme \textbf{critère de construction} des tournées, mais pas encore comme objectif d'optimisation final.
+
+\subsection{Remarque}
+Cette approche ne prouve pas mathématiquement que le nombre trouvé est optimal. En revanche, elle fournit une estimation cohérente du nombre minimal de véhicules, adaptée à la taille des instances étudiées. Cette estimation sera ensuite affinée indirectement par les métaheuristiques développées dans les phases suivantes.
 
 % --------------------------------------------------
 \section{Génération d'une solution initiale}
