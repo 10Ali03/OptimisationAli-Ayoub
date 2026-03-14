@@ -1,0 +1,639 @@
+# VRPTW Project Context — Optimisation Discrète
+
+## 1. Contexte du projet
+
+Ce projet est réalisé dans le cadre du cours d’optimisation discrète.
+
+L’objectif est de résoudre un problème appelé :
+
+Vehicle Routing Problem with Time Windows (VRPTW).
+
+Le problème consiste à organiser les tournées de véhicules partant d’un dépôt afin de servir un ensemble de clients en minimisant la distance totale parcourue.
+
+Chaque client possède :
+
+- une position cartésienne
+- une demande
+- une fenêtre de temps
+- un temps de service
+
+Les véhicules sont identiques et possèdent une capacité maximale.
+
+Chaque client doit être visité exactement une fois.
+
+---
+
+# 2. Objectifs du projet
+
+Le projet comporte plusieurs étapes :
+
+1. Modéliser le problème
+2. Structurer le code
+3. Déterminer le nombre minimal de véhicules
+4. Générer des solutions aléatoires
+5. Implémenter deux métaheuristiques
+6. Comparer les résultats
+
+Le sujet demande explicitement :
+
+- de commencer sans fenêtres de temps
+- puis d'ajouter les fenêtres de temps.
+
+---
+
+# 3. Versions du problème
+
+Deux versions du problème sont étudiées.
+
+## 3.1 Version sans fenêtres de temps
+
+Cette version correspond au problème :
+
+Capacitated Vehicle Routing Problem (CVRP)
+
+Contraintes :
+
+- capacité des véhicules
+- chaque client est visité une seule fois
+- les tournées commencent et terminent au dépôt
+
+Objectif :
+
+minimiser la distance totale parcourue.
+
+---
+
+## 3.2 Version avec fenêtres de temps
+
+Cette version correspond au problème complet VRPTW.
+
+Contraintes supplémentaires :
+
+Chaque client doit être servi dans sa fenêtre temporelle.
+
+ready_time ≤ arrival_time ≤ due_time
+
+Si le véhicule arrive trop tôt, il doit attendre.
+
+---
+
+# 4. Format des données
+
+Les données sont fournies dans des fichiers `.vrp`.
+
+Exemple :
+
+NAME: data101.vrp  
+TYPE: vrptw  
+NB_DEPOTS: 1  
+NB_CLIENTS: 100  
+MAX_QUANTITY: 200  
+
+---
+
+## Dépôt
+
+DATA_DEPOTS
+
+d1 35 35 0 230
+
+Format :
+
+id x y readyTime dueTime
+
+---
+
+## Clients
+
+DATA_CLIENTS
+
+c1 41 49 161 171 10 10
+
+Format :
+
+id x y readyTime dueTime demand service
+
+---
+
+# 5. Modélisation mathématique
+
+## Ensembles
+
+V = {0,...,n}
+
+0 représente le dépôt
+
+C = {1,...,n}
+
+ensemble des clients.
+
+---
+
+## Paramètres
+
+d_ij
+
+distance entre les sommets i et j.
+
+q_i
+
+demande du client i.
+
+Q
+
+capacité maximale d'un véhicule.
+
+[a_i , b_i]
+
+fenêtre de temps du client i.
+
+s_i
+
+temps de service chez le client.
+
+---
+
+## Variables de décision
+
+x_ij = 1 si un véhicule se déplace directement de i vers j  
+x_ij = 0 sinon.
+
+---
+
+## Fonction objectif
+
+Minimiser la distance totale parcourue :
+
+min Σ d_ij x_ij
+
+---
+
+## Contraintes
+
+### Visite unique
+
+Chaque client doit être visité exactement une fois.
+
+### Conservation du flot
+
+Si un véhicule arrive chez un client, il doit repartir.
+
+### Capacité
+
+Σ q_i ≤ Q
+
+pour chaque tournée.
+
+### Fenêtres de temps
+
+a_i ≤ t_i ≤ b_i
+
+et
+
+t_j ≥ t_i + s_i + d_ij
+
+---
+
+# 6. Architecture du code
+
+Structure du projet :
+
+src/
+
+main.py  
+io_utils.py  
+evaluate.py  
+construction.py  
+solver.py  
+neighbors.py  
+
+meta/
+
+simulated_annealing.py  
+tabu_search.py  
+
+---
+
+## main.py
+
+Point d’entrée du programme.
+
+Responsabilités :
+
+- charger les instances
+- lancer les algorithmes
+- afficher les résultats.
+
+---
+
+## io_utils.py
+
+Lecture et parsing des fichiers `.vrp`.
+
+Responsabilités :
+
+- lire les sections du fichier
+- créer les objets.
+
+Classes principales :
+
+Depot  
+Client  
+VRPTWInstance  
+
+---
+
+## evaluate.py
+
+Fonctions d’évaluation :
+
+- distance euclidienne
+- distance entre clients
+- demande totale
+- calcul des bornes inférieures
+- calcul de la distance d’une solution
+- vérification de faisabilité.
+
+---
+
+## construction.py
+
+Méthodes de construction de solutions.
+
+Fonctions principales :
+
+- construire une solution avec k véhicules
+- heuristique gloutonne
+- recherche du nombre minimal de véhicules.
+
+---
+
+## neighbors.py
+
+Opérateurs de voisinage utilisés dans les métaheuristiques :
+
+- relocate
+- swap
+- 2-opt
+- échanges inter-routes.
+
+---
+
+## meta/
+
+Contient les métaheuristiques :
+
+simulated_annealing.py  
+tabu_search.py  
+
+---
+
+# 7. Question 2 : nombre minimal de véhicules
+
+Pour chaque instance, on cherche :
+
+k_min
+
+le nombre minimal de véhicules nécessaires.
+
+---
+
+## Borne inférieure capacité
+
+Une borne inférieure est donnée par :
+
+LB = ceil( Σ q_i / Q )
+
+où :
+
+Σ q_i est la demande totale  
+Q la capacité du véhicule.
+
+Cette borne ne dépend pas :
+
+- des distances
+- des fenêtres de temps.
+
+---
+
+# 8. Résultats obtenus sans fenêtres de temps
+
+| Instance | Demande totale | Capacité | LB |
+|---------|---------------|---------|----|
+| data101 | 1458 | 200 | 8 |
+| data102 | 1458 | 200 | 8 |
+| data1101 | 1724 | 200 | 9 |
+| data1102 | 1724 | 200 | 9 |
+| data111 | 1458 | 200 | 8 |
+| data112 | 1458 | 200 | 8 |
+| data1201 | 1724 | 1000 | 2 |
+| data1202 | 1724 | 1000 | 2 |
+| data201 | 1458 | 1000 | 2 |
+| data202 | 1458 | 1000 | 2 |
+
+Une solution faisable a été trouvée avec exactement cette borne pour toutes les instances.
+
+Donc :
+
+k_min = LB
+
+dans la version sans fenêtres de temps.
+
+---
+
+# 9. Méthode de construction utilisée
+
+Pour tester un nombre de véhicules k :
+
+1. sélectionner k clients graines (les plus éloignés du dépôt)
+2. créer k tournées
+3. ajouter progressivement les clients les plus proches
+4. respecter la capacité
+5. vérifier la faisabilité.
+
+Si tous les clients sont servis :
+
+solution faisable trouvée.
+
+Sinon :
+
+tester k+1 véhicules.
+
+---
+
+# 10. Génération de solutions initiales
+
+Le sujet demande un générateur aléatoire.
+
+Principe :
+
+1. ouvrir une nouvelle tournée
+2. déterminer les clients admissibles
+3. choisir un client aléatoirement
+4. l'ajouter à la tournée
+5. répéter jusqu'à saturation
+6. ouvrir une nouvelle tournée
+7. continuer jusqu'à servir tous les clients.
+
+---
+
+# 11. Métaheuristiques prévues
+
+Deux méthodes seront implémentées.
+
+---
+
+## Recuit simulé
+
+Principe :
+
+- exploration probabiliste
+- acceptation de solutions moins bonnes
+- évitement des minima locaux.
+
+---
+
+## Recherche tabou
+
+Principe :
+
+- mémorisation des mouvements récents
+- interdiction temporaire de certains mouvements
+- exploration plus large de l'espace des solutions.
+
+---
+
+# 12. Protocole expérimental
+
+Pour chaque instance :
+
+1. générer plusieurs solutions initiales
+2. appliquer les métaheuristiques
+3. comparer les résultats.
+
+Critères de comparaison :
+
+- distance totale
+- temps de calcul
+- robustesse.
+
+---
+
+# 13. État actuel du dépôt
+
+Date de référence : 14 mars 2026
+
+Le dépôt contient déjà une première base fonctionnelle pour la version sans fenêtres de temps.
+
+Implémenté actuellement :
+
+- lecture des fichiers `.vrp` dans `src/io_utils.py`
+- calcul de la demande totale et de la borne inférieure capacité dans `src/evaluate.py`
+- calcul de la distance et de la charge des tournées dans `src/evaluate.py`
+- évaluation complète d'une tournée avec temps d'arrivée, attente, début de service et temps de retour
+- vérification de faisabilité capacité et fenêtres de temps dans `src/evaluate.py`
+- évaluation globale d'une solution avec contrôle "chaque client servi une seule fois"
+- construction gloutonne d'une solution capacitaire dans `src/construction.py`
+- générateur aléatoire de solutions initiales faisables dans `src/construction.py`
+- opérateurs de voisinage `relocate`, `swap` et `2-opt` dans `src/neighbors.py`
+- génération et déduplication de voisins faisables dans `src/neighbors.py`
+- sélection du meilleur voisin faisable dans `src/neighbors.py`
+- génération d'un voisin aléatoire faisable dans `src/neighbors.py`
+- première implémentation du recuit simulé dans `src/meta/simulated_annealing.py`
+- première implémentation de la recherche tabou dans `src/meta/tabu_search.py`
+- protocole expérimental centralisé dans `src/solver.py`
+- presets `quick` et `long` pour distinguer validation rapide et tests longs
+- mode CLI dédié aux campagnes expérimentales dans `src/main.py`
+- recherche du nombre minimal de véhicules à partir de la borne inférieure
+- script principal `src/main.py` pour résumer les instances et lancer la recherche
+
+Constat actuel :
+
+- l'exécution de `python3 src/main.py` fonctionne
+- une solution faisable est trouvée pour toutes les instances présentes
+- les fichiers `src/model.py`, `src/solver.py`, `src/neighbors.py`, `src/meta/simulated_annealing.py` et `src/meta/tabu_search.py` sont encore vides
+- la partie fenêtres de temps est maintenant intégrée dans l'évaluation, mais pas encore dans la construction gloutonne
+- la génération aléatoire de solutions initiales est implémentée pour la version capacitaire et déjà compatible avec un contrôle temporel
+- les voisinages sont maintenant branchés dans une première version du recuit simulé
+- la recherche tabou est implémentée dans une première version plus coûteuse en calcul que le recuit simulé
+- un cadre de comparaison recuit/tabou existe maintenant, mais les tests longs n'ont pas encore été lancés systématiquement
+
+Résultats observés avec l'état actuel :
+
+| Instance | LB | Véhicules trouvés | Distance |
+|---------|----|-------------------|----------|
+| data101.vrp | 8 | 8 | 1307.24 |
+| data102.vrp | 8 | 8 | 1307.24 |
+| data1101.vrp | 9 | 9 | 2093.55 |
+| data1102.vrp | 9 | 9 | 2093.55 |
+| data111.vrp | 8 | 8 | 1307.24 |
+| data112.vrp | 8 | 8 | 1307.24 |
+| data1201.vrp | 2 | 2 | 961.46 |
+| data1202.vrp | 2 | 2 | 961.46 |
+| data201.vrp | 2 | 2 | 929.20 |
+| data202.vrp | 2 | 2 | 929.20 |
+
+---
+
+# 14. Suite logique proposée
+
+Ordre recommandé pour la suite du projet :
+
+1. stabiliser le socle d'évaluation d'une solution
+2. ajouter les vérifications de faisabilité complètes
+3. implémenter un générateur aléatoire de solutions initiales
+4. implémenter les voisinages
+5. brancher le recuit simulé
+6. brancher la recherche tabou
+7. ajouter la gestion des fenêtres de temps
+8. lancer le protocole expérimental final
+
+Prochaine étape conseillée :
+
+lancer les premiers tests longs contrôlés avec le preset `long` sur un sous-ensemble d'instances, puis consigner précisément les résultats.
+
+Points à brancher ensuite :
+
+- choix du sous-ensemble d'instances pour la première campagne longue
+- conservation des tableaux de résultats
+- éventuel export CSV ou markdown
+- analyse des écarts entre répétitions
+- intégration progressive des tableaux dans le rapport
+
+Cela permettra ensuite de lancer les vrais tests longs de comparaison.
+
+---
+
+# 16. Journal de suivi
+
+## 14 mars 2026
+
+Travail réalisé :
+
+- ajout d'un socle d'évaluation complet dans `src/evaluate.py`
+- ajout d'une structure `RouteEvaluation`
+- centralisation des calculs de distance et de charge
+- refactorisation légère de `src/construction.py` pour réutiliser `src/evaluate.py`
+- nettoyage de `src/main.py` pour utiliser `solution_distance` depuis `src/evaluate.py`
+- implémentation d'un générateur aléatoire de solutions faisables avec nombre de véhicules fixé
+- ajout d'un filtre de clients admissibles compatible capacité et fenêtres de temps
+- ajout d'un affichage de validation des solutions initiales dans `src/main.py`
+- implémentation des voisinages `relocate`, `swap` et `2-opt` dans `src/neighbors.py`
+- ajout d'une fonction de génération de voisins faisables et d'une sélection du meilleur voisin
+- ajout d'une génération de voisin aléatoire faisable pour éviter un coût trop élevé dans le recuit simulé
+- implémentation du recuit simulé avec acceptation probabiliste et suivi de la meilleure solution
+- ajout d'un aperçu léger du recuit simulé dans `src/main.py`
+- implémentation d'une première recherche tabou avec mémoire tabou sur solutions visitées et aspiration
+- ajout d'un aperçu léger de la recherche tabou dans `src/main.py`
+- création de `src/solver.py` pour centraliser les expériences
+- ajout de presets `quick` et `long` avec paramètres reproductibles
+- intégration d'un tableau de comparaison métaheuristiques dans `src/main.py`
+- recalibrage du preset `long` pour tenir compte du coût réel de la recherche tabou
+- ajout d'une interface de lancement explicite pour les campagnes ciblées (`--mode experiment`)
+
+Vérifications effectuées :
+
+- `python3 src/main.py` exécute toujours correctement le pipeline actuel
+- test manuel de `evaluate_route()` sur une tournée simple de `data101.vrp`
+- le contrôle des fenêtres de temps détecte bien une tournée non faisable
+- génération aléatoire validée sur plusieurs instances avec contrôle de faisabilité global
+- test des voisinages sur `data101.vrp` : 9987 voisins faisables générés pour une solution aléatoire testée
+- sur cette même solution, un meilleur voisin faisable a été trouvé avec une distance améliorée de 3649.90 à 3512.66
+- test ciblé du recuit simulé sur `data101.vrp` : amélioration de 3488.41 à 2211.87 en 500 itérations
+- aperçu intégré dans `src/main.py` validé sur 3 instances avec amélioration systématique des solutions initiales
+- test ciblé de la recherche tabou sur `data101.vrp` : amélioration de 3604.26 à 3278.86 en 10 itérations
+- aperçu intégré de la recherche tabou validé sur `data101.vrp` : amélioration de 3627.92 à 3488.60 en 5 itérations, avec un coût de calcul déjà notable
+- protocole `quick` validé sur `data101.vrp` : distance moyenne initiale 3726.26, recuit simulé 2295.29, tabou 3592.33
+- sur ce même protocole `quick`, temps moyen observé : 0.10 s pour le recuit simulé contre 12.02 s pour la recherche tabou
+- tentative de première campagne `long` : le preset initial s'est révélé trop coûteux pour la recherche tabou
+- en conséquence, le preset `long` a été recalibré à un niveau plus réaliste avant de lancer les prochaines campagnes longues
+- validation du mode expérimental dédié : `python3 src/main.py --mode experiment --preset quick --instances data101.vrp --details`
+- premier test `long` exécuté sur `data101.vrp` avec détail par répétition
+- résultat moyen observé sur `data101.vrp` en mode `long` : initial 3719.84, recuit simulé 1800.80, tabou 3424.76
+- temps moyens observés sur ce test `long` : 0.36 s pour le recuit simulé contre 19.96 s pour la recherche tabou
+- lot `long` exécuté sur `data101.vrp` et `data102.vrp`
+- résultat moyen observé sur `data102.vrp` en mode `long` : initial 3609.70, recuit simulé 1764.93, tabou 3372.76
+- temps moyens observés sur `data102.vrp` : 0.37 s pour le recuit simulé contre 20.71 s pour la recherche tabou
+- lot `long` exécuté sur `data1101.vrp` et `data1102.vrp`
+- résultat moyen observé sur `data1101.vrp` en mode `long` : initial 4717.62, recuit simulé 2271.42, tabou 4448.35
+- résultat moyen observé sur `data1102.vrp` en mode `long` : initial 4683.40, recuit simulé 2368.66, tabou 4311.87
+- temps moyens observés sur `data1101.vrp` et `data1102.vrp` : environ 0.48 s pour le recuit simulé contre environ 20.3 s pour la recherche tabou
+- lot `long` exécuté sur `data111.vrp` et `data112.vrp`
+- résultats observés sur `data111.vrp` et `data112.vrp` identiques à ceux de `data101.vrp` et `data102.vrp` avec les mêmes graines
+- cette répétition suggère fortement que ces paires d'instances partagent la même structure utile pour nos heuristiques actuelles
+- lot `long` exécuté sur `data1201.vrp` et `data1202.vrp`
+- résultat moyen observé sur `data1201.vrp` en mode `long` : initial 4507.39, recuit simulé 1898.40, tabou 4191.42
+- résultat moyen observé sur `data1202.vrp` en mode `long` : initial 4693.59, recuit simulé 2051.32, tabou 4216.21
+- sur ces instances à 2 véhicules, le recuit simulé reste très performant et encore plus rapide, autour de 0.26 s
+- lot `long` exécuté sur `data201.vrp` et `data202.vrp`
+- résultat moyen observé sur `data201.vrp` en mode `long` : initial 3410.18, recuit simulé 1547.01, tabou 3111.51
+- résultat moyen observé sur `data202.vrp` en mode `long` : initial 3436.16, recuit simulé 1660.53, tabou 3129.50
+- la première campagne longue couvre maintenant toutes les familles d'instances présentes dans le dépôt
+- un tableau récapitulatif complet de la première campagne longue a été ajouté dans `rapport.tex`
+- intégration d'une heuristique d'insertion pour la construction avec fenêtres de temps dans `src/construction.py`
+- recherche du nombre minimal de véhicules avec fenêtres de temps maintenant branchée dans `src/main.py`
+- premiers résultats VRPTW observés : `data101.vrp -> 21`, `data102.vrp -> 18`, `data1101.vrp -> 18`, `data1201.vrp -> 5`, `data201.vrp -> 5`
+
+---
+
+# 15. Règle de suivi de collaboration
+
+À partir de maintenant, `codex.md` sert aussi de mémoire de travail, et `rapport.tex` doit être mis à jour au fur et à mesure pour refléter l'avancement réel du projet.
+
+Le rapport doit aussi expliquer l'évolution du code et des choix d'architecture : pourquoi certains modules ont été séparés, pourquoi certaines refactorisations ont été faites, et quelle logique a guidé le découpage en fichiers.
+
+À chaque modification importante, on mettra à jour :
+
+- ce qui a été implémenté
+- ce qui reste à faire
+- les hypothèses retenues
+- les résultats observés après test
+- les sections du rapport qui doivent être synchronisées
+
+Objectif :
+
+garder un historique clair du projet, de ses choix techniques et de l'avancement.
+
+# 13. Étapes restantes
+
+Travail restant :
+
+1. intégrer complètement les fenêtres de temps
+2. implémenter le générateur aléatoire
+3. implémenter les opérateurs de voisinage
+4. coder le recuit simulé
+5. coder la recherche tabou
+6. analyser et comparer les résultats.
+
+---
+
+# 14. Stratégie de développement
+
+Le projet est développé progressivement.
+
+Étape 1 :
+
+version sans fenêtres de temps.
+
+Étape 2 :
+
+validation des heuristiques.
+
+Étape 3 :
+
+intégration des fenêtres de temps.
+
+Étape 4 :
+
+implémentation des métaheuristiques.
+
+---
+
+# 15. Objectif final
+
+Construire un solveur VRPTW capable de :
+
+- générer des solutions faisables
+- optimiser les tournées
+- comparer différentes métaheuristiques
+- analyser les performances sur plusieurs instances.

@@ -141,13 +141,23 @@ Cette phase est décomposée en deux sous-parties :
 Le sujet demandant un générateur aléatoire, nous avons choisi de construire des \textbf{solutions aléatoires faisables}.
 
 \subsection{Phase 4 : Première métaheuristique}
-Cette partie sera complétée ultérieurement.
+Nous avons retenu le recuit simulé comme première métaheuristique. Une première version fonctionnelle a été implémentée afin de valider la chaîne complète :
+\begin{itemize}
+    \item génération d'une solution initiale ;
+    \item génération d'un voisin faisable ;
+    \item acceptation déterministe ou probabiliste ;
+    \item mémorisation de la meilleure solution rencontrée.
+\end{itemize}
 
 \subsection{Phase 5 : Deuxième métaheuristique}
-Cette partie sera complétée ultérieurement.
+Nous avons retenu la recherche tabou comme seconde métaheuristique. Une première version a été mise en place afin de disposer rapidement des deux approches demandées par le sujet avant de lancer les comparaisons expérimentales détaillées.
 
 \subsection{Phase 6 : Protocole expérimental et comparaison}
-Cette partie sera complétée ultérieurement.
+Une première infrastructure expérimentale a maintenant été mise en place afin de distinguer clairement deux usages :
+\begin{itemize}
+    \item un mode \og rapide \fg{} destiné à valider les implémentations et à obtenir un premier ordre de grandeur ;
+    \item un mode \og long \fg{} destiné aux comparaisons plus rigoureuses, avec davantage d'itérations et plusieurs répétitions.
+\end{itemize}
 
 % --------------------------------------------------
 \section{Modélisation du problème}
@@ -261,6 +271,62 @@ src/
     tabu_search.py
 \end{lstlisting}
 
+\subsection{Évolution de l'architecture}
+La structure actuelle n'a pas été figée dès le début du projet. Elle est le résultat d'une évolution progressive, guidée à la fois par le sujet et par les besoins apparus au cours de l'implémentation.
+
+Dans une première étape, nous avions surtout besoin de lire correctement les instances et de manipuler les données du problème. Cela a conduit à isoler très tôt un module de lecture, afin de ne pas mélanger le parsing des fichiers \texttt{.vrp} avec la logique algorithmique.
+
+Ensuite, à mesure que plusieurs méthodes de construction et d'amélioration ont été ajoutées, il est devenu clair qu'il fallait éviter de dupliquer partout les mêmes calculs de distance, de charge ou de faisabilité. C'est cette réflexion qui a motivé la centralisation de ces calculs dans \texttt{evaluate.py}. Ce choix a été important, car il garantit que les heuristiques, les voisinages et les métaheuristiques reposent tous sur la même définition d'une solution faisable.
+
+Dans un troisième temps, lorsque le projet a commencé à inclure des opérateurs de voisinage puis deux métaheuristiques différentes, nous avons séparé plus explicitement :
+\begin{itemize}
+    \item la construction des solutions ;
+    \item l'évaluation des solutions ;
+    \item la génération des voisins ;
+    \item la logique propre à chaque métaheuristique ;
+    \item le pilotage global des expériences.
+\end{itemize}
+
+Cette évolution n'est donc pas purement esthétique. Elle répond à un besoin de lisibilité, de réutilisation du code et de réduction des erreurs.
+
+\subsection{Justification des choix de fichiers}
+Le découpage en fichiers a été pensé pour suivre les grandes responsabilités du projet.
+
+\begin{itemize}
+    \item \texttt{io\_utils.py} regroupe tout ce qui concerne la lecture des données. Nous avons préféré isoler cette partie, car elle dépend fortement du format des fichiers et ne doit pas polluer la logique des algorithmes.
+    \item \texttt{evaluate.py} joue le rôle de noyau commun. Nous avons choisi d'y placer tous les calculs de distance, de charge et de faisabilité, car ces éléments sont utilisés par presque tous les autres modules.
+    \item \texttt{construction.py} contient les méthodes de construction de solutions. Nous avons fait ce choix pour distinguer clairement les solutions initiales des méthodes d'amélioration.
+    \item \texttt{neighbors.py} rassemble les transformations locales des solutions. Il nous a semblé plus propre d'avoir un module dédié aux mouvements, plutôt que de disperser ces opérations dans chaque métaheuristique.
+    \item le dossier \texttt{meta/} contient les métaheuristiques elles-mêmes. Cette séparation facilite la comparaison des approches, car chaque méthode dispose de son propre fichier, avec ses paramètres et sa logique.
+    \item \texttt{solver.py} a été introduit plus tard, lorsque le besoin d'organiser les expériences est apparu. Nous avons choisi de ne pas surcharger \texttt{main.py} avec toute la logique des campagnes de tests.
+    \item \texttt{main.py} reste volontairement léger : son rôle est de lancer les traitements et d'afficher des synthèses, pas de contenir toute l'intelligence du projet.
+\end{itemize}
+
+\subsection{Pourquoi cette structure nous a semblé adaptée}
+Nous n'avons pas cherché à construire une architecture complexe dès le départ. Au contraire, nous avons essayé de garder une structure simple, puis de la faire évoluer uniquement lorsque cela devenait utile.
+
+Par exemple, tant que le projet ne contenait qu'une heuristique gloutonne, il n'était pas indispensable de distinguer fortement tous les rôles. En revanche, dès que plusieurs algorithmes ont commencé à partager les mêmes briques, le découpage modulaire est devenu nécessaire.
+
+Cette manière de faire nous a paru préférable à une structure trop ambitieuse dès le début. Elle nous a permis :
+\begin{itemize}
+    \item d'avancer progressivement sans sur-ingénierie ;
+    \item de refactoriser seulement quand un besoin concret apparaissait ;
+    \item de garder un code plus facile à tester, à modifier et à documenter ;
+    \item de faire correspondre plus naturellement chaque fichier à une idée claire du projet.
+\end{itemize}
+
+\subsection{Lien entre structure logicielle et démarche scientifique}
+Enfin, cette structure a aussi été pensée en fonction du rapport expérimental demandé par le sujet. En séparant clairement les responsabilités, il devient plus facile d'expliquer :
+\begin{itemize}
+    \item comment une solution est construite ;
+    \item comment elle est évaluée ;
+    \item comment elle est modifiée localement ;
+    \item comment les métaheuristiques exploitent ces briques ;
+    \item comment les expériences sont lancées et comparées.
+\end{itemize}
+
+Autrement dit, l'organisation du code soutient directement la clarté de l'analyse présentée dans le rapport.
+
 \subsection{\texttt{main.py}}
 Point d'entrée du programme. Il permet de charger une instance, de lancer l'algorithme choisi et d'afficher ou sauvegarder les résultats.
 
@@ -285,6 +351,19 @@ Ce fichier regroupe les fonctions de calcul :
     \item respect des fenêtres de temps.
 \end{itemize}
 
+Dans l'état actuel du projet, ce module joue un rôle central car il sert de base commune à toutes les étapes suivantes. Nous y avons regroupé les calculs de distance d'une tournée, de charge, ainsi que l'évaluation temporelle détaillée d'une route.
+
+Plus précisément, pour une tournée donnée, nous calculons successivement :
+\begin{itemize}
+    \item le temps d'arrivée à chaque client ;
+    \item le temps d'attente éventuel si le véhicule arrive avant l'ouverture de la fenêtre ;
+    \item l'instant de début de service ;
+    \item l'instant de départ après service ;
+    \item le temps de retour au dépôt.
+\end{itemize}
+
+Cette évaluation permet de tester séparément la faisabilité en capacité et la faisabilité temporelle. Elle sera réutilisée directement pour le générateur aléatoire de solutions initiales, puis pour les opérateurs de voisinage et les métaheuristiques.
+
 \subsection{\texttt{solver.py}}
 Interface de haut niveau permettant de lancer les différentes méthodes de résolution.
 
@@ -296,6 +375,15 @@ Ce module contiendra les opérateurs de voisinage utilisés par les métaheurist
     \item inversion de segment (\texttt{2-opt}) ;
     \item opérateurs intra-route et inter-route.
 \end{itemize}
+
+Dans l'état actuel du projet, une première version de ce module a été implémentée. Elle permet de générer des voisins faisables à partir de trois opérateurs classiques :
+\begin{itemize}
+    \item \texttt{relocate}, qui déplace un client d'une position à une autre, éventuellement dans une autre tournée ;
+    \item \texttt{swap}, qui échange deux clients ;
+    \item \texttt{2-opt}, qui inverse un segment à l'intérieur d'une tournée.
+\end{itemize}
+
+Chaque voisin généré est filtré par le module \texttt{evaluate.py}, ce qui garantit que seuls des candidats faisables sont conservés. Cette décision simplifie la mise en place des métaheuristiques, qui pourront se concentrer sur la stratégie d'exploration plutôt que sur la gestion locale des contraintes.
 
 \subsection{\texttt{meta/}}
 Ce dossier contiendra les deux métaheuristiques retenues dans le projet :
@@ -377,6 +465,8 @@ Pour une valeur donnée de \(k\), la solution est considérée comme faisable si
 
 Dans cette phase, la distance intervient comme \textbf{critère de construction} des tournées, mais pas encore comme objectif d'optimisation final.
 
+Du point de vue de l'implémentation, cette vérification est maintenant centralisée dans le module \texttt{evaluate.py}. Cela permet d'éviter la duplication des contrôles et garantit que les futures méthodes de construction et d'amélioration utiliseront toutes le même critère de faisabilité.
+
 \subsection{Remarque}
 Cette approche ne prouve pas mathématiquement que le nombre trouvé est optimal. En revanche, elle fournit une estimation cohérente du nombre minimal de véhicules, adaptée à la taille des instances étudiées. Cette estimation sera ensuite affinée indirectement par les métaheuristiques développées dans les phases suivantes.
 
@@ -429,6 +519,38 @@ k_{TW} \ge LB.
 
 L'objectif de la seconde partie de la question 2 est donc de déterminer expérimentalement le nombre minimal de véhicules lorsque les contraintes temporelles sont prises en compte.
 
+\subsection{Première intégration effective des fenêtres de temps}
+Après avoir d'abord travaillé sur la version capacitaire, nous avons intégré explicitement les fenêtres de temps dans la construction des tournées. Le simple prolongement de l'heuristique gloutonne précédente ne suffisait pas, car ajouter systématiquement les clients en fin de tournée se révélait trop rigide dans le cas VRPTW.
+
+Nous avons donc fait évoluer la construction vers une logique d'insertion faisable. L'idée est de partir d'un ensemble de tournées initialement vides, puis d'insérer progressivement les clients dans les positions qui restent compatibles avec :
+\begin{itemize}
+    \item la capacité du véhicule ;
+    \item les fenêtres de temps ;
+    \item le retour au dépôt dans la fenêtre autorisée.
+\end{itemize}
+
+Ce changement de stratégie est important du point de vue méthodologique : il illustre bien le fait qu'une structure de construction adaptée au CVRP ne se transpose pas automatiquement au VRPTW.
+
+\subsection{Premiers résultats VRPTW}
+Les premiers essais obtenus avec cette heuristique d'insertion montrent déjà un effet très net des fenêtres de temps sur le nombre minimal de véhicules nécessaire.
+
+Sur un premier sous-ensemble d'instances, nous obtenons :
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Instance & Borne inférieure capacité & Nombre trouvé avec fenêtres de temps \\
+\midrule
+data101.vrp  & 8 & 21 \\
+data102.vrp  & 8 & 18 \\
+data1101.vrp & 9 & 18 \\
+data1201.vrp & 2 & 5 \\
+data201.vrp  & 2 & 5 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Ces premiers résultats confirment que les fenêtres de temps modifient profondément la structure du problème. Alors que la version sans fenêtres de temps permettait souvent d'atteindre directement la borne inférieure capacité, la version VRPTW exige ici un nombre de véhicules bien plus élevé.
+
 % --------------------------------------------------
 \section{Génération d'une solution initiale}
 % --------------------------------------------------
@@ -448,6 +570,10 @@ Nous ne retenons pas une permutation totalement aléatoire des clients, car cell
     \item répéter jusqu'à ce que tous les clients soient servis.
 \end{enumerate}
 
+Dans notre implémentation actuelle, nous fixons d'abord un nombre de tournées \(k\), en pratique le nombre minimal de véhicules obtenu dans la phase précédente pour la version sans fenêtres de temps. Nous initialisons ensuite ces \(k\) tournées puis nous ajoutons des clients un par un de manière aléatoire, sous réserve d'admissibilité.
+
+À chaque étape, un client est considéré comme admissible si son ajout en fin de tournée conserve la faisabilité de cette tournée. Le choix final est ensuite effectué aléatoirement parmi l'ensemble des clients admissibles. Cette stratégie permet de produire des solutions variées tout en restant contrôlées.
+
 \subsection{Cas sans fenêtres de temps}
 Dans un premier temps, un client est admissible si son ajout ne fait pas dépasser la capacité du véhicule.
 
@@ -456,6 +582,13 @@ Dans un second temps, un client sera admissible si son ajout respecte à la fois
 \begin{itemize}
     \item la capacité du véhicule ;
     \item la faisabilité temporelle de la tournée.
+\end{itemize}
+
+\subsection{Intérêt de cette construction}
+Cette méthode présente deux avantages importants pour la suite du projet :
+\begin{itemize}
+    \item elle génère plusieurs solutions initiales différentes pour une même instance, ce qui est utile pour évaluer la robustesse des métaheuristiques ;
+    \item elle s'appuie sur le même module d'évaluation que le reste du projet, ce qui garantit une cohérence entre construction, tests de faisabilité et futurs mouvements de voisinage.
 \end{itemize}
 
 \subsection{Rôle de cette solution}
@@ -481,6 +614,179 @@ Les opérateurs suivants seront étudiés :
     \item 2-opt ;
     \item éventuellement des opérateurs inter-route plus complexes.
 \end{itemize}
+
+\subsection{Première implémentation des voisinages}
+Nous avons commencé par implémenter les voisinages les plus classiques, car ils offrent un bon compromis entre simplicité de codage et capacité d'amélioration des solutions.
+
+\begin{itemize}
+    \item Le voisinage \texttt{relocate} permet de réaffecter un client à une autre position, ce qui est particulièrement utile pour rééquilibrer les tournées.
+    \item Le voisinage \texttt{swap} permet d'échanger deux clients et peut corriger rapidement de mauvaises affectations.
+    \item Le voisinage \texttt{2-opt} agit à l'intérieur d'une tournée en supprimant certains croisements et en raccourcissant localement les trajets.
+\end{itemize}
+
+Sur une solution initiale aléatoire de l'instance \texttt{data101.vrp}, la combinaison de ces trois voisinages a permis de générer plusieurs milliers de voisins faisables et d'identifier immédiatement une solution améliorée. Ce résultat confirme que ces opérateurs constituent une base pertinente pour les métaheuristiques à venir.
+
+\subsection{Première implémentation du recuit simulé}
+Le recuit simulé a été implémenté dans une première version pragmatique. L'idée est de partir d'une solution initiale faisable, puis de répéter les étapes suivantes :
+\begin{enumerate}[label=\arabic*.]
+    \item tirer un voisin faisable de manière aléatoire ;
+    \item calculer la variation de coût associée ;
+    \item accepter systématiquement un voisin meilleur ;
+    \item accepter parfois un voisin moins bon avec une probabilité dépendant de la température ;
+    \item diminuer progressivement la température ;
+    \item conserver la meilleure solution rencontrée pendant toute l'exécution.
+\end{enumerate}
+
+Nous avons volontairement choisi, pour cette première version, de générer un voisin aléatoire faisable plutôt que d'énumérer tous les voisins à chaque itération. Ce choix réduit fortement le coût d'une itération et rend l'algorithme plus adapté aux tests répétés sur des instances de taille 100.
+
+\subsection{Résultats préliminaires}
+Les premiers essais montrent déjà que le recuit simulé améliore nettement les solutions initiales aléatoires. Par exemple, sur l'instance \texttt{data101.vrp}, un test de validation a permis de passer d'une distance initiale de \(3488.41\) à une meilleure distance de \(2211.87\) en \(500\) itérations, tout en conservant une solution faisable.
+
+Ces résultats restent préliminaires. Ils servent à valider l'implémentation et à préparer les futurs tests expérimentaux plus longs, qui feront l'objet d'un protocole plus rigoureux dans la suite du projet.
+
+\subsection{Première implémentation de la recherche tabou}
+La recherche tabou a également été implémentée dans une première version opérationnelle. À chaque itération, l'algorithme génère un ensemble de voisins faisables, puis sélectionne le meilleur voisin autorisé, c'est-à-dire non tabou, sauf si un critère d'aspiration permet d'accepter une solution améliorant le meilleur résultat global.
+
+Dans cette première version, la mémoire tabou porte sur les signatures des solutions récemment visitées. Cette approche n'est pas la plus fine possible, mais elle permet de disposer rapidement d'une base fiable pour les expériences comparatives.
+
+\subsection{Observation importante sur le coût de calcul}
+Les premiers essais montrent que la recherche tabou est sensiblement plus coûteuse en temps de calcul que le recuit simulé dans notre implémentation actuelle. Cette différence s'explique par le fait que, même avec une limitation du nombre de voisins inspectés, la recherche tabou évalue un ensemble de candidats à chaque itération alors que le recuit simulé peut se contenter d'un voisin aléatoire faisable.
+
+Cette observation est importante pour la suite du projet. Elle signifie que les tests de validation rapide et les tests expérimentaux longs devront être distingués clairement, avec des paramètres adaptés à chaque usage.
+
+\subsection{Résultats préliminaires de la recherche tabou}
+Sur l'instance \texttt{data101.vrp}, un test ciblé a permis d'améliorer une solution initiale de distance \(3604.26\) vers une distance \(3278.86\) en \(10\) itérations. Un aperçu plus léger intégré au programme principal améliore également la solution initiale, mais avec un coût de calcul déjà notable même pour un très petit nombre d'itérations.
+
+Ces résultats confirment que la méthode fonctionne, tout en montrant qu'une attention particulière devra être portée au réglage des paramètres et au protocole de test.
+
+\subsection{Mise en place du protocole expérimental}
+Afin d'éviter de mélanger validation fonctionnelle et comparaison scientifique, nous avons centralisé les expériences dans un module dédié. Ce module permet :
+\begin{itemize}
+    \item de fixer des jeux de paramètres reproductibles ;
+    \item de lancer plusieurs répétitions avec des graines différentes ;
+    \item de résumer les résultats sous forme de moyennes, minimums et maximums ;
+    \item de comparer directement les distances finales et les temps de calcul des deux métaheuristiques.
+\end{itemize}
+
+Dans l'état actuel, deux préréglages sont utilisés :
+\begin{itemize}
+    \item un préréglage \texttt{quick}, pour les vérifications rapides ;
+    \item un préréglage \texttt{long}, destiné aux futurs tests approfondis.
+\end{itemize}
+
+Les premières tentatives ont toutefois montré que le réglage initial du mode \texttt{long} était trop ambitieux pour la recherche tabou dans l'état actuel de l'implémentation. Nous avons donc recalibré ce préréglage afin d'obtenir un compromis plus réaliste entre profondeur de recherche et temps de calcul.
+
+Afin de lancer ces expériences de manière explicite, nous avons également ajouté un mode dédié dans le programme principal. Cela permet de distinguer clairement :
+\begin{itemize}
+    \item l'exécution courante du projet, utilisée pour les vérifications rapides ;
+    \item les campagnes expérimentales ciblées, lancées volontairement avec un préréglage et un sous-ensemble d'instances.
+\end{itemize}
+
+Par exemple, une campagne ciblée sur une seule instance peut être lancée avec une commande du type :
+\begin{lstlisting}
+python3 src/main.py --mode experiment --preset quick --instances data101.vrp --details
+\end{lstlisting}
+
+Cette commande produit à la fois un tableau récapitulatif et un détail par répétition, ce qui facilite la consignation des résultats dans le rapport.
+
+\subsection{Premiers résultats comparatifs}
+Le protocole \texttt{quick} a déjà été validé sur l'instance \texttt{data101.vrp}. Sur ce premier essai, la distance moyenne initiale observée est \(3726.26\). Le recuit simulé ramène cette valeur à \(2295.29\) en moyenne, alors que la recherche tabou atteint \(3592.33\) avec les paramètres rapides actuellement retenus.
+
+Le temps de calcul moyen mesuré dans ce mode rapide est d'environ \(0.10\) seconde pour le recuit simulé contre environ \(12.02\) secondes pour la recherche tabou. Cette différence confirme que, dans notre implémentation actuelle, la recherche tabou est nettement plus coûteuse et devra être utilisée avec précaution lors des campagnes expérimentales longues.
+
+\subsection{Premier essai en mode long}
+Un premier test en mode \texttt{long} a ensuite été lancé sur l'instance \texttt{data101.vrp}, avec deux répétitions. La distance moyenne initiale observée est \(3719.84\). Dans ce cadre plus exigeant, le recuit simulé obtient une distance moyenne de \(1800.80\), alors que la recherche tabou atteint une distance moyenne de \(3424.76\).
+
+Les temps moyens associés à cette expérience sont d'environ \(0.36\) seconde pour le recuit simulé et \(19.96\) secondes pour la recherche tabou.
+
+Ce premier résultat long confirme deux points importants :
+\begin{itemize}
+    \item le recuit simulé améliore fortement les solutions initiales avec un coût de calcul encore modéré ;
+    \item la recherche tabou reste beaucoup plus coûteuse dans l'état actuel de notre implémentation, tout en apportant ici une amélioration plus limitée.
+\end{itemize}
+
+Ces observations guideront la suite de notre protocole expérimental, notamment pour le choix des instances à tester en mode long et pour le réglage plus fin des paramètres de la recherche tabou.
+
+\subsection{Extension du test long à \texttt{data102.vrp}}
+Nous avons ensuite appliqué le même protocole \texttt{long} à l'instance \texttt{data102.vrp}. La distance moyenne initiale obtenue est \(3609.70\). Le recuit simulé atteint alors une distance moyenne de \(1764.93\), tandis que la recherche tabou obtient une distance moyenne de \(3372.76\).
+
+Les temps moyens observés sont du même ordre que pour \texttt{data101.vrp} : environ \(0.37\) seconde pour le recuit simulé contre environ \(20.71\) secondes pour la recherche tabou.
+
+Ce second résultat renforce la tendance observée sur la première instance : dans notre implémentation actuelle et avec les paramètres retenus, le recuit simulé offre un compromis nettement plus favorable entre qualité de solution et temps de calcul que la recherche tabou.
+
+\subsection{Résultats sur \texttt{data1101.vrp} et \texttt{data1102.vrp}}
+Nous avons ensuite appliqué le même protocole \texttt{long} aux instances \texttt{data1101.vrp} et \texttt{data1102.vrp}, qui présentent une demande totale plus élevée et nécessitent \(9\) véhicules dans la version sans fenêtres de temps.
+
+Pour \texttt{data1101.vrp}, la distance moyenne initiale observée est \(4717.62\). Le recuit simulé obtient une distance moyenne de \(2271.42\), tandis que la recherche tabou atteint \(4448.35\).
+
+Pour \texttt{data1102.vrp}, la distance moyenne initiale est \(4683.40\). Le recuit simulé descend à \(2368.66\) en moyenne, alors que la recherche tabou obtient \(4311.87\).
+
+Les temps moyens restent dans le même ordre de grandeur que précédemment : environ \(0.48\) seconde pour le recuit simulé et environ \(20.3\) secondes pour la recherche tabou.
+
+Ces nouveaux résultats confirment la tendance déjà observée sur \texttt{data101.vrp} et \texttt{data102.vrp}. Même sur des instances plus chargées, le recuit simulé améliore très fortement les solutions initiales pour un coût de calcul modéré, alors que la recherche tabou demeure beaucoup plus coûteuse tout en restant, dans notre implémentation actuelle, moins performante en qualité de solution finale.
+
+\subsection{Résultats sur \texttt{data111.vrp} et \texttt{data112.vrp}}
+Le même protocole \texttt{long} a ensuite été appliqué aux instances \texttt{data111.vrp} et \texttt{data112.vrp}. Les résultats observés sont identiques à ceux obtenus respectivement sur \texttt{data101.vrp} et \texttt{data102.vrp}, avec les mêmes graines expérimentales.
+
+Autrement dit :
+\begin{itemize}
+    \item \texttt{data111.vrp} reproduit les valeurs observées sur \texttt{data101.vrp} ;
+    \item \texttt{data112.vrp} reproduit les valeurs observées sur \texttt{data102.vrp}.
+\end{itemize}
+
+Cette répétition n'est pas anodine. Elle suggère que ces paires d'instances possèdent une structure très proche, voire équivalente pour les heuristiques utilisées dans notre étude. Du point de vue expérimental, cela renforce la cohérence des résultats déjà obtenus et nous donne davantage de confiance dans la stabilité des tendances observées.
+
+\subsection{Résultats sur \texttt{data1201.vrp} et \texttt{data1202.vrp}}
+Nous avons ensuite testé le protocole \texttt{long} sur les instances \texttt{data1201.vrp} et \texttt{data1202.vrp}, qui se distinguent par une capacité beaucoup plus élevée et un nombre de véhicules minimal égal à \(2\).
+
+Pour \texttt{data1201.vrp}, la distance moyenne initiale observée est \(4507.39\). Le recuit simulé atteint une distance moyenne de \(1898.40\), tandis que la recherche tabou obtient \(4191.42\).
+
+Pour \texttt{data1202.vrp}, la distance moyenne initiale vaut \(4693.59\). Le recuit simulé descend à \(2051.32\) en moyenne, alors que la recherche tabou atteint \(4216.21\).
+
+Le point notable ici est que le recuit simulé devient encore plus rapide, avec un temps moyen d'environ \(0.26\) seconde sur ces instances à deux tournées, tandis que la recherche tabou reste autour de \(19\) à \(20\) secondes.
+
+Ces résultats renforcent encore l'avantage pratique du recuit simulé dans notre implémentation actuelle : même lorsque la structure des solutions change fortement, il reste à la fois efficace en qualité et très peu coûteux en temps de calcul.
+
+\subsection{Résultats sur \texttt{data201.vrp} et \texttt{data202.vrp}}
+Enfin, nous avons appliqué le protocole \texttt{long} aux instances \texttt{data201.vrp} et \texttt{data202.vrp}, qui utilisent elles aussi \(2\) véhicules dans la version sans fenêtres de temps.
+
+Pour \texttt{data201.vrp}, la distance moyenne initiale observée est \(3410.18\). Le recuit simulé obtient une distance moyenne de \(1547.01\), tandis que la recherche tabou atteint \(3111.51\).
+
+Pour \texttt{data202.vrp}, la distance moyenne initiale vaut \(3436.16\). Le recuit simulé descend à \(1660.53\) en moyenne, alors que la recherche tabou obtient \(3129.50\).
+
+Comme pour \texttt{data1201.vrp} et \texttt{data1202.vrp}, le recuit simulé reste ici très rapide, autour de \(0.26\) seconde, tandis que la recherche tabou demeure proche de \(19\) secondes.
+
+\subsection{Synthèse de la première campagne longue}
+À l'issue de cette première campagne longue menée sur l'ensemble des familles d'instances disponibles, une tendance forte se dégage :
+\begin{itemize}
+    \item le recuit simulé améliore systématiquement et fortement les solutions initiales ;
+    \item la recherche tabou améliore également les solutions, mais de manière beaucoup plus limitée dans notre implémentation actuelle ;
+    \item le coût de calcul du recuit simulé reste faible sur toutes les instances testées ;
+    \item le coût de calcul de la recherche tabou reste élevé et relativement stable, généralement autour de \(20\) secondes par bloc expérimental.
+\end{itemize}
+
+Le tableau suivant résume les valeurs moyennes observées sur l'ensemble de cette première campagne longue.
+
+\begin{center}
+\begin{tabular}{lcccccc}
+\toprule
+Instance & \(k\) & Init. moy. & RS moy. & Tabou moy. & Temps RS & Temps tabou \\
+\midrule
+data101.vrp  & 8 & 3719.84 & 1800.80 & 3424.76 & 0.37 & 20.25 \\
+data102.vrp  & 8 & 3609.70 & 1764.93 & 3372.76 & 0.37 & 20.71 \\
+data1101.vrp & 9 & 4717.62 & 2271.42 & 4448.35 & 0.47 & 20.27 \\
+data1102.vrp & 9 & 4683.40 & 2368.66 & 4311.87 & 0.48 & 20.35 \\
+data111.vrp  & 8 & 3719.84 & 1800.80 & 3424.76 & 0.37 & 20.69 \\
+data112.vrp  & 8 & 3609.70 & 1764.93 & 3372.76 & 0.36 & 20.08 \\
+data1201.vrp & 2 & 4507.39 & 1898.40 & 4191.42 & 0.26 & 19.91 \\
+data1202.vrp & 2 & 4693.59 & 2051.32 & 4216.21 & 0.26 & 19.34 \\
+data201.vrp  & 2 & 3410.18 & 1547.01 & 3111.51 & 0.26 & 19.22 \\
+data202.vrp  & 2 & 3436.16 & 1660.53 & 3129.50 & 0.26 & 19.16 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Cette première campagne ne constitue pas encore l'étude expérimentale finale du projet, mais elle fournit déjà un signal clair : avec les choix d'implémentation et les réglages actuels, le recuit simulé apparaît comme la méthode la plus convaincante parmi les deux métaheuristiques testées.
 
 % --------------------------------------------------
 \section{Format des données}
@@ -528,14 +834,8 @@ Chaque client est donc décrit par :
 
 Les parties suivantes restent à compléter :
 \begin{itemize}
-    \item implémentation détaillée du calcul de faisabilité ;
-    \item calcul expérimental du nombre minimal de véhicules sur chaque instance ;
-    \item définition précise des voisinages ;
-    \item implémentation du recuit simulé ;
-    \item implémentation de la recherche tabou ;
-    \item protocole expérimental ;
     \item analyse comparative des résultats ;
-    \item prise en compte complète des fenêtres de temps.
+    \item prise en compte complète des fenêtres de temps dans la construction et l'amélioration des tournées.
 \end{itemize}
 
 % --------------------------------------------------
@@ -548,10 +848,13 @@ Les parties suivantes restent à compléter :
     \item proposé une première modélisation mathématique ;
     \item structuré les grandes phases du projet ;
     \item défini l'architecture logicielle ;
+    \item implémenté la lecture des instances au format \texttt{.vrp} ;
+    \item mis en place un module d'évaluation unifié pour les distances, les charges et les contraintes temporelles ;
+    \item déterminé expérimentalement le nombre minimal de véhicules dans la version sans fenêtres de temps sur les instances fournies ;
     \item choisi d'utiliser OR-Tools uniquement sur petites instances ;
-    \item retenu une stratégie de génération aléatoire faisable pour construire les solutions initiales.
+    \item implémenté un premier générateur aléatoire de solutions initiales faisables pour la version sans fenêtres de temps.
 \end{itemize}
 
-La suite du travail consistera à déterminer le nombre minimal de véhicules, puis à développer et comparer deux métaheuristiques adaptées au problème.
+La suite du travail consistera à exploiter ce socle pour générer des solutions initiales faisables, définir des voisinages pertinents, puis développer et comparer deux métaheuristiques adaptées au problème.
 
 \end{document}
