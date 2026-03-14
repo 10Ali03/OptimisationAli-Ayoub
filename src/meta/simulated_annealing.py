@@ -3,7 +3,8 @@ import random
 import time
 from dataclasses import dataclass
 
-from construction import generate_random_solution
+from construction import build_solution_with_k_vehicles, generate_random_solution
+from evaluate import lower_bound_vehicles
 from evaluate import evaluate_solution
 from neighbors import random_neighbor
 
@@ -14,6 +15,8 @@ class SimulatedAnnealingResult:
     best_distance: float
     initial_distance: float
     iterations: int
+    generated_neighbors: int
+    failed_neighbor_generations: int
     accepted_moves: int
     improving_moves: int
     temperature_final: float
@@ -43,6 +46,13 @@ def simulated_annealing(
             seed=seed,
             check_time_windows=check_time_windows,
         )
+        if initial_routes is None and check_time_windows:
+            target_k = lower_bound_vehicles(instance) if k is None else k
+            initial_routes = build_solution_with_k_vehicles(
+                instance,
+                target_k,
+                check_time_windows=True,
+            )
         if initial_routes is None:
             raise ValueError("Impossible de générer une solution initiale faisable.")
 
@@ -59,6 +69,8 @@ def simulated_annealing(
     accepted_moves = 0
     improving_moves = 0
     iterations_done = 0
+    generated_neighbors = 0
+    failed_neighbor_generations = 0
 
     for iteration in range(max_iterations):
         if temperature < min_temperature:
@@ -76,8 +88,10 @@ def simulated_annealing(
         if candidate_routes is None:
             temperature *= cooling_rate
             iterations_done = iteration + 1
+            failed_neighbor_generations += 1
             continue
 
+        generated_neighbors += 1
         candidate_distance = evaluate_solution(
             instance,
             candidate_routes,
@@ -117,6 +131,8 @@ def simulated_annealing(
             check_time_windows=check_time_windows,
         )["distance"],
         iterations=iterations_done,
+        generated_neighbors=generated_neighbors,
+        failed_neighbor_generations=failed_neighbor_generations,
         accepted_moves=accepted_moves,
         improving_moves=improving_moves,
         temperature_final=temperature,

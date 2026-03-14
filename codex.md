@@ -573,6 +573,17 @@ Vérifications effectuées :
 - intégration d'une heuristique d'insertion pour la construction avec fenêtres de temps dans `src/construction.py`
 - recherche du nombre minimal de véhicules avec fenêtres de temps maintenant branchée dans `src/main.py`
 - premiers résultats VRPTW observés : `data101.vrp -> 21`, `data102.vrp -> 18`, `data1101.vrp -> 18`, `data1201.vrp -> 5`, `data201.vrp -> 5`
+- constat VRPTW actuel : la construction déterministe par insertion fonctionne, mais le générateur aléatoire avec fenêtres de temps ne trouve pas encore facilement de solution faisable
+- fallback déterministe ajouté dans les métaheuristiques pour permettre des essais VRPTW malgré la fragilité du générateur aléatoire
+- test VRPTW ciblé validé : sur `data1201.vrp`, recuit simulé exécuté à partir d'une solution faisable avec `k=5`, faisabilité conservée
+- campagnes expérimentales maintenant persistées dans `experiment_results.log` après chaque instance terminée
+- idée validée : on pourra interrompre un test long et relire les résultats partiels au prompt suivant
+- première expérience VRPTW `quick` complète validée sur `data1201.vrp`
+- résultat observé sur `data1201.vrp` avec fenêtres de temps : initial 1974.63, recuit simulé 1909.98, tabou 1945.36
+- temps observés en VRPTW `quick` sur `data1201.vrp` : 0.74 s pour le recuit simulé et 9.35 s pour la recherche tabou
+- campagne VRPTW `quick` sur les 10 instances terminée et persistée dans `experiment_results.log`
+- résultats VRPTW `quick` désormais disponibles pour tout le corpus, avec `k` faisable, distance initiale, recuit simulé et recherche tabou pour chaque instance
+- campagne VRPTW `quick` complète intégrée dans `rapport.tex` avec tableau récapitulatif et analyse
 
 ---
 
@@ -581,6 +592,16 @@ Vérifications effectuées :
 À partir de maintenant, `codex.md` sert aussi de mémoire de travail, et `rapport.tex` doit être mis à jour au fur et à mesure pour refléter l'avancement réel du projet.
 
 Le rapport doit aussi expliquer l'évolution du code et des choix d'architecture : pourquoi certains modules ont été séparés, pourquoi certaines refactorisations ont été faites, et quelle logique a guidé le découpage en fichiers.
+
+Les astuces d'organisation interne pour les tests longs (par exemple les fichiers de log temporaires) ne doivent pas apparaître dans le rapport final. Elles servent uniquement à sécuriser notre travail et à mieux noter les résultats pendant le projet.
+
+Procédure pour les futurs chats :
+
+- avant de relancer une campagne longue, relire d'abord `experiment_results.log`
+- considérer ce fichier comme la source de vérité pour savoir quelles instances ont déjà été calculées
+- si une campagne a été interrompue, reprendre à partir des instances non encore présentes dans le log
+- recopier ensuite seulement les résultats utiles dans `codex.md` et `rapport.tex`
+- supprimer les fichiers de log temporaires à la fin du projet
 
 À chaque modification importante, on mettra à jour :
 
@@ -594,46 +615,96 @@ Objectif :
 
 garder un historique clair du projet, de ses choix techniques et de l'avancement.
 
-# 13. Étapes restantes
-
-Travail restant :
-
-1. intégrer complètement les fenêtres de temps
-2. implémenter le générateur aléatoire
-3. implémenter les opérateurs de voisinage
-4. coder le recuit simulé
-5. coder la recherche tabou
-6. analyser et comparer les résultats.
-
 ---
 
-# 14. Stratégie de développement
+# 16. Mise à jour du 2026-03-14
 
-Le projet est développé progressivement.
+- ajout d'un suivi explicite du nombre de voisins traités par les métaheuristiques
+- `src/meta/simulated_annealing.py` compte maintenant les voisins faisables générés
+- `src/meta/tabu_search.py` exposait déjà le nombre de voisins explorés ; ces métriques sont maintenant résumées dans `src/solver.py`
+- `src/main.py --mode experiment` affiche désormais aussi un tableau `Voisins générés/explorés`
+- validation sur `data101.vrp` en mode `quick` :
+  - recuit simulé : `300` voisins générés en moyenne, `141` mouvements acceptés
+  - recherche tabou : `200` voisins explorés, `5` mouvements acceptés
 
-Étape 1 :
+- ajout du bonus exact dans `src/bonus_exact.py` et branchement dans `src/main.py --mode bonus`
+- commande type :
+  - `python3 src/main.py --mode bonus --instances data101.vrp --sizes 5 10 15 20 25 30 35 40 --time-limit 10`
+- résultats bonus actuels sur `data101.vrp` :
+  - `5` clients : `OPTIMAL`, `0.03 s`
+  - `10` clients : `OPTIMAL`, `0.01 s`
+  - `15` clients : `OPTIMAL`, `0.74 s`
+  - `20` clients : `OPTIMAL`, `0.46 s`
+  - `25` clients : `OPTIMAL`, `5.08 s`
+  - `30` clients : `FEASIBLE` à la limite de `10 s`
+  - `35` clients : `FEASIBLE` à la limite de `10 s`
+  - `40` clients : `FEASIBLE` à la limite de `10 s`
+- lecture actuelle : dans notre configuration, la résolution exacte devient déjà sensiblement difficile autour de `30` clients
 
-version sans fenêtres de temps.
+- campagne VRPTW `long` en cours de persistance dans `tmp/experiments/vrptw_long.log`
+- campagne VRPTW `long` terminée sur les 10 instances
+- résultats finaux :
+  - `data101.vrp` : initial `2127.09`, recuit `1756.06`, tabou `2042.71`
+  - `data102.vrp` : initial `1794.68`, recuit `1683.80`, tabou `1695.11`
+  - `data1101.vrp` : initial `2184.86`, recuit `1851.01`, tabou `2036.87`
+  - `data1102.vrp` : initial `2035.58`, recuit `1765.05`, tabou `1955.24`
+  - `data111.vrp` : initial `1601.37`, recuit `1426.25`, tabou `1557.55`
+  - `data112.vrp` : initial `1434.70`, recuit `1256.10`, tabou `1367.21`
+  - `data1201.vrp` : initial `1974.63`, recuit `1833.03`, tabou `1864.35`
+  - `data1202.vrp` : initial `1948.06`, recuit `1746.99`, tabou `1861.51`
+  - `data201.vrp` : initial `2263.65`, recuit `1656.57`, tabou `2074.35`
+  - `data202.vrp` : initial `2997.76`, recuit `1772.69`, tabou `2797.17`
+- lecture actuelle :
+  - le recuit simulé domine maintenant aussi sur la campagne VRPTW `long`
+  - la recherche tabou reste plus coûteuse et globalement moins efficace dans notre implémentation actuelle
+- `rapport.tex` a été mis à jour pour intégrer cette campagne complète
+- pour reprendre dans un futur chat :
+  - lire d'abord `tmp/experiments/vrptw_long.log`
+  - considérer le log comme source de vérité
+  - ne reporter dans `rapport.tex` que des résultats terminés et stables
 
-Étape 2 :
+# 17. État réel pour le prochain chat
 
-validation des heuristiques.
+Questions du sujet maintenant couvertes :
 
-Étape 3 :
+- modélisation du problème : oui
+- structure du code : oui
+- nombre minimal de véhicules sans fenêtres de temps : oui
+- nombre minimal de véhicules avec fenêtres de temps : oui
+- générateur aléatoire de solutions sans fenêtres de temps : oui
+- générateur aléatoire de solutions avec fenêtres de temps : partiellement seulement, encore fragile
+- deux métaheuristiques implémentées : oui
+- protocole expérimental expliqué : oui
+- comparaison temps / qualité / nombre de voisins traités / paramètres : oui
+- bonus exact avec solveur linéaire : oui, première étude faite avec OR-Tools
 
-intégration des fenêtres de temps.
+État du rapport :
 
-Étape 4 :
+- `rapport.tex` est globalement à jour par rapport au code
+- la campagne CVRP `long` complète est intégrée
+- la campagne VRPTW `quick` complète est intégrée
+- la campagne VRPTW `long` complète est intégrée
+- le bonus exact est intégré
+- le rapport ne doit toujours pas mentionner nos outils internes de log ou notre organisation de suivi
 
-implémentation des métaheuristiques.
+Ce qu'il reste vraiment à faire :
 
----
+- éventuellement améliorer le générateur aléatoire VRPTW pour qu'il soit robuste, et pas seulement remplacé par un fallback déterministe
+- éventuellement améliorer la recherche tabou, qui reste en retrait par rapport au recuit simulé
+- faire le nettoyage final du dépôt avant rendu
 
-# 15. Objectif final
+Procédure de reprise recommandée :
 
-Construire un solveur VRPTW capable de :
+- relire d'abord `codex.md`
+- relire ensuite `tmp/experiments/vrptw_long.log` et `experiment_results.log` si on reprend un travail expérimental
+- considérer les logs comme source de vérité brute
+- ne recopier dans `rapport.tex` que des résultats stabilisés
+- garder les fichiers temporaires dans `tmp/` jusqu'à la toute fin, puis les supprimer avant rendu si nécessaire
 
-- générer des solutions faisables
-- optimiser les tournées
-- comparer différentes métaheuristiques
-- analyser les performances sur plusieurs instances.
+Lecture synthétique actuelle :
+
+- sans fenêtres de temps, le recuit simulé domine très nettement la recherche tabou en qualité et en temps
+- avec fenêtres de temps, le recuit simulé domine aussi la campagne `long`
+- la recherche tabou reste plus coûteuse et globalement moins efficace dans l'implémentation actuelle
+- les fenêtres de temps augmentent fortement le nombre de véhicules nécessaires
+- l'étude exacte avec OR-Tools devient déjà plus difficile autour de `30` clients dans notre cadre expérimental

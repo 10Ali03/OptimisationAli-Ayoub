@@ -78,6 +78,30 @@ def best_feasible_insertion(instance, routes, unserved, check_time_windows=False
     return best_move
 
 
+def random_feasible_insertion(instance, routes, unserved, rng, check_time_windows=False):
+    clients = list(unserved)
+    rng.shuffle(clients)
+    route_indices = list(range(len(routes)))
+    rng.shuffle(route_indices)
+
+    for client_id in clients:
+        candidate_moves = []
+        for route_index in route_indices:
+            positions = feasible_insertion_positions(
+                instance,
+                routes[route_index],
+                client_id,
+                check_time_windows=check_time_windows,
+            )
+            for position in positions:
+                candidate_moves.append((client_id, route_index, position))
+
+        if candidate_moves:
+            return rng.choice(candidate_moves)
+
+    return None
+
+
 def nearest_feasible_client(instance, route, unserved, check_time_windows=False):
     """
     Retourne le client admissible le plus proche du dernier sommet de la route
@@ -150,6 +174,24 @@ def build_random_solution_with_k_vehicles(
     rng = rng or random.Random()
     unserved = set(instance.clients.keys())
     routes = [[] for _ in range(k)]
+
+    if check_time_windows:
+        while unserved:
+            move = random_feasible_insertion(
+                instance,
+                routes,
+                unserved,
+                rng,
+                check_time_windows=True,
+            )
+            if move is None:
+                return None
+
+            client_id, route_index, position = move
+            routes[route_index].insert(position, client_id)
+            unserved.remove(client_id)
+
+        return [route for route in routes if route]
 
     route_indices = list(range(k))
     rng.shuffle(route_indices)

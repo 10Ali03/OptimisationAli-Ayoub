@@ -2,8 +2,8 @@ import time
 from collections import deque
 from dataclasses import dataclass
 
-from construction import generate_random_solution
-from evaluate import evaluate_solution
+from construction import build_solution_with_k_vehicles, generate_random_solution
+from evaluate import evaluate_solution, lower_bound_vehicles
 from neighbors import generate_neighbors
 
 
@@ -42,6 +42,13 @@ def tabu_search(
             seed=seed,
             check_time_windows=check_time_windows,
         )
+        if initial_routes is None and check_time_windows:
+            target_k = lower_bound_vehicles(instance) if k is None else k
+            initial_routes = build_solution_with_k_vehicles(
+                instance,
+                target_k,
+                check_time_windows=True,
+            )
         if initial_routes is None:
             raise ValueError("Impossible de générer une solution initiale faisable.")
 

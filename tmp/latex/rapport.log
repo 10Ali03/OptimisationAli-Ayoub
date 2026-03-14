@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.14)  14 MAR 2026 15:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.14)  14 MAR 2026 16:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -822,6 +822,18 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [13]
+Overfull \hbox (5.41676pt too wide) in paragraph at lines 568--569
+[]\T1/lmr/m/n/10.95 Concrètement, lorsque la gé-né-ra-tion aléa-toire échoue en
+ mode VRPTW, nous uti-li-sons la construc-
+ []
+
+
+Overfull \hbox (15.81775pt too wide) in paragraph at lines 575--576
+[]\T1/lmr/m/n/10.95 Nous avons en-suite lancé un pre-mier es-sai ex-pé-ri-men-t
+al en mode ra-pide sur l'ins-tance \T1/lmtt/m/n/10.95 data1201.vrp\T1/lmr/m/n/1
+0.95 ,
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -846,12 +858,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [16]
-Overfull \hbox (12.35101pt too wide) in paragraph at lines 718--719
-[]\T1/lmr/m/n/10.95 Nous avons en-suite ap-pli-qué le même pro-to-cole \T1/lmtt
-/m/n/10.95 long \T1/lmr/m/n/10.95 aux ins-tances \T1/lmtt/m/n/10.95 data1101.vr
-p \T1/lmr/m/n/10.95 et \T1/lmtt/m/n/10.95 data1102.vrp\T1/lmr/m/n/10.95 ,
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -860,12 +866,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [17]
-Overfull \hbox (8.6124pt too wide) in paragraph at lines 729--730
-\T1/lmr/m/n/10.95 ré-sul-tats ob-ser-vés sont iden-tiques à ceux ob-te-nus res-
-pec-ti-ve-ment sur \T1/lmtt/m/n/10.95 data101.vrp \T1/lmr/m/n/10.95 et \T1/lmtt
-/m/n/10.95 data102.vrp\T1/lmr/m/n/10.95 ,
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -882,6 +882,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [19]
+Overfull \hbox (12.35101pt too wide) in paragraph at lines 831--832
+[]\T1/lmr/m/n/10.95 Nous avons en-suite ap-pli-qué le même pro-to-cole \T1/lmtt
+/m/n/10.95 long \T1/lmr/m/n/10.95 aux ins-tances \T1/lmtt/m/n/10.95 data1101.vr
+p \T1/lmr/m/n/10.95 et \T1/lmtt/m/n/10.95 data1102.vrp\T1/lmr/m/n/10.95 ,
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -890,6 +896,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [20]
+Overfull \hbox (8.6124pt too wide) in paragraph at lines 842--843
+\T1/lmr/m/n/10.95 ré-sul-tats ob-ser-vés sont iden-tiques à ceux ob-te-nus res-
+pec-ti-ve-ment sur \T1/lmtt/m/n/10.95 data101.vrp \T1/lmr/m/n/10.95 et \T1/lmtt
+/m/n/10.95 data102.vrp\T1/lmr/m/n/10.95 ,
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -897,22 +909,46 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[21] (./rapport.aux)
+[21]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[22]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[23]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[24] (./rapport.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `rapport.out' has not changed.
-(rerunfilecheck)             Checksum: 6D3E1C56ADDD28918DA158E7E6208942;14395.
+(rerunfilecheck)             Checksum: 62F6AC40317227476C39CAC6D59828F5;16359.
  ) 
 Here is how much of TeX's memory you used:
- 17235 strings out of 469006
- 272561 string characters out of 5454813
- 754281 words of memory out of 5000000
- 45564 multiletter control sequences out of 15000+600000
+ 17254 strings out of 469006
+ 272828 string characters out of 5454813
+ 741281 words of memory out of 5000000
+ 45572 multiletter control sequences out of 15000+600000
  680351 words of font info for 74 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 75i,12n,79p,544b,1084s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,691b,1989s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></u
 sr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/lo
 cal/texlive/2026basic/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/
@@ -926,10 +962,10 @@ type1/public/lm/lmsy10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1
 /public/lm/lmsy8.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/publi
 c/lm/lmtk10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/lm/
 lmtt10.pfb>
-Output written on rapport.pdf (22 pages, 288050 bytes).
+Output written on rapport.pdf (25 pages, 300008 bytes).
 PDF statistics:
- 604 PDF objects out of 1000 (max. 8388607)
- 547 compressed objects within 6 object streams
- 143 named destinations out of 1000 (max. 500000)
- 553 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 660 PDF objects out of 1000 (max. 8388607)
+ 600 compressed objects within 6 object streams
+ 154 named destinations out of 1000 (max. 500000)
+ 617 words of extra memory for PDF output out of 10000 (max. 10000000)
 
