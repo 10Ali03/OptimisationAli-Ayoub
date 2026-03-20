@@ -262,6 +262,8 @@ et, pour tout déplacement de \(i\) vers \(j\),
 t_j \ge t_i + s_i + d_{ij}.
 \]
 
+Cette formulation correspond à un problème combinatoire NP-difficile, ce qui justifie le recours à des méthodes heuristiques et métaheuristiques pour traiter des instances de grande taille dans des temps de calcul raisonnables.
+
 \subsection{Remarque sur l'utilisation d'OR-Tools}
 Nous avons choisi d'utiliser OR-Tools uniquement pour des \textbf{tests sur petites instances} et pour la validation de certaines hypothèses. En effet, sur des instances plus grandes, l'utilisation directe d'un solveur exact peut devenir trop coûteuse en temps de calcul. La résolution principale du projet repose donc sur des méthodes heuristiques et métaheuristiques.
 
@@ -510,6 +512,8 @@ data202.vrp  & 1000 & 1458 & 2 & 2 \\
 \end{tabular}
 \end{center}
 
+Pour toutes les instances traitées sans fenêtres de temps, une solution faisable a donc été trouvée avec exactement la borne inférieure basée sur la capacité. Nous observons ainsi que cette borne est atteinte sur tout le corpus étudié et qu'elle correspond ici au nombre minimal exact de véhicules.
+
 On remarque donc que, pour ces jeux de données et sans tenir compte des fenêtres temporelles, la contrainte de capacité suffit à expliquer le nombre minimal de véhicules.
 
 \subsection{Influence des fenêtres de temps sur la borne inférieure}
@@ -523,6 +527,8 @@ LB = \left\lceil \frac{\sum_{i \in C} q_i}{Q} \right\rceil.
 Cette borne ne dépend que de la demande totale et de la capacité des véhicules. Elle est donc indépendante des distances et des fenêtres temporelles.
 
 Ainsi, l'introduction des fenêtres de temps ne modifie pas cette borne inférieure. En revanche, elle restreint fortement l'ensemble des tournées faisables. Certaines combinaisons de clients compatibles en termes de capacité peuvent devenir impossibles à réaliser lorsque leurs fenêtres de service sont incompatibles.
+
+Les fenêtres de temps réduisent en effet fortement l'ensemble des tournées faisables. Deux clients compatibles du point de vue de la capacité peuvent devenir incompatibles temporellement si leurs fenêtres ne permettent pas de les servir dans une même tournée. Cette contrainte induit donc mécaniquement une augmentation possible du nombre minimal de véhicules nécessaires.
 
 Par conséquent, le nombre minimal de véhicules nécessaire avec fenêtres de temps est généralement supérieur ou égal à la borne inférieure :
 
@@ -629,7 +635,7 @@ Cette campagne rapide met déjà en évidence plusieurs tendances importantes.
     \item En revanche, la recherche tabou reste plus coûteuse en temps de calcul sur l'ensemble de cette campagne rapide, avec un temps souvent compris entre \(9\) et \(13\) secondes, contre des temps généralement inférieurs à \(4\) secondes pour le recuit simulé.
 \end{itemize}
 
-Ces résultats sont encore préliminaires, mais ils montrent que la hiérarchie observée dans la version sans fenêtres de temps n'est pas automatiquement identique dans le cas VRPTW. La présence des contraintes temporelles modifie non seulement la faisabilité des tournées, mais aussi le comportement comparé des métaheuristiques.
+Nous observons ainsi que la hiérarchie observée dans la version sans fenêtres de temps n'est pas automatiquement identique dans le cas VRPTW. Ce comportement s'explique par le fait que les contraintes temporelles resserrent fortement l'espace faisable : une méthode capable d'éviter plus efficacement les retours en arrière ou les cycles peut alors devenir plus compétitive, même si elle reste plus coûteuse. Ces résultats restent préliminaires, mais ils montrent déjà que la présence des contraintes temporelles modifie non seulement la faisabilité des tournées, mais aussi le comportement comparé des métaheuristiques.
 
 \subsection{Campagne VRPTW en mode long}
 Nous avons ensuite prolongé cette étude avec une campagne \texttt{long} complète sur les dix instances, toujours avec fenêtres de temps activées. Cette campagne reprend le même principe que la campagne rapide, mais avec davantage d'itérations et deux répétitions par instance.
@@ -664,7 +670,7 @@ Cette campagne longue confirme et clarifie plusieurs tendances déjà visibles e
     \item Le coût en temps de la recherche tabou augmente sensiblement sur les cas difficiles, mais reste raisonnable sur la majorité du corpus et devient acceptable au regard du gain de qualité obtenu.
 \end{itemize}
 
-Cette campagne longue modifie donc notre lecture finale du projet : dans le cas VRPTW, une recherche tabou correctement échantillonnée et recalibrée devient très compétitive, et même meilleure que le recuit simulé sur la plupart des instances testées, au prix d'un surcoût encore notable sur quelques cas difficiles.
+Nous observons que la recherche tabou fournit en moyenne de meilleures solutions que le recuit simulé sur une majorité d'instances VRPTW. Cela met en évidence un comportement différent de celui observé en CVRP et s'explique probablement par sa capacité à éviter plus efficacement les cycles tout en maintenant une exploration dirigée de l'espace faisable malgré les blocages locaux. Cette campagne longue modifie donc notre lecture finale du projet : dans le cas VRPTW, une recherche tabou correctement échantillonnée et recalibrée devient très compétitive, et même meilleure que le recuit simulé sur la plupart des instances testées, au prix d'un surcoût encore notable sur quelques cas difficiles.
 
 % --------------------------------------------------
 \section{Génération d'une solution initiale}
@@ -684,6 +690,8 @@ Nous ne retenons pas une permutation totalement aléatoire des clients, car cell
     \item ouvrir une nouvelle tournée ;
     \item répéter jusqu'à ce que tous les clients soient servis.
 \end{enumerate}
+
+Une génération totalement aléatoire des tournées conduit dans la grande majorité des cas à des solutions infaisables, en particulier lorsque les contraintes de capacité et de temps sont fortes. Nous avons donc retenu une génération aléatoire faisable, construite progressivement, afin de conserver de la diversité sans perdre le contrôle de la faisabilité.
 
 Dans notre implémentation actuelle, nous fixons d'abord un nombre de tournées \(k\), en pratique le nombre minimal de véhicules obtenu dans la phase précédente pour la version sans fenêtres de temps. Nous initialisons ensuite ces \(k\) tournées puis nous ajoutons des clients un par un de manière aléatoire, sous réserve d'admissibilité.
 
@@ -752,6 +760,8 @@ Le recuit simulé a été implémenté dans une première version pragmatique. L
     \item conserver la meilleure solution rencontrée pendant toute l'exécution.
 \end{enumerate}
 
+Le recuit simulé présente ici un avantage important : il permet d'accepter temporairement certaines dégradations de la solution afin d'échapper aux minima locaux et d'explorer plus largement l'espace des solutions. Cette méthode présente ainsi l'avantage de concilier diversification et intensification avec un coût de calcul modéré.
+
 Nous avons volontairement choisi, pour cette première version, de générer un voisin aléatoire faisable plutôt que d'énumérer tous les voisins à chaque itération. Ce choix réduit fortement le coût d'une itération et rend l'algorithme plus adapté aux tests répétés sur des instances de taille 100.
 
 \subsection{Résultats préliminaires}
@@ -763,6 +773,8 @@ Ces résultats restent préliminaires. Ils servent à valider l'implémentation 
 La recherche tabou a également été implémentée dans une première version opérationnelle. À chaque itération, l'algorithme génère un ensemble de voisins faisables, puis sélectionne le meilleur voisin autorisé, c'est-à-dire non tabou, sauf si un critère d'aspiration permet d'accepter une solution améliorant le meilleur résultat global.
 
 Dans cette première version, la mémoire tabou porte sur les signatures des solutions récemment visitées. Cette approche n'est pas la plus fine possible, mais elle permet de disposer rapidement d'une base fiable pour les expériences comparatives.
+
+La recherche tabou repose sur une mémoire à court terme des mouvements ou solutions récentes, ce qui permet d'éviter les cycles et de forcer l'exploration de nouvelles régions de l'espace des solutions. Cette propriété devient particulièrement utile lorsque l'espace faisable est fortement contraint.
 
 \subsection{Observation importante sur le coût de calcul}
 Les premiers essais montrent que la recherche tabou est sensiblement plus coûteuse en temps de calcul que le recuit simulé dans notre implémentation actuelle. Cette différence s'explique par le fait que, même avec une limitation du nombre de voisins inspectés, la recherche tabou évalue un ensemble de candidats à chaque itération alors que le recuit simulé peut se contenter d'un voisin aléatoire faisable.
@@ -790,6 +802,8 @@ Dans l'état actuel, deux préréglages sont utilisés :
 \end{itemize}
 
 Les premières tentatives ont toutefois montré que le réglage initial du mode \texttt{long} était trop ambitieux pour la recherche tabou dans l'état actuel de l'implémentation. Nous avons donc recalibré ce préréglage afin d'obtenir un compromis plus réaliste entre profondeur de recherche et temps de calcul.
+
+Les performances des métaheuristiques dépendent fortement du réglage de leurs paramètres. Pour le recuit simulé, la température initiale, le facteur de refroidissement et le nombre d'itérations déterminent directement le niveau d'exploration : une température trop faible limite l'acceptation de mouvements dégradants, tandis qu'un refroidissement trop rapide réduit trop tôt la diversité des solutions visitées. Pour la recherche tabou, la taille de la liste tabou, le nombre d'itérations et le nombre maximal de voisins évalués par itération influencent à la fois la qualité des solutions et le temps de calcul : une mémoire trop courte peut favoriser les cycles, alors qu'une exploration trop large devient coûteuse. Nous observons donc que le réglage des paramètres constitue un élément central du compromis qualité/temps.
 
 Afin de lancer ces expériences de manière explicite, nous avons également ajouté un mode dédié dans le programme principal. Cela permet de distinguer clairement :
 \begin{itemize}
@@ -912,7 +926,7 @@ data202.vrp  & 2 & 3401.22 & 1611.37 & 2219.52 & 0.33 & 0.53 \\
 \end{tabular}
 \end{center}
 
-Cette campagne améliorée fournit un signal plus net encore : dans la version capacitaire, le recuit simulé reste la meilleure méthode en qualité, tandis que la recherche tabou recalibrée devient beaucoup plus compétitive sans coûter significativement plus cher.
+Nous observons ici un signal très net : dans la version capacitaire, le recuit simulé reste la meilleure méthode en qualité sur l'ensemble du corpus. Cette différence s'explique par le fait qu'en CVRP l'espace faisable est plus large et se prête bien à une exploration légère mais très fréquente, ce qui constitue précisément l'avantage du recuit simulé dans notre implémentation. La recherche tabou recalibrée devient néanmoins beaucoup plus compétitive qu'auparavant sans coûter significativement plus cher.
 
 % --------------------------------------------------
 \section{Format des données}
@@ -1002,8 +1016,8 @@ Ces limites ouvrent des perspectives naturelles pour une poursuite du projet : r
 
 Ce projet nous a permis de construire une chaîne complète de résolution pour le problème de tournées de véhicules, d'abord dans sa version capacitaire, puis dans sa version avec fenêtres de temps. Nous avons proposé une modélisation du problème, structuré le code en modules cohérents, développé des procédures de construction de solutions, puis implémenté et comparé deux métaheuristiques reposant sur les mêmes voisinages.
 
-Les campagnes expérimentales finales dégagent une lecture claire. Dans le cas CVRP, le recuit simulé reste la méthode la plus efficace de notre étude, avec un excellent compromis entre qualité de solution et temps de calcul. Dans le cas VRPTW, les fenêtres de temps changent profondément la structure des solutions et augmentent nettement le nombre de véhicules nécessaires ; dans ce cadre plus contraint, la recherche tabou recalibrée devient globalement la meilleure méthode sur la campagne longue finale, même si elle conserve un surcoût sur certains cas difficiles.
+Les campagnes expérimentales finales dégagent une lecture claire. Nous avons montré que, sans fenêtres de temps, le nombre minimal de véhicules est exactement égal à la borne inférieure basée sur la capacité pour l'ensemble des instances étudiées. Dans le cas CVRP, le recuit simulé reste la méthode la plus efficace de notre étude, avec un excellent compromis entre qualité de solution et temps de calcul. Dans le cas VRPTW, les fenêtres de temps changent profondément la structure des solutions, réduisent fortement l'ensemble des tournées faisables et augmentent nettement le nombre de véhicules nécessaires ; dans ce cadre plus contraint, la recherche tabou recalibrée devient globalement la meilleure méthode sur la campagne longue finale, même si les approches heuristiques ne permettent pas de garantir l'optimalité.
 
-Enfin, l'étude bonus menée avec OR-Tools confirme l'intérêt des approches heuristiques sur les instances de taille significative : dans notre cadre expérimental, la résolution exacte devient déjà sensiblement plus difficile à partir d'environ \(30\) clients. Au total, le projet aboutit donc à un résultat cohérent sur les plans algorithmique, expérimental et logiciel, tout en mettant en évidence des pistes d'amélioration réalistes pour une poursuite du travail.
+Enfin, l'étude bonus menée avec OR-Tools confirme l'intérêt des approches heuristiques sur les instances de taille significative : dans notre cadre expérimental, la résolution exacte devient déjà sensiblement plus difficile à partir d'environ \(30\) clients. Des améliorations futures pourraient inclure l'introduction de voisinages plus complexes, de stratégies hybrides, ou encore d'approches exactes sur des sous-problèmes de petite taille. Au total, le projet aboutit donc à un résultat cohérent sur les plans algorithmique, expérimental et logiciel, tout en mettant en évidence des pistes d'amélioration réalistes pour une poursuite du travail.
 
 \end{document}
