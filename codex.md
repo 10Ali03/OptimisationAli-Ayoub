@@ -880,3 +880,80 @@ Ce qu'il reste vraiment avant rendu :
 - relire visuellement `rapport.pdf`
 - dÃ©cider si l'on veut corriger aussi les petits avertissements LaTeX restants ou s'arrÃªter lÃ 
 - vÃ©rifier une derniÃ¨re fois les noms / auteurs rÃ©els sur la page de garde du rapport
+# 21. Mise à jour rapport final du 2026-03-20
+
+- relecture approfondie de `rapport.tex` pour renforcer la cohérence avec le code final et les logs `final_long_*`
+- modélisation mathématique rendue plus rigoureuse :
+  - domaines des variables ajoutés
+  - contrainte temporelle formulée avec grand `M`
+  - ajout d'une remarque sur la formulation PLNE complète possible et l'élimination des sous-tournées
+- clarification du lien entre modèle théorique et choix d'implémentation :
+  - capacité contrôlée dans l'évaluation de route
+  - faisabilité temporelle contrôlée dans l'évaluation de route
+- renforcement de la question 2 :
+  - meilleure mise en avant du fait que la borne capacité est atteinte sur tout le corpus CVRP étudié
+  - ajout d'une nuance explicite : ce constat vaut pour notre corpus et ne constitue pas une propriété générale du CVRP
+  - ajout d'un tableau synthétique `LB capacité / k minimal CVRP / k minimal VRPTW`
+- générateur aléatoire :
+  - rapport clarifié pour indiquer que la génération aléatoire répond pleinement au besoin en CVRP
+  - en VRPTW, la robustesse reste partielle et un fallback déterministe est utilisé
+  - formulation défensive ajoutée pour bien couvrir la consigne du sujet sans contredire le code réel
+- métaheuristiques :
+  - tableau synthétique des paramètres `quick` et `long` ajouté
+  - sous-section sur les critères de comparaison ajoutée
+  - sous-section sur la reproductibilité et les répétitions ajoutée
+  - pseudo-code simplifié du recuit simulé ajouté dans le rapport
+- protocole expérimental :
+  - ajout d'indicateurs de dispersion min / max / écart-type sur quelques cas représentatifs
+  - conclusions expérimentales resserrées pour distinguer clairement CVRP et VRPTW
+
+Figures désormais intégrées dans `rapport.tex` et `rapport.pdf` :
+
+- `figures/comparison_vehicles.png` :
+  - impact des fenêtres de temps sur le nombre minimal de véhicules
+- `figures/convergence_data101_cvrp.png` :
+  - courbe de convergence en CVRP sur `data101.vrp`
+- `figures/convergence_data1201_vrptw.png` :
+  - courbe de convergence en VRPTW sur `data1201.vrp`
+- `figures/comparison_distances.png` :
+  - comparaison des distances finales sur les campagnes longues CVRP et VRPTW
+- `figures/comparison_times.png` :
+  - comparaison des temps d'exécution sur les campagnes longues CVRP et VRPTW
+- `figures/routes_data1201_comparison.png` :
+  - visualisation comparative de tournées sur `data1201.vrp` en CVRP et VRPTW
+
+Source réelle des nouvelles figures :
+
+- les graphes agrégés sont construits à partir des résultats finaux présents dans :
+  - `tmp/experiments/final_long_cvrp.log`
+  - `tmp/experiments/final_long_vrptw.log`
+- les visualisations de tournées et les courbes de convergence sont reconstruites à partir du code final et de graines contrôlées :
+  - convergence CVRP sur `data101.vrp`
+  - convergence VRPTW sur `data1201.vrp`
+  - visualisation de tournées sur `data1201.vrp`
+
+Lecture finale actuelle du rapport :
+
+- en CVRP :
+  - la borne capacité est atteinte sur tout le corpus étudié
+  - le recuit simulé reste le meilleur compromis qualité / temps
+- en VRPTW :
+  - les fenêtres de temps augmentent fortement le nombre de véhicules nécessaires
+  - la recherche tabou recalibrée devient globalement meilleure sur la campagne longue finale
+  - le générateur aléatoire reste moins robuste que dans le cas capacitaire
+
+État réel en fin de chat :
+
+- `rapport.tex` : mis à jour et cohérent avec le code final
+- `rapport.pdf` : recompilé avec succès après chaque série de modifications
+- avertissements LaTeX mineurs toujours présents :
+  - quelques `Overfull \hbox`
+  - un avertissement `hyperref` lié à du mode math dans une chaîne PDF
+  - un avertissement de duplication d'identifiant de page au début du document
+- ces avertissements n'empêchent pas la production du PDF
+
+Ce qu'il reste vraiment avant rendu :
+
+- remplacer les noms factices de la page de garde par les vrais noms
+- relire visuellement `rapport.pdf`
+- décider si l'on corrige ou non les avertissements LaTeX restants
