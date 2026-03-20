@@ -53,26 +53,26 @@
 \contentsline {subsection}{\numberline {6.1}Choix retenu}{16}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Cas sans fenêtres de temps}{16}{subsection.6.2}%
 \contentsline {subsection}{\numberline {6.3}Cas avec fenêtres de temps}{16}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Intérêt de cette construction}{16}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.4}Intérêt de cette construction}{17}{subsection.6.4}%
 \contentsline {subsection}{\numberline {6.5}Rôle de cette solution}{17}{subsection.6.5}%
 \contentsline {section}{\numberline {7}Choix des méthodes de résolution}{17}{section.7}%
 \contentsline {subsection}{\numberline {7.1}Voisinages envisagés}{17}{subsection.7.1}%
 \contentsline {subsection}{\numberline {7.2}Première implémentation des voisinages}{17}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Première implémentation du recuit simulé}{17}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.3}Première implémentation du recuit simulé}{18}{subsection.7.3}%
 \contentsline {subsection}{\numberline {7.4}Résultats préliminaires}{18}{subsection.7.4}%
 \contentsline {subsection}{\numberline {7.5}Première implémentation de la recherche tabou}{18}{subsection.7.5}%
 \contentsline {subsection}{\numberline {7.6}Observation importante sur le coût de calcul}{18}{subsection.7.6}%
-\contentsline {subsection}{\numberline {7.7}Résultats préliminaires de la recherche tabou}{18}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.7}Résultats préliminaires de la recherche tabou}{19}{subsection.7.7}%
 \contentsline {subsection}{\numberline {7.8}Mise en place du protocole expérimental}{19}{subsection.7.8}%
 \contentsline {subsection}{\numberline {7.9}Premiers résultats comparatifs}{19}{subsection.7.9}%
 \contentsline {subsection}{\numberline {7.10}Premier essai en mode long}{20}{subsection.7.10}%
 \contentsline {subsection}{\numberline {7.11}Extension du test long à \texttt {data102.vrp}}{20}{subsection.7.11}%
-\contentsline {subsection}{\numberline {7.12}Résultats sur \texttt {data1101.vrp} et \texttt {data1102.vrp}}{20}{subsection.7.12}%
+\contentsline {subsection}{\numberline {7.12}Résultats sur \texttt {data1101.vrp} et \texttt {data1102.vrp}}{21}{subsection.7.12}%
 \contentsline {subsection}{\numberline {7.13}Résultats sur \texttt {data111.vrp} et \texttt {data112.vrp}}{21}{subsection.7.13}%
 \contentsline {subsection}{\numberline {7.14}Résultats sur \texttt {data1201.vrp} et \texttt {data1202.vrp}}{21}{subsection.7.14}%
-\contentsline {subsection}{\numberline {7.15}Résultats sur \texttt {data201.vrp} et \texttt {data202.vrp}}{21}{subsection.7.15}%
+\contentsline {subsection}{\numberline {7.15}Résultats sur \texttt {data201.vrp} et \texttt {data202.vrp}}{22}{subsection.7.15}%
 \contentsline {subsection}{\numberline {7.16}Synthèse de la première campagne longue}{22}{subsection.7.16}%
 \contentsline {section}{\numberline {8}Format des données}{22}{section.8}%
 \contentsline {section}{\numberline {9}Bonus : résolution exacte sur sous-instances}{23}{section.9}%
-\contentsline {section}{\numberline {10}Travail restant}{23}{section.10}%
+\contentsline {section}{\numberline {10}Limites et perspectives}{24}{section.10}%
 \contentsline {section}{\numberline {11}Conclusion}{24}{section.11}%

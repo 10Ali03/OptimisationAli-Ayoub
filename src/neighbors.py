@@ -310,6 +310,51 @@ def generate_neighbors(
     return unique_neighbors(neighbors)
 
 
+def generate_sampled_neighbors(
+    instance,
+    routes,
+    operators=None,
+    rng=None,
+    check_time_windows=False,
+    max_neighbors=100,
+    max_attempts=None,
+):
+    rng = rng or random.Random()
+    if max_neighbors is None:
+        return generate_neighbors(
+            instance,
+            routes,
+            operators=operators,
+            check_time_windows=check_time_windows,
+        )
+
+    max_attempts = max_attempts or max_neighbors * 10
+    sampled = []
+    seen = set()
+
+    for _ in range(max_attempts):
+        candidate = random_neighbor(
+            instance,
+            routes,
+            operators=operators,
+            rng=rng,
+            check_time_windows=check_time_windows,
+        )
+        if candidate is None:
+            continue
+
+        key = tuple(tuple(route) for route in candidate)
+        if key in seen:
+            continue
+
+        seen.add(key)
+        sampled.append(candidate)
+        if len(sampled) >= max_neighbors:
+            break
+
+    return sampled
+
+
 def best_neighbor(
     instance,
     routes,

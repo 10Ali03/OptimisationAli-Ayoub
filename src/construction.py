@@ -102,6 +102,47 @@ def random_feasible_insertion(instance, routes, unserved, rng, check_time_window
     return None
 
 
+def randomized_best_feasible_insertion(
+    instance,
+    routes,
+    unserved,
+    rng,
+    check_time_windows=False,
+    candidate_pool_size=8,
+):
+    candidate_moves = []
+
+    for client_id in unserved:
+        client = instance.clients[client_id]
+        for route_index, route in enumerate(routes):
+            positions = feasible_insertion_positions(
+                instance,
+                route,
+                client_id,
+                check_time_windows=check_time_windows,
+            )
+            for position in positions:
+                cost = insertion_cost(instance, route, client_id, position)
+                candidate_moves.append(
+                    (
+                        cost,
+                        client.due_time,
+                        len(route),
+                        client_id,
+                        route_index,
+                        position,
+                    )
+                )
+
+    if not candidate_moves:
+        return None
+
+    candidate_moves.sort()
+    restricted = candidate_moves[:candidate_pool_size]
+    _, _, _, client_id, route_index, position = rng.choice(restricted)
+    return client_id, route_index, position
+
+
 def nearest_feasible_client(instance, route, unserved, check_time_windows=False):
     """
     Retourne le client admissible le plus proche du dernier sommet de la route
@@ -176,14 +217,36 @@ def build_random_solution_with_k_vehicles(
     routes = [[] for _ in range(k)]
 
     if check_time_windows:
+        seed_route_indices = list(range(k))
+        rng.shuffle(seed_route_indices)
+        seed_candidates = choose_time_window_seeds(instance, min(k, len(unserved)), list(unserved))
+
+        for route_index, client_id in zip(seed_route_indices, seed_candidates):
+            candidate_route = [client_id]
+            if not is_route_feasible(
+                instance,
+                candidate_route,
+                check_time_windows=True,
+            ):
+                continue
+            routes[route_index].append(client_id)
+            unserved.remove(client_id)
+
         while unserved:
-            move = random_feasible_insertion(
+            move = randomized_best_feasible_insertion(
                 instance,
                 routes,
                 unserved,
                 rng,
                 check_time_windows=True,
             )
+            if move is None:
+                move = best_feasible_insertion(
+                    instance,
+                    routes,
+                    unserved,
+                    check_time_windows=True,
+                )
             if move is None:
                 return None
 
@@ -349,5 +412,13 @@ def generate_random_solution(
         )
         if routes is not None:
             return routes
+
+    if check_time_windows:
+        # Safety net: keep the API robust on hard VRPTW instances.
+        return build_solution_with_k_vehicles(
+            instance,
+            target_k,
+            check_time_windows=True,
+        )
 
     return None

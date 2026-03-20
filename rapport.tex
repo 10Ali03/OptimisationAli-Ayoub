@@ -5,7 +5,19 @@
 % --------------------------------------------------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[french]{babel}
+\IfFileExists{txtbabel.def}{
+    \usepackage[french]{babel}
+}{
+    \newcommand{\og}{<<}
+    \newcommand{\fg}{>>}
+    \renewcommand{\today}{%
+        \number\day\space
+        \ifcase\month\or
+        janvier\or f\'evrier\or mars\or avril\or mai\or juin\or
+        juillet\or ao\^ut\or septembre\or octobre\or novembre\or d\'ecembre\fi
+        \space\number\year
+    }
+}
 \usepackage{lmodern}
 \usepackage{geometry}
 \usepackage{amsmath,amssymb,amsthm}
@@ -22,6 +34,7 @@
 \usepackage{caption}
 
 \geometry{margin=2.5cm}
+\setlength{\headheight}{14pt}
 \setlength{\parskip}{0.5em}
 \setlength{\parindent}{0pt}
 
@@ -592,16 +605,16 @@ Après ce premier test ciblé, nous avons lancé une première campagne \texttt{
 \toprule
 Instance & \(k\) & Init. & RS & Tabou & Temps RS & Temps tabou \\
 \midrule
-data101.vrp  & 21 & 2127.09 & 1906.31 & 2078.33 & 3.51 & 13.47 \\
-data102.vrp  & 18 & 1794.68 & 1703.70 & 1753.13 & 0.93 & 12.37 \\
-data1101.vrp & 18 & 2184.86 & 2073.22 & 2105.62 & 1.60 & 12.29 \\
-data1102.vrp & 16 & 2035.58 & 1979.05 & 1985.54 & 1.03 & 11.75 \\
-data111.vrp  & 14 & 1601.37 & 1601.37 & 1576.06 & 0.92 & 11.25 \\
-data112.vrp  & 12 & 1434.70 & 1392.79 & 1395.91 & 0.73 & 10.72 \\
-data1201.vrp & 5  & 1974.63 & 1973.68 & 1945.36 & 0.96 & 9.38 \\
-data1202.vrp & 4  & 1948.06 & 1918.80 & 1870.66 & 0.62 & 9.30 \\
-data201.vrp  & 5  & 1750.26 & 1748.15 & 1713.03 & 0.64 & 9.32 \\
-data202.vrp  & 5  & 3113.87 & 2134.61 & 2959.75 & 0.33 & 9.26 \\
+data101.vrp  & 21 & 2127.09 & 1906.31 & 1995.52 & 4.77 & 5.20 \\
+data102.vrp  & 18 & 1794.68 & 1703.70 & 1766.13 & 1.22 & 1.94 \\
+data1101.vrp & 18 & 2184.86 & 2073.22 & 2079.72 & 2.16 & 2.56 \\
+data1102.vrp & 16 & 2065.99 & 1926.79 & 1926.77 & 1.55 & 1.32 \\
+data111.vrp  & 14 & 1601.37 & 1601.37 & 1540.14 & 1.81 & 1.71 \\
+data112.vrp  & 12 & 1434.70 & 1392.79 & 1401.36 & 0.92 & 1.09 \\
+data1201.vrp & 5  & 1748.48 & 1737.71 & 1653.86 & 0.83 & 0.60 \\
+data1202.vrp & 4  & 2032.65 & 1896.22 & 1872.86 & 0.75 & 0.69 \\
+data201.vrp  & 5  & 1636.58 & 1617.42 & 1563.94 & 0.72 & 0.66 \\
+data202.vrp  & 5  & 1600.85 & 1599.76 & 1517.66 & 0.45 & 0.44 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -626,16 +639,16 @@ Nous avons ensuite prolongé cette étude avec une campagne \texttt{long} compl�
 \toprule
 Instance & \(k\) & Init. moy. & RS moy. & Tabou moy. & Temps RS & Temps tabou \\
 \midrule
-data101.vrp  & 21 & 2127.09 & 1756.06 & 2042.71 & 18.55 & 26.33 \\
-data102.vrp  & 18 & 1794.68 & 1683.80 & 1695.11 & 4.38 & 25.26 \\
-data1101.vrp & 18 & 2184.86 & 1851.01 & 2036.87 & 5.46 & 15.54 \\
-data1102.vrp & 16 & 2035.58 & 1765.05 & 1955.24 & 2.73 & 13.82 \\
-data111.vrp  & 14 & 1601.37 & 1426.25 & 1557.55 & 1.80 & 13.03 \\
-data112.vrp  & 12 & 1434.70 & 1256.10 & 1367.21 & 2.33 & 12.67 \\
-data1201.vrp & 5  & 1974.63 & 1833.03 & 1864.35 & 1.79 & 11.14 \\
-data1202.vrp & 4  & 1948.06 & 1746.99 & 1861.51 & 1.52 & 10.78 \\
-data201.vrp  & 5  & 2263.65 & 1656.57 & 2074.35 & 1.47 & 10.97 \\
-data202.vrp  & 5  & 2997.76 & 1772.69 & 2797.17 & 0.78 & 10.86 \\
+data101.vrp  & 21 & 2127.09 & 1756.06 & 1852.75 & 20.29 & 49.07 \\
+data102.vrp  & 18 & 1794.68 & 1683.80 & 1610.82 & 4.11 & 13.15 \\
+data1101.vrp & 18 & 2184.86 & 1851.01 & 1864.19 & 6.94 & 29.45 \\
+data1102.vrp & 16 & 1913.17 & 1753.92 & 1663.26 & 4.46 & 9.47 \\
+data111.vrp  & 14 & 1601.37 & 1426.25 & 1417.19 & 3.09 & 8.46 \\
+data112.vrp  & 12 & 1434.70 & 1256.10 & 1229.63 & 3.69 & 7.14 \\
+data1201.vrp & 5  & 2267.76 & 1840.63 & 1752.22 & 3.09 & 7.40 \\
+data1202.vrp & 4  & 1924.75 & 1700.61 & 1633.87 & 2.67 & 5.06 \\
+data201.vrp  & 5  & 1759.27 & 1631.38 & 1449.18 & 2.33 & 5.19 \\
+data202.vrp  & 5  & 1506.60 & 1506.60 & 1282.73 & 1.19 & 2.26 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -645,13 +658,13 @@ Cette campagne longue confirme et clarifie plusieurs tendances déjà visibles e
 
 \begin{itemize}
     \item Le recuit simulé améliore systématiquement les solutions initiales sur l'ensemble du corpus.
-    \item La recherche tabou améliore elle aussi les solutions, mais reste globalement moins performante que le recuit simulé dans notre implémentation actuelle.
-    \item L'écart de qualité devient parfois très marqué, notamment sur \texttt{data101.vrp}, \texttt{data201.vrp} et \texttt{data202.vrp}.
-    \item Le coût en temps du recuit simulé dépend fortement de l'instance, mais reste très inférieur ou comparable à celui de la recherche tabou sur la majorité des cas.
-    \item La recherche tabou demeure plus stable en temps, souvent entre \(10\) et \(26\) secondes, au prix d'un gain plus limité.
+    \item La recherche tabou recalibrée améliore elle aussi systématiquement les solutions et devient meilleure que le recuit simulé sur une majorité d'instances VRPTW.
+    \item Le recuit simulé garde un avantage net sur les instances les plus contraintes en nombre de véhicules, en particulier \texttt{data101.vrp}, et reste très proche de la tabou sur \texttt{data1101.vrp}.
+    \item Sur les autres instances, la recherche tabou devient la meilleure méthode observée, avec des gains marqués sur \texttt{data102.vrp}, \texttt{data1201.vrp}, \texttt{data201.vrp} et \texttt{data202.vrp}.
+    \item Le coût en temps de la recherche tabou augmente sensiblement sur les cas difficiles, mais reste raisonnable sur la majorité du corpus et devient acceptable au regard du gain de qualité obtenu.
 \end{itemize}
 
-Cette campagne longue renforce donc la conclusion générale du projet : même dans le cas VRPTW, le recuit simulé fournit actuellement le meilleur compromis entre qualité de solution et coût de calcul sur les instances étudiées.
+Cette campagne longue modifie donc notre lecture finale du projet : dans le cas VRPTW, une recherche tabou correctement échantillonnée et recalibrée devient très compétitive, et même meilleure que le recuit simulé sur la plupart des instances testées, au prix d'un surcoût encore notable sur quelques cas difficiles.
 
 % --------------------------------------------------
 \section{Génération d'une solution initiale}
@@ -794,7 +807,7 @@ Cette commande produit à la fois un tableau récapitulatif et un détail par r�
 \subsection{Premiers résultats comparatifs}
 Le protocole \texttt{quick} a déjà été validé sur l'instance \texttt{data101.vrp}. Sur ce premier essai, la distance moyenne initiale observée est \(3726.26\). Le recuit simulé ramène cette valeur à \(2295.29\) en moyenne, alors que la recherche tabou atteint \(3592.33\) avec les paramètres rapides actuellement retenus.
 
-Le temps de calcul moyen mesuré dans ce mode rapide est d'environ \(0.10\) seconde pour le recuit simulé contre environ \(12.02\) secondes pour la recherche tabou. Cette différence confirme que, dans notre implémentation actuelle, la recherche tabou est nettement plus coûteuse et devra être utilisée avec précaution lors des campagnes expérimentales longues.
+Le temps de calcul moyen mesuré dans ce mode rapide est d'environ \(0.44\) seconde pour le recuit simulé contre environ \(20.51\) secondes pour la recherche tabou dans notre environnement final de relance. Cette différence confirme que, dans notre implémentation actuelle, la recherche tabou est nettement plus coûteuse et devra être utilisée avec précaution lors des campagnes expérimentales longues.
 
 Le sujet demande aussi une comparaison en nombre de solutions générées. Pour quantifier ce point, nous avons ajouté un suivi explicite du nombre de voisins faisables réellement traités par chaque méthode. Sur \texttt{data101.vrp} avec le préréglage \texttt{quick}, le recuit simulé génère en moyenne \(300\) voisins faisables et en accepte \(141\), alors que la recherche tabou explore \(200\) voisins et n'accepte que \(5\) déplacements.
 
@@ -808,74 +821,74 @@ Cette différence s'explique directement par les paramètres retenus et par la l
 Ce point complète utilement la comparaison temps/qualité : dans notre implémentation actuelle, la recherche tabou paie son coût en temps par une exploration plus large et plus systématique des voisinages, tandis que le recuit simulé privilégie une progression légère mais très fréquente.
 
 \subsection{Premier essai en mode long}
-Un premier test en mode \texttt{long} a ensuite été lancé sur l'instance \texttt{data101.vrp}, avec deux répétitions. La distance moyenne initiale observée est \(3719.84\). Dans ce cadre plus exigeant, le recuit simulé obtient une distance moyenne de \(1800.80\), alors que la recherche tabou atteint une distance moyenne de \(3424.76\).
+Un premier test en mode \texttt{long} a ensuite été lancé sur l'instance \texttt{data101.vrp}, avec deux répétitions. La distance moyenne initiale observée est \(3719.84\). Dans ce cadre plus exigeant, le recuit simulé obtient une distance moyenne de \(1814.38\), alors que la recherche tabou recalibrée atteint \(2419.86\).
 
-Les temps moyens associés à cette expérience sont d'environ \(0.36\) seconde pour le recuit simulé et \(19.96\) secondes pour la recherche tabou.
+Les temps moyens associés à cette expérience sont d'environ \(0.56\) seconde pour le recuit simulé et \(1.01\) seconde pour la recherche tabou.
 
 Ce premier résultat long confirme deux points importants :
 \begin{itemize}
     \item le recuit simulé améliore fortement les solutions initiales avec un coût de calcul encore modéré ;
-    \item la recherche tabou reste beaucoup plus coûteuse dans l'état actuel de notre implémentation, tout en apportant ici une amélioration plus limitée.
+    \item la recherche tabou devient nettement plus compétitive qu'auparavant, mais reste derrière le recuit simulé sur cette première instance capacitaire.
 \end{itemize}
 
 Ces observations guideront la suite de notre protocole expérimental, notamment pour le choix des instances à tester en mode long et pour le réglage plus fin des paramètres de la recherche tabou.
 
 \subsection{Extension du test long à \texttt{data102.vrp}}
-Nous avons ensuite appliqué le même protocole \texttt{long} à l'instance \texttt{data102.vrp}. La distance moyenne initiale obtenue est \(3609.70\). Le recuit simulé atteint alors une distance moyenne de \(1764.93\), tandis que la recherche tabou obtient une distance moyenne de \(3372.76\).
+Nous avons ensuite appliqué le même protocole \texttt{long} à l'instance \texttt{data102.vrp}. La distance moyenne initiale obtenue est \(3609.70\). Le recuit simulé atteint alors une distance moyenne de \(1765.58\), tandis que la recherche tabou obtient \(2389.28\).
 
-Les temps moyens observés sont du même ordre que pour \texttt{data101.vrp} : environ \(0.37\) seconde pour le recuit simulé contre environ \(20.71\) secondes pour la recherche tabou.
+Les temps moyens observés sont du même ordre que pour \texttt{data101.vrp} : environ \(0.50\) seconde pour le recuit simulé contre environ \(0.88\) seconde pour la recherche tabou.
 
 Ce second résultat renforce la tendance observée sur la première instance : dans notre implémentation actuelle et avec les paramètres retenus, le recuit simulé offre un compromis nettement plus favorable entre qualité de solution et temps de calcul que la recherche tabou.
 
 \subsection{Résultats sur \texttt{data1101.vrp} et \texttt{data1102.vrp}}
 Nous avons ensuite appliqué le même protocole \texttt{long} aux instances \texttt{data1101.vrp} et \texttt{data1102.vrp}, qui présentent une demande totale plus élevée et nécessitent \(9\) véhicules dans la version sans fenêtres de temps.
 
-Pour \texttt{data1101.vrp}, la distance moyenne initiale observée est \(4717.62\). Le recuit simulé obtient une distance moyenne de \(2271.42\), tandis que la recherche tabou atteint \(4448.35\).
+Pour \texttt{data1101.vrp}, la distance moyenne initiale observée est \(4801.67\). Le recuit simulé obtient une distance moyenne de \(2322.33\), tandis que la recherche tabou atteint \(3202.56\).
 
-Pour \texttt{data1102.vrp}, la distance moyenne initiale est \(4683.40\). Le recuit simulé descend à \(2368.66\) en moyenne, alors que la recherche tabou obtient \(4311.87\).
+Pour \texttt{data1102.vrp}, la distance moyenne initiale est \(4702.59\). Le recuit simulé descend à \(2455.44\) en moyenne, alors que la recherche tabou obtient \(3063.83\).
 
-Les temps moyens restent dans le même ordre de grandeur que précédemment : environ \(0.48\) seconde pour le recuit simulé et environ \(20.3\) secondes pour la recherche tabou.
+Les temps moyens restent faibles sur ces deux instances : environ \(1.19\) et \(1.71\) seconde pour le recuit simulé, contre environ \(1.90\) et \(2.75\) secondes pour la recherche tabou.
 
 Ces nouveaux résultats confirment la tendance déjà observée sur \texttt{data101.vrp} et \texttt{data102.vrp}. Même sur des instances plus chargées, le recuit simulé améliore très fortement les solutions initiales pour un coût de calcul modéré, alors que la recherche tabou demeure beaucoup plus coûteuse tout en restant, dans notre implémentation actuelle, moins performante en qualité de solution finale.
 
 \subsection{Résultats sur \texttt{data111.vrp} et \texttt{data112.vrp}}
-Le même protocole \texttt{long} a ensuite été appliqué aux instances \texttt{data111.vrp} et \texttt{data112.vrp}. Les résultats observés sont identiques à ceux obtenus respectivement sur \texttt{data101.vrp} et \texttt{data102.vrp}, avec les mêmes graines expérimentales.
+Le même protocole \texttt{long} a ensuite été appliqué aux instances \texttt{data111.vrp} et \texttt{data112.vrp}. Les résultats observés confirment les mêmes tendances favorables au recuit simulé, même si les valeurs ne coïncident plus exactement avec celles de \texttt{data101.vrp} et \texttt{data102.vrp} dans notre relance finale.
 
-Autrement dit :
+On observe ici :
 \begin{itemize}
-    \item \texttt{data111.vrp} reproduit les valeurs observées sur \texttt{data101.vrp} ;
-    \item \texttt{data112.vrp} reproduit les valeurs observées sur \texttt{data102.vrp}.
+    \item \texttt{data111.vrp} : initiale \(3480.20\), recuit \(1700.26\), tabou \(2306.55\) ;
+    \item \texttt{data112.vrp} : initiale \(3550.56\), recuit \(1738.23\), tabou \(2317.44\).
 \end{itemize}
 
-Cette répétition n'est pas anodine. Elle suggère que ces paires d'instances possèdent une structure très proche, voire équivalente pour les heuristiques utilisées dans notre étude. Du point de vue expérimental, cela renforce la cohérence des résultats déjà obtenus et nous donne davantage de confiance dans la stabilité des tendances observées.
+Les temps mesurés restent modestes pour les deux méthodes, autour de \(0.56\) à \(0.78\) seconde pour le recuit simulé et de \(1.08\) à \(1.26\) seconde pour la recherche tabou. Ces deux instances renforcent donc la cohérence de la tendance globale en faveur du recuit dans la version capacitaire.
 
 \subsection{Résultats sur \texttt{data1201.vrp} et \texttt{data1202.vrp}}
 Nous avons ensuite testé le protocole \texttt{long} sur les instances \texttt{data1201.vrp} et \texttt{data1202.vrp}, qui se distinguent par une capacité beaucoup plus élevée et un nombre de véhicules minimal égal à \(2\).
 
-Pour \texttt{data1201.vrp}, la distance moyenne initiale observée est \(4507.39\). Le recuit simulé atteint une distance moyenne de \(1898.40\), tandis que la recherche tabou obtient \(4191.42\).
+Pour \texttt{data1201.vrp}, la distance moyenne initiale observée est \(4584.95\). Le recuit simulé atteint une distance moyenne de \(2001.83\), tandis que la recherche tabou obtient \(2905.82\).
 
-Pour \texttt{data1202.vrp}, la distance moyenne initiale vaut \(4693.59\). Le recuit simulé descend à \(2051.32\) en moyenne, alors que la recherche tabou atteint \(4216.21\).
+Pour \texttt{data1202.vrp}, la distance moyenne initiale vaut \(4458.85\). Le recuit simulé descend à \(2009.33\) en moyenne, alors que la recherche tabou atteint \(2844.22\).
 
-Le point notable ici est que le recuit simulé devient encore plus rapide, avec un temps moyen d'environ \(0.26\) seconde sur ces instances à deux tournées, tandis que la recherche tabou reste autour de \(19\) à \(20\) secondes.
+Le point notable ici est que les deux méthodes deviennent très rapides : environ \(0.43\) à \(0.51\) seconde pour le recuit simulé et environ \(0.65\) à \(0.73\) seconde pour la recherche tabou.
 
 Ces résultats renforcent encore l'avantage pratique du recuit simulé dans notre implémentation actuelle : même lorsque la structure des solutions change fortement, il reste à la fois efficace en qualité et très peu coûteux en temps de calcul.
 
 \subsection{Résultats sur \texttt{data201.vrp} et \texttt{data202.vrp}}
 Enfin, nous avons appliqué le protocole \texttt{long} aux instances \texttt{data201.vrp} et \texttt{data202.vrp}, qui utilisent elles aussi \(2\) véhicules dans la version sans fenêtres de temps.
 
-Pour \texttt{data201.vrp}, la distance moyenne initiale observée est \(3410.18\). Le recuit simulé obtient une distance moyenne de \(1547.01\), tandis que la recherche tabou atteint \(3111.51\).
+Pour \texttt{data201.vrp}, la distance moyenne initiale observée est \(3324.19\). Le recuit simulé obtient une distance moyenne de \(1669.67\), tandis que la recherche tabou atteint \(2147.25\).
 
-Pour \texttt{data202.vrp}, la distance moyenne initiale vaut \(3436.16\). Le recuit simulé descend à \(1660.53\) en moyenne, alors que la recherche tabou obtient \(3129.50\).
+Pour \texttt{data202.vrp}, la distance moyenne initiale vaut \(3401.22\). Le recuit simulé descend à \(1611.37\) en moyenne, alors que la recherche tabou obtient \(2219.52\).
 
-Comme pour \texttt{data1201.vrp} et \texttt{data1202.vrp}, le recuit simulé reste ici très rapide, autour de \(0.26\) seconde, tandis que la recherche tabou demeure proche de \(19\) secondes.
+Comme pour \texttt{data1201.vrp} et \texttt{data1202.vrp}, les temps restent très faibles : environ \(0.33\) à \(0.35\) seconde pour le recuit simulé et autour de \(0.52\) à \(0.53\) seconde pour la recherche tabou.
 
 \subsection{Synthèse de la première campagne longue}
 À l'issue de cette première campagne longue menée sur l'ensemble des familles d'instances disponibles, une tendance forte se dégage :
 \begin{itemize}
     \item le recuit simulé améliore systématiquement et fortement les solutions initiales ;
-    \item la recherche tabou améliore également les solutions, mais de manière beaucoup plus limitée dans notre implémentation actuelle ;
+    \item la recherche tabou améliore également nettement les solutions après recalibrage, mais reste globalement en retrait par rapport au recuit simulé dans la version capacitaire ;
     \item le coût de calcul du recuit simulé reste faible sur toutes les instances testées ;
-    \item le coût de calcul de la recherche tabou reste élevé et relativement stable, généralement autour de \(20\) secondes par bloc expérimental.
+    \item le coût de calcul de la recherche tabou devient lui aussi raisonnable, généralement entre \(0.5\) et \(2.8\) secondes par bloc expérimental.
 \end{itemize}
 
 Le tableau suivant résume les valeurs moyennes observées sur l'ensemble de cette première campagne longue.
@@ -885,21 +898,21 @@ Le tableau suivant résume les valeurs moyennes observées sur l'ensemble de cet
 \toprule
 Instance & \(k\) & Init. moy. & RS moy. & Tabou moy. & Temps RS & Temps tabou \\
 \midrule
-data101.vrp  & 8 & 3719.84 & 1800.80 & 3424.76 & 0.37 & 20.25 \\
-data102.vrp  & 8 & 3609.70 & 1764.93 & 3372.76 & 0.37 & 20.71 \\
-data1101.vrp & 9 & 4717.62 & 2271.42 & 4448.35 & 0.47 & 20.27 \\
-data1102.vrp & 9 & 4683.40 & 2368.66 & 4311.87 & 0.48 & 20.35 \\
-data111.vrp  & 8 & 3719.84 & 1800.80 & 3424.76 & 0.37 & 20.69 \\
-data112.vrp  & 8 & 3609.70 & 1764.93 & 3372.76 & 0.36 & 20.08 \\
-data1201.vrp & 2 & 4507.39 & 1898.40 & 4191.42 & 0.26 & 19.91 \\
-data1202.vrp & 2 & 4693.59 & 2051.32 & 4216.21 & 0.26 & 19.34 \\
-data201.vrp  & 2 & 3410.18 & 1547.01 & 3111.51 & 0.26 & 19.22 \\
-data202.vrp  & 2 & 3436.16 & 1660.53 & 3129.50 & 0.26 & 19.16 \\
+data101.vrp  & 8 & 3719.84 & 1814.38 & 2419.86 & 0.56 & 1.01 \\
+data102.vrp  & 8 & 3609.70 & 1765.58 & 2389.28 & 0.50 & 0.88 \\
+data1101.vrp & 9 & 4801.67 & 2322.33 & 3202.56 & 1.19 & 1.90 \\
+data1102.vrp & 9 & 4702.59 & 2455.44 & 3063.83 & 1.71 & 2.75 \\
+data111.vrp  & 8 & 3480.20 & 1700.26 & 2306.55 & 0.78 & 1.26 \\
+data112.vrp  & 8 & 3550.56 & 1738.23 & 2317.44 & 0.56 & 1.08 \\
+data1201.vrp & 2 & 4584.95 & 2001.83 & 2905.82 & 0.43 & 0.65 \\
+data1202.vrp & 2 & 4458.85 & 2009.33 & 2844.22 & 0.51 & 0.73 \\
+data201.vrp  & 2 & 3324.19 & 1669.67 & 2147.25 & 0.35 & 0.52 \\
+data202.vrp  & 2 & 3401.22 & 1611.37 & 2219.52 & 0.33 & 0.53 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Cette première campagne ne constitue pas encore l'étude expérimentale finale du projet, mais elle fournit déjà un signal clair : avec les choix d'implémentation et les réglages actuels, le recuit simulé apparaît comme la méthode la plus convaincante parmi les deux métaheuristiques testées.
+Cette campagne améliorée fournit un signal plus net encore : dans la version capacitaire, le recuit simulé reste la meilleure méthode en qualité, tandis que la recherche tabou recalibrée devient beaucoup plus compétitive sans coûter significativement plus cher.
 
 % --------------------------------------------------
 \section{Format des données}
@@ -971,40 +984,26 @@ Clients & \(k\) & Statut & Objectif & Temps (s) \\
 L'enseignement principal est net : dans notre configuration, le solveur exact reste très efficace jusqu'à \(25\) clients, mais commence à peiner dès \(30\) clients, où il atteint déjà la limite de temps sans certifier l'optimalité. Ce seuil ne constitue pas une frontière théorique universelle, mais il donne un ordre de grandeur concret sur le moment où une approche exacte devient sensiblement plus difficile à exploiter dans ce projet.
 
 % --------------------------------------------------
-\section{Travail restant}
+\section{Limites et perspectives}
 % --------------------------------------------------
 
-Les parties suivantes restent à compléter :
+Le travail réalisé permet de répondre à l'ensemble des points principaux du sujet, mais certaines limites doivent être signalées.
 \begin{itemize}
-    \item fiabilisation du générateur aléatoire de solutions initiales dans le cas avec fenêtres de temps ;
-    \item éventuel raffinement de la recherche tabou, qui reste en retrait sur la majorité des campagnes menées ;
-    \item nettoyage final du projet avant rendu.
+    \item Dans le cas VRPTW, la génération aléatoire de solutions initiales a été nettement améliorée, mais elle reste moins robuste que dans la version purement capacitaire.
+    \item La recherche tabou recalibrée obtient de très bons résultats sur la campagne finale VRPTW, mais son coût de calcul demeure plus élevé sur quelques instances difficiles, en particulier lorsque le nombre de véhicules imposé par les fenêtres de temps devient important.
+    \item L'étude exacte avec OR-Tools a volontairement été limitée à des sous-instances de petite taille ; elle fournit donc un ordre de grandeur utile, mais pas une frontière générale de difficulté.
 \end{itemize}
+
+Ces limites ouvrent des perspectives naturelles pour une poursuite du projet : renforcer encore l'initialisation aléatoire en VRPTW, affiner les paramètres ou la mémoire tabou sur les cas les plus contraints, et élargir l'étude exacte à d'autres familles de sous-instances.
 
 % --------------------------------------------------
 \section{Conclusion}
 % --------------------------------------------------
 
-À ce stade, nous avons :
-\begin{itemize}
-    \item identifié clairement le problème à résoudre ;
-    \item proposé une première modélisation mathématique ;
-    \item structuré les grandes phases du projet ;
-    \item défini l'architecture logicielle ;
-    \item implémenté la lecture des instances au format \texttt{.vrp} ;
-    \item mis en place un module d'évaluation unifié pour les distances, les charges et les contraintes temporelles ;
-    \item déterminé expérimentalement le nombre minimal de véhicules dans la version sans fenêtres de temps sur les instances fournies ;
-    \item intégré une première construction faisable pour la version avec fenêtres de temps ;
-    \item implémenté un générateur de solutions initiales pour la version sans fenêtres de temps ;
-    \item développé deux métaheuristiques, le recuit simulé et la recherche tabou ;
-    \item mené une première campagne expérimentale complète sans fenêtres de temps ;
-    \item mené une campagne expérimentale complète en mode rapide puis en mode long sur la version avec fenêtres de temps ;
-    \item comparé explicitement les deux approches en temps, en qualité et en volume de voisins traités ;
-    \item réalisé une première étude bonus par résolution exacte sur des sous-instances croissantes.
-\end{itemize}
+Ce projet nous a permis de construire une chaîne complète de résolution pour le problème de tournées de véhicules, d'abord dans sa version capacitaire, puis dans sa version avec fenêtres de temps. Nous avons proposé une modélisation du problème, structuré le code en modules cohérents, développé des procédures de construction de solutions, puis implémenté et comparé deux métaheuristiques reposant sur les mêmes voisinages.
 
-Les résultats obtenus mettent en évidence trois enseignements principaux. D'une part, les fenêtres de temps modifient profondément la structure du problème et augmentent fortement le nombre de véhicules nécessaires. D'autre part, dans notre implémentation actuelle, le recuit simulé fournit globalement le meilleur compromis entre qualité de solution et temps de calcul, aussi bien dans la version sans fenêtres de temps que dans les premiers essais VRPTW. Enfin, l'étude exacte avec OR-Tools montre qu'une résolution par programmation linéaire devient déjà sensiblement plus délicate autour de \(30\) clients dans notre cadre expérimental.
+Les campagnes expérimentales finales dégagent une lecture claire. Dans le cas CVRP, le recuit simulé reste la méthode la plus efficace de notre étude, avec un excellent compromis entre qualité de solution et temps de calcul. Dans le cas VRPTW, les fenêtres de temps changent profondément la structure des solutions et augmentent nettement le nombre de véhicules nécessaires ; dans ce cadre plus contraint, la recherche tabou recalibrée devient globalement la meilleure méthode sur la campagne longue finale, même si elle conserve un surcoût sur certains cas difficiles.
 
-Le projet dispose donc désormais d'une base cohérente, à la fois du point de vue algorithmique et du point de vue expérimental. Les améliorations restantes concernent surtout l'approfondissement de la version VRPTW et la consolidation finale des résultats.
+Enfin, l'étude bonus menée avec OR-Tools confirme l'intérêt des approches heuristiques sur les instances de taille significative : dans notre cadre expérimental, la résolution exacte devient déjà sensiblement plus difficile à partir d'environ \(30\) clients. Au total, le projet aboutit donc à un résultat cohérent sur les plans algorithmique, expérimental et logiciel, tout en mettant en évidence des pistes d'amélioration réalistes pour une poursuite du travail.
 
 \end{document}

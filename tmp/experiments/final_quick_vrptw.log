@@ -1,0 +1,53 @@
+
+# Run started 2026-03-20T18:12:23
+preset=quick time_windows=True instances=10
+
+## data101.vrp | preset=quick | time_windows=True
+vehicles=21 successful_runs=1
+summary initial_avg=2127.09 sa_avg=1906.31 tabu_avg=1995.52 sa_time=4.77 tabu_time=5.20 sa_generated=244.00 tabu_explored=200.00
+run=1 seed=1000 initial=2127.09 sa=1906.31 sa_time=4.77 sa_generated=244 tabu=1995.52 tabu_time=5.20 tabu_explored=200
+
+## data102.vrp | preset=quick | time_windows=True
+vehicles=18 successful_runs=1
+summary initial_avg=1794.68 sa_avg=1703.70 tabu_avg=1766.13 sa_time=1.22 tabu_time=1.94 sa_generated=300.00 tabu_explored=200.00
+run=1 seed=1001 initial=1794.68 sa=1703.70 sa_time=1.22 sa_generated=300 tabu=1766.13 tabu_time=1.94 tabu_explored=200
+
+## data1101.vrp | preset=quick | time_windows=True
+vehicles=18 successful_runs=1
+summary initial_avg=2184.86 sa_avg=2073.22 tabu_avg=2079.72 sa_time=2.16 tabu_time=2.56 sa_generated=298.00 tabu_explored=200.00
+run=1 seed=1002 initial=2184.86 sa=2073.22 sa_time=2.16 sa_generated=298 tabu=2079.72 tabu_time=2.56 tabu_explored=200
+
+## data1102.vrp | preset=quick | time_windows=True
+vehicles=16 successful_runs=1
+summary initial_avg=2065.99 sa_avg=1926.79 tabu_avg=1926.77 sa_time=1.55 tabu_time=1.32 sa_generated=300.00 tabu_explored=200.00
+run=1 seed=1003 initial=2065.99 sa=1926.79 sa_time=1.55 sa_generated=300 tabu=1926.77 tabu_time=1.32 tabu_explored=200
+
+## data111.vrp | preset=quick | time_windows=True
+vehicles=14 successful_runs=1
+summary initial_avg=1601.37 sa_avg=1601.37 tabu_avg=1540.14 sa_time=1.81 tabu_time=1.71 sa_generated=300.00 tabu_explored=200.00
+run=1 seed=1004 initial=1601.37 sa=1601.37 sa_time=1.81 sa_generated=300 tabu=1540.14 tabu_time=1.71 tabu_explored=200
+
+## data112.vrp | preset=quick | time_windows=True
+vehicles=12 successful_runs=1
+summary initial_avg=1434.70 sa_avg=1392.79 tabu_avg=1401.36 sa_time=0.92 tabu_time=1.09 sa_generated=300.00 tabu_explored=200.00
+run=1 seed=1005 initial=1434.70 sa=1392.79 sa_time=0.92 sa_generated=300 tabu=1401.36 tabu_time=1.09 tabu_explored=200
+
+## data1201.vrp | preset=quick | time_windows=True
+vehicles=5 successful_runs=1
+summary initial_avg=1748.48 sa_avg=1737.71 tabu_avg=1653.86 sa_time=0.83 tabu_time=0.60 sa_generated=300.00 tabu_explored=200.00
+run=1 seed=1006 initial=1748.48 sa=1737.71 sa_time=0.83 sa_generated=300 tabu=1653.86 tabu_time=0.60 tabu_explored=200
+
+## data1202.vrp | preset=quick | time_windows=True
+vehicles=4 successful_runs=1
+summary initial_avg=2032.65 sa_avg=1896.22 tabu_avg=1872.86 sa_time=0.75 tabu_time=0.69 sa_generated=300.00 tabu_explored=200.00
+run=1 seed=1007 initial=2032.65 sa=1896.22 sa_time=0.75 sa_generated=300 tabu=1872.86 tabu_time=0.69 tabu_explored=200
+
+## data201.vrp | preset=quick | time_windows=True
+vehicles=5 successful_runs=1
+summary initial_avg=1636.58 sa_avg=1617.42 tabu_avg=1563.94 sa_time=0.72 tabu_time=0.66 sa_generated=300.00 tabu_explored=200.00
+run=1 seed=1008 initial=1636.58 sa=1617.42 sa_time=0.72 sa_generated=300 tabu=1563.94 tabu_time=0.66 tabu_explored=200
+
+## data202.vrp | preset=quick | time_windows=True
+vehicles=5 successful_runs=1
+summary initial_avg=1600.85 sa_avg=1599.76 tabu_avg=1517.66 sa_time=0.45 tabu_time=0.44 sa_generated=300.00 tabu_explored=200.00
+run=1 seed=1009 initial=1600.85 sa=1599.76 sa_time=0.45 sa_generated=300 tabu=1517.66 tabu_time=0.44 tabu_explored=200

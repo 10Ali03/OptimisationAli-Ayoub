@@ -43,9 +43,9 @@ LONG_PRESET = ExperimentPreset(
     sa_temperature=120.0,
     sa_cooling_rate=0.995,
     sa_neighbor_attempts=100,
-    tabu_iterations=10,
-    tabu_tenure=8,
-    tabu_max_neighbors=60,
+    tabu_iterations=20,
+    tabu_tenure=12,
+    tabu_max_neighbors=100,
     repetitions=2,
 )
 
@@ -105,12 +105,6 @@ def run_metaheuristics_on_instance(
             seed=seed,
             check_time_windows=check_time_windows,
         )
-        if initial_routes is None and check_time_windows:
-            initial_routes = build_solution_with_k_vehicles(
-                instance,
-                found_k,
-                check_time_windows=True,
-            )
         if initial_routes is None:
             runs.append(
                 {

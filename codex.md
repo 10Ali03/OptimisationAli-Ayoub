@@ -708,3 +708,175 @@ Lecture synthétique actuelle :
 - la recherche tabou reste plus coûteuse et globalement moins efficace dans l'implémentation actuelle
 - les fenêtres de temps augmentent fortement le nombre de véhicules nécessaires
 - l'étude exacte avec OR-Tools devient déjà plus difficile autour de `30` clients dans notre cadre expérimental
+# 18. Mise Ã  jour du 2026-03-20
+
+- l'environnement Python a Ã©tÃ© rÃ©parÃ© via Python Manager
+- `ortools` a Ã©tÃ© installÃ© dans cet environnement pour permettre l'exÃ©cution de `src/main.py`
+- validation de reprise effectuÃ©e sur `data101.vrp` en mode `quick`
+- relance complÃ¨te des campagnes `long` CVRP et VRPTW sur les 10 instances
+
+RÃ©sultats CVRP `long` observÃ©s sur cette relance :
+
+- `data101.vrp` : initial `3719.84`, recuit `1814.38`, tabou `3424.76`
+- `data102.vrp` : initial `3609.70`, recuit `1765.58`, tabou `3372.76`
+- `data1101.vrp` : initial `4801.67`, recuit `2322.33`, tabou `4411.14`
+- `data1102.vrp` : initial `4702.59`, recuit `2455.44`, tabou `4427.25`
+- `data111.vrp` : initial `3480.20`, recuit `1700.26`, tabou `3180.53`
+- `data112.vrp` : initial `3550.56`, recuit `1738.23`, tabou `3229.16`
+- `data1201.vrp` : initial `4584.95`, recuit `2001.83`, tabou `4100.91`
+- `data1202.vrp` : initial `4458.85`, recuit `2009.33`, tabou `4042.31`
+- `data201.vrp` : initial `3324.19`, recuit `1669.67`, tabou `3035.40`
+- `data202.vrp` : initial `3401.22`, recuit `1611.37`, tabou `3118.30`
+
+Temps moyens CVRP `long` observÃ©s sur cette relance :
+
+- recuit simulÃ© : environ `0.34 s` Ã  `1.31 s`
+- recherche tabou : environ `23.67 s` Ã  `36.56 s`
+- voisins moyens traitÃ©s :
+  - recuit simulÃ© : `1200`
+  - recherche tabou : `600`
+
+RÃ©sultats VRPTW `long` observÃ©s sur cette relance :
+
+- `data101.vrp` : initial `2127.09`, recuit `1756.06`, tabou `2042.71`
+- `data102.vrp` : initial `1794.68`, recuit `1683.80`, tabou `1695.11`
+- `data1101.vrp` : initial `2184.86`, recuit `1851.01`, tabou `2036.87`
+- `data1102.vrp` : initial `2035.58`, recuit `1765.05`, tabou `1955.24`
+- `data111.vrp` : initial `1601.37`, recuit `1426.25`, tabou `1557.55`
+- `data112.vrp` : initial `1434.70`, recuit `1256.10`, tabou `1367.21`
+- `data1201.vrp` : initial `1974.63`, recuit `1833.03`, tabou `1864.35`
+- `data1202.vrp` : initial `1948.06`, recuit `1746.99`, tabou `1861.51`
+- `data201.vrp` : initial `2263.65`, recuit `1656.57`, tabou `2074.35`
+- `data202.vrp` : initial `2997.76`, recuit `1772.69`, tabou `2797.17`
+
+Temps moyens VRPTW `long` observÃ©s sur cette relance :
+
+- recuit simulÃ© : environ `1.81 s` Ã  `28.38 s`
+- recherche tabou : environ `22.98 s` Ã  `40.71 s`
+- voisins moyens traitÃ©s :
+  - recuit simulÃ© : `1200` sur presque toutes les instances, `1162` sur `data101.vrp`
+  - recherche tabou : `600`
+
+Lecture actuelle aprÃ¨s relance :
+
+- les conclusions de fond ne changent pas : le recuit simulÃ© reste la meilleure mÃ©taheuristique du projet dans notre implÃ©mentation actuelle
+- la recherche tabou reste dominÃ©e en qualitÃ© et plus coÃ»teuse en temps, en CVRP comme en VRPTW
+- les temps absolus de cette relance sont plus Ã©levÃ©s que ceux notÃ©s plus tÃ´t dans le projet, mais l'ordre relatif des mÃ©thodes reste inchangÃ©
+- `rapport.tex` doit maintenant reflÃ©ter cette relance rÃ©cente plutÃ´t que les anciennes mesures de temps
+
+Questions du sujet couvertes aprÃ¨s cette relance :
+
+- modÃ©lisation : oui
+- architecture du code : oui
+- nombre minimal de vÃ©hicules sans fenÃªtres de temps : oui
+- nombre minimal de vÃ©hicules avec fenÃªtres de temps : oui
+- gÃ©nÃ©ration initiale sans fenÃªtres de temps : oui
+- gÃ©nÃ©ration initiale avec fenÃªtres de temps : encore partielle, avec fallback dÃ©terministe si besoin
+- deux mÃ©taheuristiques : oui
+- protocole expÃ©rimental complet : oui
+- comparaison qualitÃ© / temps / voisins traitÃ©s : oui
+- bonus exact avec OR-Tools : oui
+
+Ce qu'il reste rÃ©ellement Ã  faire :
+
+- amÃ©liorer si on le souhaite la robustesse du gÃ©nÃ©rateur alÃ©atoire VRPTW
+- amÃ©liorer si on le souhaite la recherche tabou
+- faire le nettoyage final du dÃ©pÃ´t et une derniÃ¨re relecture du rapport avant rendu
+---
+
+# 19. Mise Ã  jour finale du 2026-03-20
+
+- optimisation de `src/evaluate.py` avec cache des distances et Ã©valuation de route en un seul passage
+- amÃ©lioration de l'initialisation alÃ©atoire VRPTW dans `src/construction.py` par insertion alÃ©atoire guidÃ©e
+- ajout d'un Ã©chantillonnage bornÃ© de voisins dans `src/neighbors.py`
+- recherche tabou mise Ã  jour pour exploiter cet Ã©chantillonnage dans `src/meta/tabu_search.py`
+- preset `long` recalibrÃ© dans `src/solver.py` :
+  - tabou `20` itÃ©rations
+  - tenure `12`
+  - `100` voisins max par itÃ©ration
+
+Campagne finale CVRP `long` aprÃ¨s amÃ©liorations :
+
+- `data101.vrp` : initial `3719.84`, recuit `1814.38`, tabou `2419.86`
+- `data102.vrp` : initial `3609.70`, recuit `1765.58`, tabou `2389.28`
+- `data1101.vrp` : initial `4801.67`, recuit `2322.33`, tabou `3202.56`
+- `data1102.vrp` : initial `4702.59`, recuit `2455.44`, tabou `3063.83`
+- `data111.vrp` : initial `3480.20`, recuit `1700.26`, tabou `2306.55`
+- `data112.vrp` : initial `3550.56`, recuit `1738.23`, tabou `2317.44`
+- `data1201.vrp` : initial `4584.95`, recuit `2001.83`, tabou `2905.82`
+- `data1202.vrp` : initial `4458.85`, recuit `2009.33`, tabou `2844.22`
+- `data201.vrp` : initial `3324.19`, recuit `1669.67`, tabou `2147.25`
+- `data202.vrp` : initial `3401.22`, recuit `1611.37`, tabou `2219.52`
+
+Lecture CVRP actuelle :
+
+- le recuit simulÃ© reste clairement la meilleure mÃ©thode en qualitÃ©
+- la recherche tabou a Ã©tÃ© trÃ¨s fortement amÃ©liorÃ©e
+- la recherche tabou n'est plus du tout prohibitive en temps :
+  - environ `0.52 s` Ã  `2.75 s`
+  - contre des dizaines de secondes auparavant
+
+Campagne finale VRPTW `long` aprÃ¨s amÃ©liorations :
+
+- `data101.vrp` : initial `2127.09`, recuit `1756.06`, tabou `1852.75`
+- `data102.vrp` : initial `1794.68`, recuit `1683.80`, tabou `1610.82`
+- `data1101.vrp` : initial `2184.86`, recuit `1851.01`, tabou `1864.19`
+- `data1102.vrp` : initial `1913.17`, recuit `1753.92`, tabou `1663.26`
+- `data111.vrp` : initial `1601.37`, recuit `1426.25`, tabou `1417.19`
+- `data112.vrp` : initial `1434.70`, recuit `1256.10`, tabou `1229.63`
+- `data1201.vrp` : initial `2267.76`, recuit `1840.63`, tabou `1752.22`
+- `data1202.vrp` : initial `1924.75`, recuit `1700.61`, tabou `1633.87`
+- `data201.vrp` : initial `1759.27`, recuit `1631.38`, tabou `1449.18`
+- `data202.vrp` : initial `1506.60`, recuit `1506.60`, tabou `1282.73`
+
+Lecture VRPTW actuelle :
+
+- la recherche tabou recalibrÃ©e devient meilleure que le recuit simulÃ© sur `8` instances sur `10`
+- le recuit simulÃ© garde un avantage net sur `data101.vrp`
+- le recuit simulÃ© reste trÃ¨s proche de la tabou sur `data1101.vrp`
+- la recherche tabou coÃ»te plus cher sur quelques gros cas VRPTW, surtout `data101.vrp`, mais reste raisonnable sur le reste du corpus
+
+Questions du sujet : Ã©tat actuel
+
+- modÃ©lisation : oui
+- structure du code : oui
+- nombre minimal de vÃ©hicules sans fenÃªtres de temps : oui
+- nombre minimal de vÃ©hicules avec fenÃªtres de temps : oui
+- gÃ©nÃ©rateur alÃ©atoire sans fenÃªtres de temps : oui
+- gÃ©nÃ©rateur alÃ©atoire avec fenÃªtres de temps : mieux qu'avant, mais encore pas entiÃ¨rement robuste
+- deux mÃ©taheuristiques : oui
+- protocole expÃ©rimental complet : oui
+- comparaison qualitÃ© / temps / voisins traitÃ©s : oui
+- bonus exact OR-Tools : oui
+
+Ce qu'il reste vraiment Ã  faire maintenant :
+
+- finaliser si on le souhaite la robustesse complÃ¨te du gÃ©nÃ©rateur alÃ©atoire VRPTW
+- Ã©ventuellement affiner encore la tabou sur les cas extrÃªmes comme `data101.vrp`
+- faire la relecture finale du rapport
+- nettoyer le dÃ©pÃ´t avant rendu
+---
+
+# 20. Nettoyage et compilation du 2026-03-20
+
+- suppression des `__pycache__` Python du dÃ©pÃ´t
+- suppression des anciens logs temporaires dans `tmp/experiments`
+- suppression des anciens fichiers auxiliaires LaTeX dans `tmp/latex`
+- relecture ciblÃ©e de `rapport.tex` pour aligner les conclusions avec la campagne finale amÃ©liorÃ©e
+- compilation du rapport avec `pdflatex` en deux passes via MiKTeX
+- copie du PDF compilÃ© vers `rapport.pdf` Ã  la racine du projet
+
+Ã‰tat final de compilation :
+
+- `rapport.pdf` recompilÃ© avec succÃ¨s
+- quelques avertissements LaTeX mineurs subsistent :
+  - quelques `Overfull \hbox`
+  - un avertissement `hyperref` sur une chaÃ®ne PDF contenant du mode math
+  - un avertissement de duplication d'identifiant de page liÃ© au dÃ©but du document
+- ces avertissements n'empÃªchent pas la production du PDF
+
+Ce qu'il reste vraiment avant rendu :
+
+- relire visuellement `rapport.pdf`
+- dÃ©cider si l'on veut corriger aussi les petits avertissements LaTeX restants ou s'arrÃªter lÃ 
+- vÃ©rifier une derniÃ¨re fois les noms / auteurs rÃ©els sur la page de garde du rapport

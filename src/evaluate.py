@@ -24,16 +24,53 @@ def euclidean_distance(x1, y1, x2, y2):
     return math.hypot(x1 - x2, y1 - y2)
 
 
+def _distance_cache(instance):
+    cache = getattr(instance, "_distance_cache", None)
+    if cache is not None:
+        return cache
+
+    depot_distances = {}
+    pair_distances = {}
+    client_ids = list(instance.clients.keys())
+
+    for client_id in client_ids:
+        client = instance.clients[client_id]
+        depot_distances[client_id] = euclidean_distance(
+            instance.depot.x,
+            instance.depot.y,
+            client.x,
+            client.y,
+        )
+
+    for client_id_1 in client_ids:
+        c1 = instance.clients[client_id_1]
+        for client_id_2 in client_ids:
+            if client_id_1 == client_id_2:
+                pair_distances[(client_id_1, client_id_2)] = 0.0
+                continue
+
+            c2 = instance.clients[client_id_2]
+            pair_distances[(client_id_1, client_id_2)] = euclidean_distance(
+                c1.x,
+                c1.y,
+                c2.x,
+                c2.y,
+            )
+
+    cache = {
+        "depot": depot_distances,
+        "pairs": pair_distances,
+    }
+    setattr(instance, "_distance_cache", cache)
+    return cache
+
+
 def distance_depot_to_client(instance, client_id):
-    depot = instance.depot
-    client = instance.clients[client_id]
-    return euclidean_distance(depot.x, depot.y, client.x, client.y)
+    return _distance_cache(instance)["depot"][client_id]
 
 
 def distance_between_clients(instance, client_id_1, client_id_2):
-    c1 = instance.clients[client_id_1]
-    c2 = instance.clients[client_id_2]
-    return euclidean_distance(c1.x, c1.y, c2.x, c2.y)
+    return _distance_cache(instance)["pairs"][(client_id_1, client_id_2)]
 
 
 def route_load(instance, route):
@@ -94,9 +131,12 @@ def evaluate_route(instance, route):
     current_time = instance.depot.ready_time
     previous_client_id = None
     time_feasible = True
+    distance = 0.0
+    load = 0
 
     for client_id in route:
         client = instance.clients[client_id]
+        load += client.demand
 
         if previous_client_id is None:
             travel_time = distance_depot_to_client(instance, client_id)
@@ -118,15 +158,18 @@ def evaluate_route(instance, route):
 
         current_time = departure_time
         previous_client_id = client_id
+        distance += travel_time
 
-    return_time = current_time + distance_depot_to_client(instance, route[-1])
+    back_to_depot = distance_depot_to_client(instance, route[-1])
+    return_time = current_time + back_to_depot
+    distance += back_to_depot
     if return_time > instance.depot.due_time:
         time_feasible = False
 
     return RouteEvaluation(
         route=list(route),
-        distance=route_distance(instance, route),
-        load=route_load(instance, route),
+        distance=distance,
+        load=load,
         arrival_times=arrival_times,
         service_start_times=service_start_times,
         waiting_times=waiting_times,

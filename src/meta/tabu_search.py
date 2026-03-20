@@ -1,10 +1,11 @@
 import time
+import random
 from collections import deque
 from dataclasses import dataclass
 
 from construction import build_solution_with_k_vehicles, generate_random_solution
 from evaluate import evaluate_solution, lower_bound_vehicles
-from neighbors import generate_neighbors
+from neighbors import generate_neighbors, generate_sampled_neighbors
 
 
 @dataclass
@@ -34,6 +35,7 @@ def tabu_search(
     max_neighbors=500,
 ):
     start_time = time.perf_counter()
+    rng = random.Random(seed)
 
     if initial_routes is None:
         initial_routes = generate_random_solution(
@@ -70,14 +72,22 @@ def tabu_search(
     iterations_done = 0
 
     for iteration in range(max_iterations):
-        neighbors = generate_neighbors(
-            instance,
-            current_routes,
-            operators=operators,
-            check_time_windows=check_time_windows,
-        )
-        if max_neighbors is not None:
-            neighbors = neighbors[:max_neighbors]
+        if max_neighbors is None:
+            neighbors = generate_neighbors(
+                instance,
+                current_routes,
+                operators=operators,
+                check_time_windows=check_time_windows,
+            )
+        else:
+            neighbors = generate_sampled_neighbors(
+                instance,
+                current_routes,
+                operators=operators,
+                rng=rng,
+                check_time_windows=check_time_windows,
+                max_neighbors=max_neighbors,
+            )
 
         if not neighbors:
             iterations_done = iteration + 1
