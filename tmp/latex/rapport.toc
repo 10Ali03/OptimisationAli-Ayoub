@@ -49,16 +49,16 @@
 \contentsline {subsection}{\numberline {5.15}Analyse de cette première campagne VRPTW}{16}{subsection.5.15}%
 \contentsline {subsection}{\numberline {5.16}Campagne VRPTW en mode long}{17}{subsection.5.16}%
 \contentsline {subsection}{\numberline {5.17}Analyse de la campagne VRPTW longue}{17}{subsection.5.17}%
-\contentsline {section}{\numberline {6}Génération d'une solution initiale}{17}{section.6}%
+\contentsline {section}{\numberline {6}Génération d'une solution initiale}{18}{section.6}%
 \contentsline {subsection}{\numberline {6.1}Choix retenu}{18}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Cas sans fenêtres de temps}{18}{subsection.6.2}%
 \contentsline {subsection}{\numberline {6.3}Cas avec fenêtres de temps}{18}{subsection.6.3}%
 \contentsline {subsection}{\numberline {6.4}Intérêt de cette construction}{18}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Rôle de cette solution}{18}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.5}Rôle de cette solution}{19}{subsection.6.5}%
 \contentsline {section}{\numberline {7}Choix des méthodes de résolution}{19}{section.7}%
 \contentsline {subsection}{\numberline {7.1}Voisinages envisagés}{19}{subsection.7.1}%
 \contentsline {subsection}{\numberline {7.2}Première implémentation des voisinages}{19}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Première implémentation du recuit simulé}{19}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.3}Première implémentation du recuit simulé}{20}{subsection.7.3}%
 \contentsline {subsection}{\numberline {7.4}Pseudo-code simplifié du recuit simulé}{20}{subsection.7.4}%
 \contentsline {subsection}{\numberline {7.5}Résultats préliminaires}{20}{subsection.7.5}%
 \contentsline {subsection}{\numberline {7.6}Première implémentation de la recherche tabou}{20}{subsection.7.6}%
@@ -79,8 +79,9 @@
 \contentsline {subsection}{\numberline {7.21}Résultats sur \texttt {data1201.vrp} et \texttt {data1202.vrp}}{26}{subsection.7.21}%
 \contentsline {subsection}{\numberline {7.22}Résultats sur \texttt {data201.vrp} et \texttt {data202.vrp}}{26}{subsection.7.22}%
 \contentsline {subsection}{\numberline {7.23}Synthèse de la première campagne longue}{27}{subsection.7.23}%
-\contentsline {subsection}{\numberline {7.24}Exemple de visualisation de tournées}{29}{subsection.7.24}%
-\contentsline {section}{\numberline {8}Format des données}{29}{section.8}%
-\contentsline {section}{\numberline {9}Bonus : résolution exacte sur sous-instances}{30}{section.9}%
+\contentsline {subsection}{\numberline {7.24}Lecture synthétique du corpus et cas marquants}{29}{subsection.7.24}%
+\contentsline {subsection}{\numberline {7.25}Exemple de visualisation de tournées}{29}{subsection.7.25}%
+\contentsline {section}{\numberline {8}Format des données}{30}{section.8}%
+\contentsline {section}{\numberline {9}Bonus : résolution exacte sur sous-instances}{31}{section.9}%
 \contentsline {section}{\numberline {10}Limites et perspectives}{31}{section.10}%
 \contentsline {section}{\numberline {11}Conclusion}{31}{section.11}%

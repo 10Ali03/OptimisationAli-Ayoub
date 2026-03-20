@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.3.20)  20 MAR 2026 21:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.3.20)  20 MAR 2026 21:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -752,7 +752,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 469.
 
 [11] [12]
-<figures/comparison_vehicles.png, id=518, 1053.9375pt x 602.25pt>
+<figures/comparison_vehicles.png, id=523, 1053.9375pt x 602.25pt>
 File: figures/comparison_vehicles.png Graphic file (type png)
 <use figures/comparison_vehicles.png>
 Package pdftex.def Info: figures/comparison_vehicles.png  used on input line 57
@@ -772,54 +772,54 @@ al en mode ra-pide sur l'ins-tance \T1/lmtt/m/n/10.95 data1201.vrp\T1/lmr/m/n/1
  []
 
 [15] [16] [17] [18] [19] [20] [21] [22] [23]
-<figures/convergence_data101_cvrp.png, id=594, 1053.9375pt x 602.25pt>
+<figures/convergence_data101_cvrp.png, id=599, 1053.9375pt x 602.25pt>
 File: figures/convergence_data101_cvrp.png Graphic file (type png)
 <use figures/convergence_data101_cvrp.png>
 Package pdftex.def Info: figures/convergence_data101_cvrp.png  used on input li
-ne 963.
+ne 965.
 (pdftex.def)             Requested size: 455.24411pt x 260.13872pt.
  [24 <./figures/convergence_data101_cvrp.png>]
-<figures/convergence_data1201_vrptw.png, id=602, 1053.9375pt x 602.25pt>
+<figures/convergence_data1201_vrptw.png, id=607, 1053.9375pt x 602.25pt>
 File: figures/convergence_data1201_vrptw.png Graphic file (type png)
 <use figures/convergence_data1201_vrptw.png>
 Package pdftex.def Info: figures/convergence_data1201_vrptw.png  used on input 
-line 974.
+line 976.
 (pdftex.def)             Requested size: 455.24411pt x 260.13872pt.
 
-Overfull \hbox (12.35101pt too wide) in paragraph at lines 988--989
+Overfull \hbox (12.35101pt too wide) in paragraph at lines 990--991
 []\T1/lmr/m/n/10.95 Nous avons en-suite ap-pli-qué le même pro-to-cole \T1/lmtt
 /m/n/10.95 long \T1/lmr/m/n/10.95 aux ins-tances \T1/lmtt/m/n/10.95 data1101.vr
 p \T1/lmr/m/n/10.95 et \T1/lmtt/m/n/10.95 data1102.vrp\T1/lmr/m/n/10.95 ,
  []
 
 [25 <./figures/convergence_data1201_vrptw.png>] [26]
-<figures/comparison_distances.png, id=613, 1053.9375pt x 602.25pt>
+<figures/comparison_distances.png, id=618, 1053.9375pt x 602.25pt>
 File: figures/comparison_distances.png Graphic file (type png)
 <use figures/comparison_distances.png>
 Package pdftex.def Info: figures/comparison_distances.png  used on input line 1
-063.
+065.
 (pdftex.def)             Requested size: 455.24411pt x 260.13872pt.
  [27]
-<figures/comparison_times.png, id=618, 1053.9375pt x 602.25pt>
+<figures/comparison_times.png, id=623, 1053.9375pt x 602.25pt>
 File: figures/comparison_times.png Graphic file (type png)
 <use figures/comparison_times.png>
-Package pdftex.def Info: figures/comparison_times.png  used on input line 1071.
+Package pdftex.def Info: figures/comparison_times.png  used on input line 1073.
 
 (pdftex.def)             Requested size: 455.24411pt x 260.13872pt.
  [28 <./figures/comparison_distances.png> <./figures/comparison_times.png>]
-<figures/routes_data1201_comparison.png, id=627, 1355.0625pt x 677.53125pt>
+<figures/routes_data1201_comparison.png, id=632, 1355.0625pt x 677.53125pt>
 File: figures/routes_data1201_comparison.png Graphic file (type png)
 <use figures/routes_data1201_comparison.png>
 Package pdftex.def Info: figures/routes_data1201_comparison.png  used on input 
-line 1084.
+line 1097.
 (pdftex.def)             Requested size: 455.24411pt x 227.61792pt.
- [29 <./figures/routes_data1201_comparison.png>] [30]
-Overfull \hbox (1.67476pt too wide) in paragraph at lines 1164--1165
+ [29] [30 <./figures/routes_data1201_comparison.png>]
+Overfull \hbox (1.67476pt too wide) in paragraph at lines 1177--1178
 []\T1/lmr/m/n/10.95 La re-cherche ta-bou re-ca-li-brée ob-tient de très bons ré
 -sul-tats sur la cam-pagne fi-nale VRPTW,
  []
 
-[31]
+[31] [32]
 (C:\Users\Admin2\Documents\Ecole\4A\Optimisation DiscrÃ¨te\OptimisationAli-Ayou
 b\tmp\latex\rapport.aux)
  ***********
@@ -827,16 +827,16 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `rapport.out' has not changed.
-(rerunfilecheck)             Checksum: E28F1B664B518D1959D35DD953272B11;18114.
+(rerunfilecheck)             Checksum: 3BBA999A7A71146618354ECBD633FEC6;18424.
  ) 
 Here is how much of TeX's memory you used:
- 17363 strings out of 467867
- 278266 string characters out of 5417850
+ 17366 strings out of 467867
+ 278305 string characters out of 5417850
  795714 words of memory out of 5000000
- 45829 multiletter control sequences out of 15000+600000
+ 45830 multiletter control sequences out of 15000+600000
  680351 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,888b,1989s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,888b,1084s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Admin2/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.p
 fb><C:/Users/Admin2/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.
 pfb><C:/Users/Admin2/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmcsc1
@@ -852,9 +852,9 @@ sy8.pfb><C:/Users/Admin2/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lm
 tk10.pfb><C:/Users/Admin2/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/l
 mtt10.pfb>
 Output written on "C:\Users\Admin2\Documents\Ecole\4A\Optimisation DiscrÃ¨te\Op
-timisationAli-Ayoub\tmp\latex\rapport.pdf" (32 pages, 644491 bytes).
+timisationAli-Ayoub\tmp\latex\rapport.pdf" (33 pages, 648184 bytes).
 PDF statistics:
- 760 PDF objects out of 1000 (max. 8388607)
- 187 named destinations out of 1000 (max. 500000)
- 711 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 769 PDF objects out of 1000 (max. 8388607)
+ 189 named destinations out of 1000 (max. 500000)
+ 719 words of extra memory for PDF output out of 10000 (max. 10000000)
 

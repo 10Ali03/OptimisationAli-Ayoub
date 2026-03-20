@@ -709,6 +709,8 @@ Cette campagne longue confirme et clarifie plusieurs tendances déjà visibles e
 
 Nous observons que la recherche tabou fournit en moyenne de meilleures solutions que le recuit simulé sur une majorité d'instances VRPTW. Cela met en évidence un comportement différent de celui observé en CVRP et s'explique probablement par sa capacité à éviter plus efficacement les cycles tout en maintenant une exploration dirigée de l'espace faisable malgré les blocages locaux. Cette campagne longue modifie donc notre lecture finale du projet : dans le cas VRPTW, une recherche tabou correctement échantillonnée et recalibrée devient très compétitive, et même meilleure que le recuit simulé sur la plupart des instances testées, au prix d'un surcoût encore notable sur quelques cas difficiles.
 
+Il est important de souligner que cette conclusion ne repose pas sur quelques exemples isolés, mais sur la campagne finale complète menée sur les dix instances du corpus. En revanche, pour garder un rapport lisible, nous ne détaillons pas chaque cas ligne par ligne : nous retenons ensuite quelques instances représentatives ou atypiques, qui permettent d'interpréter plus finement les tendances globales observées sur l'ensemble du corpus.
+
 % --------------------------------------------------
 \section{Génération d'une solution initiale}
 % --------------------------------------------------
@@ -1074,6 +1076,17 @@ Comme montré sur cette figure, le recuit simulé domine nettement le corpus CVR
 
 Comme montré sur cette figure, la recherche tabou reste plus coûteuse en temps que le recuit simulé, surtout en VRPTW. Cela implique qu'une meilleure qualité de solution ne s'obtient pas gratuitement : le compromis qualité/temps reste un élément central de l'analyse.
 
+\subsection{Lecture synthétique du corpus et cas marquants}
+Les campagnes finales \texttt{long} couvrent l'ensemble des dix instances du corpus, en CVRP comme en VRPTW. Nous disposons donc bien d'une base expérimentale complète pour dégager des tendances globales ; en revanche, toutes les instances n'ont pas besoin d'un commentaire détaillé dans le corps du rapport. Nous retenons ici trois cas particulièrement informatifs.
+
+\texttt{data101.vrp} constitue d'abord le cas VRPTW le plus contraint de notre corpus, avec \(21\) véhicules nécessaires contre \(8\) en CVRP. Comme montré par les tableaux et la courbe de convergence dédiée, ce resserrement extrême de l'espace faisable favorise encore le recuit simulé en qualité finale (\(1756.06\) contre \(1852.75\) pour la tabou), mais au prix d'un temps déjà élevé pour les deux méthodes et surtout pour la tabou. Cette instance joue donc le rôle de cas limite, utile pour comprendre le coût réel des contraintes temporelles les plus sévères.
+
+\texttt{data1201.vrp} est ensuite un cas charnière, car il illustre très clairement le changement de régime entre CVRP et VRPTW. Sans fenêtres de temps, \(2\) véhicules suffisent et le recuit simulé domine nettement (\(2001.83\) contre \(2905.82\)). Avec fenêtres de temps, l'instance passe à \(5\) véhicules et la recherche tabou devient meilleure (\(1752.22\) contre \(1840.63\)). La visualisation des tournées montre concrètement cette fragmentation supplémentaire et rend visible l'effet structurel des contraintes temporelles.
+
+Enfin, \texttt{data202.vrp} constitue un cas atypique très instructif en VRPTW. Sur cette instance, le recuit simulé ne parvient pratiquement pas à améliorer la solution initiale moyenne (\(1506.60\) avant comme après optimisation), alors que la recherche tabou descend jusqu'à \(1282.73\). Ce comportement suggère que certains bassins locaux deviennent particulièrement difficiles à quitter lorsque l'espace faisable est très resserré, et qu'une exploration plus structurée avec mémoire peut alors devenir décisive.
+
+Cette lecture par cas ne remplace donc pas l'analyse globale ; elle la complète. Le corpus complet sert à établir les tendances robustes, tandis que quelques instances ciblées permettent d'expliquer pourquoi ces tendances apparaissent.
+
 \subsection{Exemple de visualisation de tournées}
 La figure suivante illustre une visualisation explicite des tournées sur l'instance \texttt{data1201.vrp}. Afin de garder une figure lisible, nous représentons d'un côté une solution CVRP obtenue par recuit simulé et, de l'autre, une solution VRPTW obtenue par recherche tabou. Ces deux solutions sont effectivement reconstruites à partir du code final et d'une graine contrôlée.
 
@@ -1175,6 +1188,6 @@ Ce projet aboutit à une chaîne complète de résolution du problème, de la mo
 
 Trois résultats ressortent nettement. D'abord, sur le corpus CVRP étudié, la borne inférieure capacitaire est atteinte pour toutes les instances et coïncide donc avec le nombre minimal de véhicules observé. Ensuite, l'introduction des fenêtres de temps augmente fortement le nombre de véhicules nécessaires et resserre l'espace des solutions faisables. Enfin, les performances relatives des métaheuristiques dépendent de cette structure : le recuit simulé constitue le meilleur compromis en CVRP, alors que la recherche tabou devient globalement meilleure en VRPTW sur la campagne longue finale.
 
-Les principales limites concernent la robustesse encore partielle du générateur aléatoire en VRPTW et le coût plus élevé de la recherche tabou sur certains cas extrêmes. Des améliorations naturelles incluent l'ajout de voisinages plus complexes, de stratégies hybrides et d'approches exactes sur de petits sous-problèmes.
+Ces conclusions reposent sur l'ensemble du corpus final et non sur quelques exemples isolés ; les études de cas détaillées servent seulement à interpréter les comportements les plus marquants. Les principales limites concernent la robustesse encore partielle du générateur aléatoire en VRPTW et le coût plus élevé de la recherche tabou sur certains cas extrêmes. Des améliorations naturelles incluent l'ajout de voisinages plus complexes, de stratégies hybrides et d'approches exactes sur de petits sous-problèmes.
 
 \end{document}

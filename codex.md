@@ -957,3 +957,25 @@ Ce qu'il reste vraiment avant rendu :
 - remplacer les noms factices de la page de garde par les vrais noms
 - relire visuellement `rapport.pdf`
 - décider si l'on corrige ou non les avertissements LaTeX restants
+
+# 22. Décision sur l'analyse du corpus du 2026-03-20
+
+- clarification méthodologique ajoutée au rapport :
+  - les conclusions finales ne reposent pas sur quelques exemples isolés
+  - elles reposent sur l'ensemble du corpus final de `10` instances en CVRP et en VRPTW
+- choix rédactionnel retenu :
+  - conserver une analyse synthétique sur tout le corpus dans le corps du rapport
+  - commenter seulement quelques cas représentatifs ou atypiques pour éviter un catalogue instance par instance
+- cas explicitement retenus comme études de cas utiles :
+  - `data101.vrp` :
+    - cas VRPTW le plus contraint du corpus
+    - utile pour montrer le coût des contraintes temporelles sévères
+  - `data1201.vrp` :
+    - cas charnière pour illustrer le basculement CVRP vers VRPTW
+    - déjà utilisé pour la visualisation de tournées
+  - `data202.vrp` :
+    - cas atypique en VRPTW où le recuit simulé améliore peu ou pas la solution initiale moyenne
+    - utile pour justifier l'intérêt d'une exploration tabou plus structurée
+- conséquence sur le rapport :
+  - renforcement du message "analyse globale + cas marquants"
+  - conclusion resserrée pour rappeler que les études de cas servent d'interprétation et non de base statistique unique
