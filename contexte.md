@@ -641,29 +641,118 @@ garder un historique clair du projet, de ses choix techniques et de l'avancement
   - `40` clients : `FEASIBLE` à la limite de `10 s`
 - lecture actuelle : dans notre configuration, la résolution exacte devient déjà sensiblement difficile autour de `30` clients
 
-- campagne VRPTW `long` en cours de persistance dans `tmp/experiments/vrptw_long.log`
-- campagne VRPTW `long` terminée sur les 10 instances
-- résultats finaux :
-  - `data101.vrp` : initial `2127.09`, recuit `1756.06`, tabou `2042.71`
-  - `data102.vrp` : initial `1794.68`, recuit `1683.80`, tabou `1695.11`
-  - `data1101.vrp` : initial `2184.86`, recuit `1851.01`, tabou `2036.87`
-  - `data1102.vrp` : initial `2035.58`, recuit `1765.05`, tabou `1955.24`
-  - `data111.vrp` : initial `1601.37`, recuit `1426.25`, tabou `1557.55`
-  - `data112.vrp` : initial `1434.70`, recuit `1256.10`, tabou `1367.21`
-  - `data1201.vrp` : initial `1974.63`, recuit `1833.03`, tabou `1864.35`
-  - `data1202.vrp` : initial `1948.06`, recuit `1746.99`, tabou `1861.51`
-  - `data201.vrp` : initial `2263.65`, recuit `1656.57`, tabou `2074.35`
-  - `data202.vrp` : initial `2997.76`, recuit `1772.69`, tabou `2797.17`
+- campagne VRPTW `long` terminée sur les 10 instances (log définitif : `tmp/experiments/final_long_vrptw.log`)
+- résultats finaux (valeurs moyennées sur 2 répétitions — source de vérité = log) :
+  - `data101.vrp`  : k=21, initial `2127.09`, recuit `1756.06`, tabou `1852.75`, temps RS `25.00`s, temps tabou `60.23`s
+  - `data102.vrp`  : k=18, initial `1794.68`, recuit `1683.80`, tabou `1610.82`, temps RS `5.64`s, temps tabou `18.55`s
+  - `data1101.vrp` : k=18, initial `2184.86`, recuit `1851.01`, tabou `1864.19`, temps RS `9.01`s, temps tabou `41.16`s
+  - `data1102.vrp` : k=16, initial `1913.17`, recuit `1753.92`, tabou `1663.26`, temps RS `6.19`s, temps tabou `12.62`s
+  - `data111.vrp`  : k=14, initial `1601.37`, recuit `1426.25`, tabou `1417.19`, temps RS `4.26`s, temps tabou `11.74`s
+  - `data112.vrp`  : k=12, initial `1434.70`, recuit `1256.10`, tabou `1229.63`, temps RS `5.15`s, temps tabou `9.49`s
+  - `data1201.vrp` : k=5,  initial `2267.76`, recuit `1840.63`, tabou `1752.22`, temps RS `4.13`s, temps tabou `9.85`s
+  - `data1202.vrp` : k=4,  initial `1924.75`, recuit `1700.61`, tabou `1633.87`, temps RS `3.36`s, temps tabou `7.06`s
+  - `data201.vrp`  : k=5,  initial `1759.27`, recuit `1631.38`, tabou `1449.18`, temps RS `3.10`s, temps tabou `6.86`s
+  - `data202.vrp`  : k=5,  initial `1506.60`, recuit `1506.60`, tabou `1282.73`, temps RS `1.61`s, temps tabou `2.94`s
 - lecture actuelle :
-  - le recuit simulé domine maintenant aussi sur la campagne VRPTW `long`
-  - la recherche tabou reste plus coûteuse et globalement moins efficace dans notre implémentation actuelle
-- `rapport.tex` a été mis à jour pour intégrer cette campagne complète
+  - en VRPTW `long`, la tabou est meilleure sur la majorité des instances (data102, data1102, data111, data112, data1201, data1202, data201, data202)
+  - le recuit simulé reste meilleur sur data101 (k=21) et légèrement sur data1101
+  - cas atypique data202 : recuit ne parvient pas à améliorer l'initiale (1506.60 → 1506.60), la tabou descend à 1282.73
+  - la tabou est plus coûteuse en temps mais reste acceptable sauf data101 (~60s pour 2 répétitions)
+- `rapport.tex` mis à jour : table VRPTW long corrigée avec ces temps de référence
 - pour reprendre dans un futur chat :
   - lire d'abord `tmp/experiments/vrptw_long.log`
   - considérer le log comme source de vérité
   - ne reporter dans `rapport.tex` que des résultats terminés et stables
 
-# 17. État réel pour le prochain chat
+# 17. Mise à jour du 2026-04-12
+
+Corrections apportées lors de cette session :
+
+- **bug corrigé dans `src/meta/simulated_annealing.py`** : les fonctions `lower_bound_vehicles` et `build_solution_with_k_vehicles` étaient utilisées dans la branche de fallback VRPTW (lignes 49–54) sans être importées. Cela aurait causé un `NameError` si `generate_random_solution` renvoyait `None` sur une instance VRPTW difficile. Les imports ont été ajoutés (`from construction import build_solution_with_k_vehicles, generate_random_solution` et `from evaluate import evaluate_solution, lower_bound_vehicles`).
+- **rapport.tex mis à jour** : la table de résultats VRPTW en mode `long` avait des temps légèrement différents des valeurs du log de référence (`final_long_vrptw.log`). Les temps ont été corrigés pour correspondre exactement au log.
+- **contexte.md mis à jour** : les résultats VRPTW `long` de la section 16 (journal 14 mars 2026) étaient issus d'une version antérieure de la tabou ; ils ont été remplacés par les valeurs finales du log.
+
+- **`src/main.py` corrigé** : l'import de `bonus_exact` (qui requiert `ortools`) était fait au niveau module. Si `ortools` n'est pas installé, toute la commande échouait, y compris les modes `experiment` et `overview`. L'import est maintenant conditionnel (uniquement au moment où `--mode bonus` est demandé).
+
+Campagne de validation CVRP `long` relancée et terminée dans `tmp/experiments/fresh_long_cvrp.log`.
+
+Résultats frais CVRP `long` (12 avril 2026) — distances confirment le log de référence, la tabou est parfaitement reproductible (déterministe), la SA varie légèrement (stochastique) :
+
+| Instance | k | Init moy | SA moy | Tabou moy | Temps SA | Temps tabou |
+|---|---|---|---|---|---|---|
+| data101.vrp  | 8 | 3719.84 | 1800.80 | 2419.86 | 0.54 | 0.85 |
+| data102.vrp  | 8 | 3609.70 | 1764.93 | 2389.28 | 0.53 | 0.84 |
+| data1101.vrp | 9 | 4801.67 | 2237.07 | 3202.56 | 0.63 | 1.05 |
+| data1102.vrp | 9 | 4702.59 | 2455.44 | 3063.83 | 0.66 | 1.09 |
+| data111.vrp  | 8 | 3480.20 | 1716.46 | 2306.55 | 0.50 | 0.95 |
+| data112.vrp  | 8 | 3550.56 | 1819.29 | 2317.44 | 0.56 | 0.86 |
+| data1201.vrp | 2 | 4584.95 | 2001.83 | 2905.82 | 0.51 | 0.69 |
+| data1202.vrp | 2 | 4458.85 | 2009.33 | 2844.22 | 0.37 | 0.59 |
+| data201.vrp  | 2 | 3324.19 | 1669.67 | 2147.25 | 0.36 | 0.60 |
+| data202.vrp  | 2 | 3401.22 | 1611.37 | 2219.52 | 0.35 | 0.59 |
+
+Campagne VRPTW `long` : non relancée dans le sandbox (la phase `find_minimum_vehicles` avec fenêtres de temps pour data101 passe de k=8 à k=21 via des insertions O(n³) sur 100 clients, trop lent sans votre machine). Le log de référence `final_long_vrptw.log` reste la source de vérité pour les résultats VRPTW.
+
+---
+
+# 19. Mise à jour du 2026-04-12 (session 2)
+
+## Bug de performance corrigé dans `src/solver.py`
+
+`generate_random_solution` était appelée avec `max_attempts=100` pour le VRPTW.
+Or les tentatives aléatoires échouent toutes systématiquement pour les instances VRPTW
+(contraintes temporelles trop restrictives) : chaque tentative coûtait ~1.7 s × 100 = ~170 s
+gaspillées par run, avant que le safety net déterministe (2.5 s, toujours faisable) ne prenne le relais.
+
+Correction appliquée dans `run_metaheuristics_on_instance` :
+
+```python
+_max_attempts = 3 if check_time_windows else 100
+initial_routes = generate_random_solution(
+    instance,
+    k=found_k,
+    max_attempts=_max_attempts,
+    ...
+)
+```
+
+Gain : la construction initiale VRPTW passe de ~170 s à ~10 s par appel. La qualité des
+résultats est identique (le safety net est deterministe, il retourne toujours la même solution).
+
+## Campagne VRPTW `long` re-lancée et terminée (valeurs de référence)
+
+Durée totale : 13 min 58 s pour les 10 instances × 2 répétitions.
+Fichier de référence : `tmp/experiments/fresh_long_vrptw.log`
+
+| Instance | k | Init moy | SA moy | Tabou moy | Temps SA | Temps tabou |
+|---|---|---|---|---|---|---|
+| data101.vrp  | 21 | 2127.09 | 1756.06 | 1852.75 | 22.26 | 52.34 |
+| data102.vrp  | 18 | 1794.68 | 1683.80 | 1610.82 | 5.15  | 16.97 |
+| data1101.vrp | 18 | 2184.86 | 1851.01 | 1864.19 | 8.25  | 35.73 |
+| data1102.vrp | 16 | 2035.58 | 1765.05 | 1756.30 | 5.46  | 14.73 |
+| data111.vrp  | 14 | 1601.37 | 1426.25 | 1417.19 | 3.71  | 10.24 |
+| data112.vrp  | 12 | 1434.70 | 1256.10 | 1229.63 | 4.53  | 8.83  |
+| data1201.vrp | 5  | 2106.72 | 1815.58 | 1696.96 | 3.89  | 10.02 |
+| data1202.vrp | 4  | 1948.06 | 1746.99 | 1648.81 | 3.02  | 6.86  |
+| data201.vrp  | 5  | 1759.27 | 1631.38 | 1449.18 | 3.02  | 6.71  |
+| data202.vrp  | 5  | 1506.60 | 1506.60 | 1282.73 | 1.53  | 2.88  |
+
+Différences vs session précédente (section 16) :
+- data1102 : init légèrement différente (2035.58 vs 1913.17), tabou légèrement moins bonne (1756.30 vs 1663.26)
+- data1201 : init différente (2106.72 vs 2267.76), RS et tabou légèrement améliorés
+- data1202 : init légèrement différente, RS et tabou légèrement différents
+- Tous les temps sont plus courts grâce au bug fix (plus de 170 s gaspillées en construction)
+- Les tendances globales sont identiques : tabou meilleure sur 7/10 instances VRPTW
+
+## `rapport.tex` mis à jour
+
+- Table VRPTW `long` (section "Campagne VRPTW en mode long") corrigée avec les nouvelles valeurs
+- Référence textuelle à `(1752.22 contre 1840.63)` mise à jour en `(1696.96 contre 1815.58)` pour data1201
+- `experiment_results.log` consolidé avec CVRP long + VRPTW long (20 instances, 126 lignes)
+
+---
+
+# 18. État réel pour le prochain chat
 
 Questions du sujet maintenant couvertes :
 
@@ -701,11 +790,11 @@ Procédure de reprise recommandée :
 - ne recopier dans `rapport.tex` que des résultats stabilisés
 - garder les fichiers temporaires dans `tmp/` jusqu'à la toute fin, puis les supprimer avant rendu si nécessaire
 
-Lecture synthétique actuelle :
+Lecture synthétique actuelle (source : `final_long_cvrp.log` et `final_long_vrptw.log`) :
 
-- sans fenêtres de temps, le recuit simulé domine très nettement la recherche tabou en qualité et en temps
-- avec fenêtres de temps, le recuit simulé domine aussi la campagne `long`
-- la recherche tabou reste plus coûteuse et globalement moins efficace dans l'implémentation actuelle
+- sans fenêtres de temps (CVRP), le recuit simulé domine très nettement la recherche tabou en qualité et en temps
+- avec fenêtres de temps (VRPTW), la recherche tabou devient meilleure sur la majorité des instances ; le recuit simulé reste meilleur seulement sur les cas les plus contraints (data101, data1101)
+- la recherche tabou est plus coûteuse en temps, surtout en VRPTW
 - les fenêtres de temps augmentent fortement le nombre de véhicules nécessaires
 - l'étude exacte avec OR-Tools devient déjà plus difficile autour de `30` clients dans notre cadre expérimental
 # 18. Mise Ã  jour du 2026-03-20

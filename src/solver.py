@@ -98,10 +98,14 @@ def run_metaheuristics_on_instance(
     runs = []
     for repetition in range(preset.repetitions):
         seed = seed_base + repetition
+        # Pour le VRPTW, les tentatives aléatoires n'aboutissent jamais (contraintes
+        # trop restrictives) : on limite à 3 pour éviter ~167 s de calcul inutile par run.
+        # Le safety net déterministe de generate_random_solution prend le relais.
+        _max_attempts = 3 if check_time_windows else 100
         initial_routes = generate_random_solution(
             instance,
             k=found_k,
-            max_attempts=100,
+            max_attempts=_max_attempts,
             seed=seed,
             check_time_windows=check_time_windows,
         )

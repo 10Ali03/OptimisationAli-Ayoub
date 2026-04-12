@@ -4,7 +4,6 @@ from pathlib import Path
 from io_utils import parse_vrp_file
 from evaluate import evaluate_solution, lower_bound_vehicles, solution_distance, total_demand
 from construction import find_minimum_vehicles, generate_random_solution
-from bonus_exact import run_bonus_scaling
 from solver import (
     format_experiment_details,
     format_generation_table,
@@ -121,6 +120,13 @@ def print_metaheuristics_comparison(instances, preset_name="quick", limit=1):
 
 
 def run_bonus_mode(instances, sizes, time_limit_seconds):
+    try:
+        from bonus_exact import run_bonus_scaling
+    except ImportError:
+        print("Erreur : le module 'ortools' est requis pour le mode bonus.")
+        print("Installez-le avec : pip install ortools")
+        return
+
     if not instances:
         raise ValueError("Aucune instance sélectionnée pour le bonus exact.")
 

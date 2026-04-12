@@ -3,8 +3,8 @@ import random
 import time
 from dataclasses import dataclass
 
-from construction import generate_random_solution
-from evaluate import evaluate_solution
+from construction import build_solution_with_k_vehicles, generate_random_solution
+from evaluate import evaluate_solution, lower_bound_vehicles
 from neighbors import random_neighbor
 
 
