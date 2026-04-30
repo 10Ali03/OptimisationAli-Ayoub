@@ -85,14 +85,13 @@
 \contentsline {section}{\numberline {10}Mode opératoire}{34}{section.10}%
 \contentsline {subsection}{\numberline {10.1}Prérequis}{34}{subsection.10.1}%
 \contentsline {subsection}{\numberline {10.2}Organisation des fichiers}{34}{subsection.10.2}%
-\contentsline {subsection}{\numberline {10.3}Mode aperçu (défaut)}{35}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.3}Mode aperçu (défaut)}{34}{subsection.10.3}%
 \contentsline {subsection}{\numberline {10.4}Mode expérimentation}{35}{subsection.10.4}%
 \contentsline {paragraph}{CVRP — preset rapide.}{35}{subsection.10.4}%
 \contentsline {paragraph}{CVRP — preset long.}{35}{lstnumber.-9.1}%
 \contentsline {paragraph}{VRPTW.}{35}{lstnumber.-10.1}%
 \contentsline {paragraph}{Instance unique avec détail run par run.}{35}{lstnumber.-11.1}%
 \contentsline {subsection}{\numberline {10.5}Mode bonus — résolution exacte}{35}{subsection.10.5}%
-\contentsline {subsection}{\numberline {10.6}Régénération des figures}{35}{subsection.10.6}%
-\contentsline {subsection}{\numberline {10.7}Récapitulatif des options de \texttt {main.py}}{36}{subsection.10.7}%
+\contentsline {subsection}{\numberline {10.6}Récapitulatif des options de \texttt {main.py}}{35}{subsection.10.6}%
 \contentsline {section}{\numberline {11}Limites et perspectives}{36}{section.11}%
 \contentsline {section}{\numberline {12}Conclusion}{36}{section.12}%

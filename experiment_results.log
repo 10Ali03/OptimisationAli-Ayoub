@@ -32,3 +32,11 @@ preset=quick time_windows=False instances=1
 vehicles=8 successful_runs=1
 summary initial_avg=3726.26 sa_avg=2295.29 sa_time=0.07 sa_generated=300.00 tabu_avg=3343.40 tabu_time=0.05 tabu_explored=200.00
 run=1 seed=1000 initial=3726.26 sa=2295.29 sa_time=0.07 sa_generated=300 tabu=3343.40 tabu_time=0.05 tabu_explored=200
+
+# Run started 2026-04-30T12:00:43
+preset=quick time_windows=False instances=1
+
+## data101.vrp | preset=quick | time_windows=False
+vehicles=8 successful_runs=1
+summary initial_avg=3726.26 sa_avg=2295.29 sa_time=0.09 sa_generated=300.00 tabu_avg=3343.40 tabu_time=0.05 tabu_explored=200.00
+run=1 seed=1000 initial=3726.26 sa=2295.29 sa_time=0.09 sa_generated=300 tabu=3343.40 tabu_time=0.05 tabu_explored=200

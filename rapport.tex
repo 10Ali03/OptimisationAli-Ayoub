@@ -46,7 +46,7 @@
     urlcolor=blue!60!black,
     citecolor=blue!60!black,
     pdftitle={Projet Optimisation Discrète - VRPTW},
-    pdfauthor={Nom1 - Nom2}
+    pdfauthor={El Bouazzaoui Ali - Nadir Ayoub}
 }
 
 % --------------------------------------------------
@@ -306,7 +306,6 @@ OptimisationAli-Ayoub/
     comparison_vehicles.png    convergence_data101_cvrp.png
     convergence_data1201_vrptw.png
     routes_data1201_comparison.png
-  generate_figures.py    # regeneration des figures du rapport
   rapport.pdf
 \end{lstlisting}
 
@@ -1229,7 +1228,6 @@ OptimisationAli-Ayoub/
     comparison_vehicles.png    convergence_data101_cvrp.png
     convergence_data1201_vrptw.png
     routes_data1201_comparison.png
-  generate_figures.py    # regeneration des figures du rapport
   rapport.pdf
 \end{lstlisting}
 
@@ -1283,16 +1281,6 @@ Ce mode requiert OR-Tools. Il lance une résolution exacte sur des sous-instance
 python src/main.py --mode bonus \
     --sizes 5 10 15 20 25 30 --time-limit 10
 \end{lstlisting}
-
-\subsection{Régénération des figures}
-
-Les figures du rapport peuvent être recalculées en lançant :
-
-\begin{lstlisting}
-python generate_figures.py
-\end{lstlisting}
-
-Les images sont enregistrées dans le dossier \texttt{figures/} et écrasent les précédentes.
 
 \subsection{Récapitulatif des options de \texttt{main.py}}
 
