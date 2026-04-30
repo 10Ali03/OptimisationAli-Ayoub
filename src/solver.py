@@ -39,14 +39,14 @@ QUICK_PRESET = ExperimentPreset(
 
 LONG_PRESET = ExperimentPreset(
     name="long",
-    sa_iterations=1200,
-    sa_temperature=120.0,
-    sa_cooling_rate=0.995,
+    sa_iterations=2500,
+    sa_temperature=150.0,
+    sa_cooling_rate=0.997,
     sa_neighbor_attempts=100,
-    tabu_iterations=20,
-    tabu_tenure=12,
-    tabu_max_neighbors=100,
-    repetitions=2,
+    tabu_iterations=40,
+    tabu_tenure=20,
+    tabu_max_neighbors=150,
+    repetitions=3,
 )
 
 
@@ -82,6 +82,7 @@ def run_metaheuristics_on_instance(
     preset,
     seed_base=0,
     check_time_windows=False,
+    method="both",
 ):
     found_k, _ = find_minimum_vehicles(
         instance,
@@ -126,46 +127,54 @@ def run_metaheuristics_on_instance(
             initial_routes,
             check_time_windows=check_time_windows,
         )
-        sa_result = simulated_annealing(
-            instance,
-            initial_routes=initial_routes,
-            seed=seed,
-            check_time_windows=check_time_windows,
-            max_iterations=preset.sa_iterations,
-            initial_temperature=preset.sa_temperature,
-            cooling_rate=preset.sa_cooling_rate,
-            neighbor_attempts=preset.sa_neighbor_attempts,
-        )
-        tabu_result = tabu_search(
-            instance,
-            initial_routes=initial_routes,
-            seed=seed,
-            check_time_windows=check_time_windows,
-            max_iterations=preset.tabu_iterations,
-            tabu_tenure=preset.tabu_tenure,
-            max_neighbors=preset.tabu_max_neighbors,
-        )
+
+        sa_entry = None
+        if method in ("sa", "both"):
+            sa_result = simulated_annealing(
+                instance,
+                initial_routes=initial_routes,
+                seed=seed,
+                check_time_windows=check_time_windows,
+                max_iterations=preset.sa_iterations,
+                initial_temperature=preset.sa_temperature,
+                cooling_rate=preset.sa_cooling_rate,
+                neighbor_attempts=preset.sa_neighbor_attempts,
+            )
+            sa_entry = {
+                "best_distance": sa_result.best_distance,
+                "iterations": sa_result.iterations,
+                "runtime_seconds": sa_result.runtime_seconds,
+                "generated_neighbors": sa_result.generated_neighbors,
+                "failed_neighbor_generations": sa_result.failed_neighbor_generations,
+                "accepted_moves": sa_result.accepted_moves,
+            }
+
+        tabu_entry = None
+        if method in ("tabu", "both"):
+            tabu_result = tabu_search(
+                instance,
+                initial_routes=initial_routes,
+                seed=seed,
+                check_time_windows=check_time_windows,
+                max_iterations=preset.tabu_iterations,
+                tabu_tenure=preset.tabu_tenure,
+                max_neighbors=preset.tabu_max_neighbors,
+            )
+            tabu_entry = {
+                "best_distance": tabu_result.best_distance,
+                "iterations": tabu_result.iterations,
+                "runtime_seconds": tabu_result.runtime_seconds,
+                "accepted_moves": tabu_result.accepted_moves,
+                "explored_neighbors": tabu_result.explored_neighbors,
+            }
 
         runs.append(
             {
                 "seed": seed,
                 "initial_distance": initial_eval["distance"],
                 "initial_feasible": initial_eval["feasible"],
-                "simulated_annealing": {
-                    "best_distance": sa_result.best_distance,
-                    "iterations": sa_result.iterations,
-                    "runtime_seconds": sa_result.runtime_seconds,
-                    "generated_neighbors": sa_result.generated_neighbors,
-                    "failed_neighbor_generations": sa_result.failed_neighbor_generations,
-                    "accepted_moves": sa_result.accepted_moves,
-                },
-                "tabu_search": {
-                    "best_distance": tabu_result.best_distance,
-                    "iterations": tabu_result.iterations,
-                    "runtime_seconds": tabu_result.runtime_seconds,
-                    "accepted_moves": tabu_result.accepted_moves,
-                    "explored_neighbors": tabu_result.explored_neighbors,
-                },
+                "simulated_annealing": sa_entry,
+                "tabu_search": tabu_entry,
             }
         )
 
@@ -200,6 +209,9 @@ def summarize_experiment(experiment_result):
             "tabu_search": None,
         }
 
+    sa_runs = [r for r in successful_runs if r["simulated_annealing"] is not None]
+    tabu_runs = [r for r in successful_runs if r["tabu_search"] is not None]
+
     return {
         "instance": experiment_result["instance"],
         "vehicles": experiment_result["vehicles"],
@@ -209,32 +221,32 @@ def summarize_experiment(experiment_result):
         ),
         "simulated_annealing": {
             "best_distance": summarize_metric(
-                [run["simulated_annealing"]["best_distance"] for run in successful_runs]
+                [r["simulated_annealing"]["best_distance"] for r in sa_runs]
             ),
             "runtime_seconds": summarize_metric(
-                [run["simulated_annealing"]["runtime_seconds"] for run in successful_runs]
+                [r["simulated_annealing"]["runtime_seconds"] for r in sa_runs]
             ),
             "generated_neighbors": summarize_metric(
-                [run["simulated_annealing"]["generated_neighbors"] for run in successful_runs]
+                [r["simulated_annealing"]["generated_neighbors"] for r in sa_runs]
             ),
             "accepted_moves": summarize_metric(
-                [run["simulated_annealing"]["accepted_moves"] for run in successful_runs]
+                [r["simulated_annealing"]["accepted_moves"] for r in sa_runs]
             ),
-        },
+        } if sa_runs else None,
         "tabu_search": {
             "best_distance": summarize_metric(
-                [run["tabu_search"]["best_distance"] for run in successful_runs]
+                [r["tabu_search"]["best_distance"] for r in tabu_runs]
             ),
             "runtime_seconds": summarize_metric(
-                [run["tabu_search"]["runtime_seconds"] for run in successful_runs]
+                [r["tabu_search"]["runtime_seconds"] for r in tabu_runs]
             ),
             "explored_neighbors": summarize_metric(
-                [run["tabu_search"]["explored_neighbors"] for run in successful_runs]
+                [r["tabu_search"]["explored_neighbors"] for r in tabu_runs]
             ),
             "accepted_moves": summarize_metric(
-                [run["tabu_search"]["accepted_moves"] for run in successful_runs]
+                [r["tabu_search"]["accepted_moves"] for r in tabu_runs]
             ),
-        },
+        } if tabu_runs else None,
     }
 
 
@@ -245,6 +257,7 @@ def run_experiment_suite(
     seed_base=1000,
     check_time_windows=False,
     output_path=None,
+    method="both",
 ):
     preset = get_preset(preset_name)
     selected_instances = instances if limit is None else instances[:limit]
@@ -267,6 +280,7 @@ def run_experiment_suite(
             preset,
             seed_base=seed_base + index * preset.repetitions,
             check_time_windows=check_time_windows,
+            method=method,
         )
         results.append(
             {
@@ -300,19 +314,23 @@ def format_experiment_table(suite_result):
             continue
 
         initial_avg = summary["initial_distance"]["avg"]
-        sa_avg = summary["simulated_annealing"]["best_distance"]["avg"]
-        tabu_avg = summary["tabu_search"]["best_distance"]["avg"]
-        sa_time = summary["simulated_annealing"]["runtime_seconds"]["avg"]
-        tabu_time = summary["tabu_search"]["runtime_seconds"]["avg"]
+        sa_avg = summary["simulated_annealing"]["best_distance"]["avg"] if summary["simulated_annealing"] else None
+        tabu_avg = summary["tabu_search"]["best_distance"]["avg"] if summary["tabu_search"] else None
+        sa_time = summary["simulated_annealing"]["runtime_seconds"]["avg"] if summary["simulated_annealing"] else None
+        tabu_time = summary["tabu_search"]["runtime_seconds"]["avg"] if summary["tabu_search"] else None
 
+        sa_avg_s = f"{sa_avg:12.2f}" if sa_avg is not None else f"{'—':>12}"
+        tabu_avg_s = f"{tabu_avg:12.2f}" if tabu_avg is not None else f"{'—':>12}"
+        sa_time_s = f"{sa_time:10.2f}" if sa_time is not None else f"{'—':>10}"
+        tabu_time_s = f"{tabu_time:12.2f}" if tabu_time is not None else f"{'—':>12}"
         lines.append(
             f"{summary['instance']:15} "
             f"{summary['vehicles']:4d} "
             f"{initial_avg:12.2f} "
-            f"{sa_avg:12.2f} "
-            f"{tabu_avg:12.2f} "
-            f"{sa_time:10.2f} "
-            f"{tabu_time:12.2f}"
+            f"{sa_avg_s} "
+            f"{tabu_avg_s} "
+            f"{sa_time_s} "
+            f"{tabu_time_s}"
         )
 
     return "\n".join(lines)
@@ -337,18 +355,20 @@ def format_experiment_details(suite_result):
                 continue
 
             lines.append(f"    initiale : {run['initial_distance']:.2f}")
-            lines.append(
-                "    recuit simulé : "
-                f"{run['simulated_annealing']['best_distance']:.2f} "
-                f"en {run['simulated_annealing']['runtime_seconds']:.2f}s "
-                f"({run['simulated_annealing']['generated_neighbors']} voisins générés)"
-            )
-            lines.append(
-                "    recherche tabou : "
-                f"{run['tabu_search']['best_distance']:.2f} "
-                f"en {run['tabu_search']['runtime_seconds']:.2f}s "
-                f"({run['tabu_search']['explored_neighbors']} voisins explorés)"
-            )
+            if run["simulated_annealing"] is not None:
+                lines.append(
+                    "    recuit simulé : "
+                    f"{run['simulated_annealing']['best_distance']:.2f} "
+                    f"en {run['simulated_annealing']['runtime_seconds']:.2f}s "
+                    f"({run['simulated_annealing']['generated_neighbors']} voisins générés)"
+                )
+            if run["tabu_search"] is not None:
+                lines.append(
+                    "    recherche tabou : "
+                    f"{run['tabu_search']['best_distance']:.2f} "
+                    f"en {run['tabu_search']['runtime_seconds']:.2f}s "
+                    f"({run['tabu_search']['explored_neighbors']} voisins explorés)"
+                )
 
     return "\n".join(lines)
 
@@ -369,18 +389,22 @@ def format_generation_table(suite_result):
             )
             continue
 
-        sa_gen = summary["simulated_annealing"]["generated_neighbors"]["avg"]
-        sa_acc = summary["simulated_annealing"]["accepted_moves"]["avg"]
-        tabu_exp = summary["tabu_search"]["explored_neighbors"]["avg"]
-        tabu_acc = summary["tabu_search"]["accepted_moves"]["avg"]
+        sa_gen = summary["simulated_annealing"]["generated_neighbors"]["avg"] if summary["simulated_annealing"] else None
+        sa_acc = summary["simulated_annealing"]["accepted_moves"]["avg"] if summary["simulated_annealing"] else None
+        tabu_exp = summary["tabu_search"]["explored_neighbors"]["avg"] if summary["tabu_search"] else None
+        tabu_acc = summary["tabu_search"]["accepted_moves"]["avg"] if summary["tabu_search"] else None
 
+        sa_gen_s = f"{sa_gen:12.2f}" if sa_gen is not None else f"{'—':>12}"
+        sa_acc_s = f"{sa_acc:12.2f}" if sa_acc is not None else f"{'—':>12}"
+        tabu_exp_s = f"{tabu_exp:15.2f}" if tabu_exp is not None else f"{'—':>15}"
+        tabu_acc_s = f"{tabu_acc:15.2f}" if tabu_acc is not None else f"{'—':>15}"
         lines.append(
             f"{summary['instance']:15} "
             f"{summary['vehicles']:4d} "
-            f"{sa_gen:12.2f} "
-            f"{sa_acc:12.2f} "
-            f"{tabu_exp:15.2f} "
-            f"{tabu_acc:15.2f}"
+            f"{sa_gen_s} "
+            f"{sa_acc_s} "
+            f"{tabu_exp_s} "
+            f"{tabu_acc_s}"
         )
 
     return "\n".join(lines)
@@ -400,29 +424,45 @@ def append_experiment_result(output_file, preset, result_item, check_time_window
             handle.write("status=failed\n")
             return
 
-        handle.write(
-            "summary "
-            f"initial_avg={summary['initial_distance']['avg']:.2f} "
-            f"sa_avg={summary['simulated_annealing']['best_distance']['avg']:.2f} "
-            f"tabu_avg={summary['tabu_search']['best_distance']['avg']:.2f} "
-            f"sa_time={summary['simulated_annealing']['runtime_seconds']['avg']:.2f} "
-            f"tabu_time={summary['tabu_search']['runtime_seconds']['avg']:.2f} "
-            f"sa_generated={summary['simulated_annealing']['generated_neighbors']['avg']:.2f} "
-            f"tabu_explored={summary['tabu_search']['explored_neighbors']['avg']:.2f}\n"
-        )
+        sa_sum = summary["simulated_annealing"]
+        tabu_sum = summary["tabu_search"]
+        summary_parts = [f"initial_avg={summary['initial_distance']['avg']:.2f}"]
+        if sa_sum:
+            summary_parts += [
+                f"sa_avg={sa_sum['best_distance']['avg']:.2f}",
+                f"sa_time={sa_sum['runtime_seconds']['avg']:.2f}",
+                f"sa_generated={sa_sum['generated_neighbors']['avg']:.2f}",
+            ]
+        if tabu_sum:
+            summary_parts += [
+                f"tabu_avg={tabu_sum['best_distance']['avg']:.2f}",
+                f"tabu_time={tabu_sum['runtime_seconds']['avg']:.2f}",
+                f"tabu_explored={tabu_sum['explored_neighbors']['avg']:.2f}",
+            ]
+        handle.write("summary " + " ".join(summary_parts) + "\n")
 
         for run_index, run in enumerate(raw["runs"], start=1):
             if not run["initial_feasible"]:
                 handle.write(f"run={run_index} seed={run['seed']} status=failed\n")
                 continue
 
-            handle.write(
-                f"run={run_index} seed={run['seed']} "
-                f"initial={run['initial_distance']:.2f} "
-                f"sa={run['simulated_annealing']['best_distance']:.2f} "
-                f"sa_time={run['simulated_annealing']['runtime_seconds']:.2f} "
-                f"sa_generated={run['simulated_annealing']['generated_neighbors']} "
-                f"tabu={run['tabu_search']['best_distance']:.2f} "
-                f"tabu_time={run['tabu_search']['runtime_seconds']:.2f} "
-                f"tabu_explored={run['tabu_search']['explored_neighbors']}\n"
-            )
+            run_parts = [
+                f"run={run_index}",
+                f"seed={run['seed']}",
+                f"initial={run['initial_distance']:.2f}",
+            ]
+            if run["simulated_annealing"] is not None:
+                sa = run["simulated_annealing"]
+                run_parts += [
+                    f"sa={sa['best_distance']:.2f}",
+                    f"sa_time={sa['runtime_seconds']:.2f}",
+                    f"sa_generated={sa['generated_neighbors']}",
+                ]
+            if run["tabu_search"] is not None:
+                tb = run["tabu_search"]
+                run_parts += [
+                    f"tabu={tb['best_distance']:.2f}",
+                    f"tabu_time={tb['runtime_seconds']:.2f}",
+                    f"tabu_explored={tb['explored_neighbors']}",
+                ]
+            handle.write(" ".join(run_parts) + "\n")

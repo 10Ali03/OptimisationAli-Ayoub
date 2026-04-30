@@ -1068,3 +1068,128 @@ Ce qu'il reste vraiment avant rendu :
 - conséquence sur le rapport :
   - renforcement du message "analyse globale + cas marquants"
   - conclusion resserrée pour rappeler que les études de cas servent d'interprétation et non de base statistique unique
+
+---
+
+# 23. Mise à jour du 2026-04-30
+
+## Diagnostic et amélioration du preset `long`
+
+**Problème identifié** : le preset `long` était trop conservateur.
+- Recuit simulé (RS) : 1200 itérations avec refroidissement 0.995 → la température descendait sous le seuil d'exploration utile (~1.4°C) après seulement **887 itérations** ; les 313 dernières étaient inutiles (descente pure)
+- Recherche tabou : seulement 20 itérations × 100 voisins = 2000 évaluations, insuffisant pour s'extraire des optima locaux
+
+**Correction appliquée** dans `src/solver.py` :
+```python
+LONG_PRESET = ExperimentPreset(
+    name="long",
+    sa_iterations=2500,
+    sa_temperature=150.0,
+    sa_cooling_rate=0.997,
+    sa_neighbor_attempts=100,
+    tabu_iterations=40,
+    tabu_tenure=20,
+    tabu_max_neighbors=150,
+    repetitions=3,
+)
+```
+Effet : avec cooling=0.997 et 2500 itérations, le RS explore utilement pendant ~1555 itérations (vs 887 avant, +75%). La tabou passe à 40×150=6000 évaluations vs 2000 (×3).
+
+`rapport.tex` mis à jour : tableau des paramètres synchronisé avec le nouveau preset.
+
+## Résultats CVRP `long` améliorés (2026-04-30)
+
+Logs : `tmp/experiments/improved_long_cvrp.log`
+
+| Instance | k | Init moy | SA moy | Tabou moy | Temps SA | Temps tabou |
+|---|---|---|---|---|---|---|
+| data101.vrp  | 8 | 3649.06 | **1488.99** | 1776.59 | 0.51 | 1.19 |
+| data102.vrp  | 8 | 3647.26 | **1572.25** | 1846.33 | 0.56 | 1.33 |
+| data1101.vrp | 9 | 4635.30 | **1971.79** | 2301.35 | 0.76 | 1.77 |
+| data1102.vrp | 9 | 4783.86 | **1988.77** | 2344.61 | 0.74 | 1.94 |
+| data111.vrp  | 8 | 3498.39 | **1531.17** | 1806.32 | 0.54 | 1.44 |
+| data112.vrp  | 8 | 3629.29 | **1484.82** | 1831.06 | 0.70 | 1.62 |
+| data1201.vrp | 2 | 4441.38 | **1531.84** | 1870.48 | 0.54 | 1.29 |
+| data1202.vrp | 2 | 4483.64 | **1594.21** | 1892.68 | 0.62 | 1.43 |
+| data201.vrp  | 2 | 3432.02 | **1276.75** | 1614.32 | 0.45 | 1.11 |
+| data202.vrp  | 2 | 3451.40 | **1313.29** | 1525.08 | 0.52 | 1.21 |
+
+Comparé à l'ancien preset : SA améliore de ~15-24%, Tabou de ~21-36% sur tout le corpus CVRP.
+Meilleure valeur observée data101 CVRP (run individuel) : **1438.10**.
+
+## Résultats VRPTW `long` améliorés — data101 seul à ce stade (2026-04-30)
+
+Logs : `tmp/experiments/improved_long_vrptw.log` (en cours à 10:59)
+
+| Instance | k | Init moy | SA moy | Tabou moy | Temps SA | Temps tabou |
+|---|---|---|---|---|---|---|
+| data101.vrp | 21 | 2127.09 | **1744.18** | **1746.76** | 38.22 | 163.55 |
+
+Observations :
+- RS et Tabou sont maintenant **quasi-identiques** sur data101 VRPTW (1744 vs 1747)
+- RS était 1756 avant, Tabou 1853 avant → Tabou améliorée de -5.7%
+- Les 9 autres instances VRPTW sont encore en cours
+
+## Résultats VRPTW `long` améliorés — complets (2026-04-30)
+
+Logs : `tmp/experiments/improved_long_vrptw.log`
+
+| Instance | k | Init moy | SA moy | Tabou moy | Temps SA | Temps tabou |
+|---|---|---|---|---|---|---|
+| data101.vrp  | 21 | 2127.09 | 1744.18 | 1746.76 | 38.22  | 163.55 |
+| data102.vrp  | 18 | 1794.68 | 1624.00 | 1536.16 | 6.23   | 28.60  |
+| data1101.vrp | 18 | 2184.86 | 1800.45 | 1790.35 | 9.42   | 58.78  |
+| data1102.vrp | 16 | 2035.58 | 1692.94 | 1652.58 | 8.23   | 31.51  |
+| data111.vrp  | 14 | 1601.37 | 1321.15 | 1310.27 | 4.13   | 13.85  |
+| data112.vrp  | 12 | 1434.70 | 1167.36 | 1182.16 | 4.27   | 15.17  |
+| data1201.vrp | 5  | 1970.77 | 1704.66 | 1506.00 | 4.13   | 16.49  |
+| data1202.vrp | 4  | 1948.06 | 1604.65 | 1499.79 | 3.67   | 11.09  |
+| data201.vrp  | 5  | 1640.28 | 1513.91 | 1310.55 | 3.71   | 11.54  |
+| data202.vrp  | 5  | 1600.20 | 1514.41 | 1238.85 | 1.92   | 5.04   |
+
+Nouveaux constats VRPTW :
+- Tabou meilleure sur 8/10 instances (était 8/10 avant, mais les marges sont plus grandes)
+- data101 : quasi-parité (SA=1744, Tabou=1747, écart < 3)
+- data112 : SA légèrement meilleure (1167 vs 1182)
+- data202 : Tabou domine nettement (1239 vs 1514)
+
+## État final à 11:30 (2026-04-30)
+
+- CVRP `long` : terminé → `tmp/experiments/improved_long_cvrp.log`
+- VRPTW `long` : terminé → `tmp/experiments/improved_long_vrptw.log`
+- `rapport.tex` : toutes les tables et analyses textuelles mises à jour
+- `rapport.pdf` : recompilé avec succès (34 pages)
+- `src/solver.py` : preset `long` mis à jour
+
+## Diagnostic gap data101 VRPTW (2026-04-30)
+
+Constat : SA data101 VRPTW converge autour de 1744 (meilleur run 1706), alors que ~1650 est obtenu par d'autres implémentations.
+
+Diagnostic confirmé par tests :
+- `find_minimum_vehicles` → 21 véhicules (greedy construction, borne LB=8)
+- Taux d'échec voisinage = 3% seulement → pas un problème de faisabilité
+- 5000 itérations → 1711 (quasi-identique à 2500 iter → 1707) : le gap n'est PAS un problème de budget
+- Nombre de véhicules reste 21 en fin d'optimisation : aucune route jamais vidée avec nos opérateurs
+
+**Cause réelle** : opérateurs de voisinage trop limités.
+- Nos opérateurs : relocate (1 client), swap (2 clients), 2-opt intra-route
+- Manquant : Or-opt(2) (déplacer 2 clients consécutifs), 2-opt* inter-routes
+
+**Décision** : option 1 acceptée — documenter le gap dans le rapport plutôt que d'implémenter Or-opt(2) à J-4.
+
+## Rapport mis à jour (2026-04-30 session 2)
+
+- Section "Structure du code" : arborescence complète avec tous les fichiers (construction.py ajouté, data/ et figures/ ajoutés)
+- Nouvelle section "Mode opératoire" : guide utilisateur complet (prérequis, commandes, options)
+- Cas data101 VRPTW : mention du gap ~5% par rapport aux ~1650 théoriques
+- Section "Limites" : bullet Or-opt(2)/2-opt* explicite
+- Conclusion : mention spécifique des opérateurs manquants
+- `generate_figures.py` exécuté → 5 figures régénérées avec nouvelles valeurs
+- `rapport.pdf` recompilé (35 pages)
+
+## Ce qui reste avant rendu
+
+- Relire visuellement `rapport.pdf` une dernière fois
+- Vérifier que la page de garde a les bons noms (El Bouazzaoui Ali / Nadir Ayoub ✓)
+- Créer le ZIP pour Moodle
+- Nettoyer les fichiers temporaires dans `tmp/` si voulu

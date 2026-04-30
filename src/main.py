@@ -188,6 +188,12 @@ def parse_args():
         help="active la version avec fenêtres de temps en mode experiment",
     )
     parser.add_argument(
+        "--method",
+        choices=("sa", "tabu", "both"),
+        default="both",
+        help="méthode à exécuter : sa (recuit simulé), tabu (recherche tabou), both (les deux, défaut)",
+    )
+    parser.add_argument(
         "--output-file",
         default="experiment_results.log",
         help="fichier texte où enregistrer les resultats des campagnes experimentales",
@@ -224,6 +230,7 @@ def main():
             limit=None,
             check_time_windows=args.time_windows,
             output_path=args.output_file,
+            method=args.method,
         )
         print(format_experiment_table(suite_result))
         print(format_generation_table(suite_result))
