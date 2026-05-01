@@ -130,6 +130,133 @@ Le sujet demande explicitement :
 Nous considérons d'abord le problème \textbf{sans fenêtres temporelles}, ce qui revient à traiter un \textbf{Capacitated Vehicle Routing Problem (CVRP)}. Les fenêtres de temps sont ensuite réintroduites pour traiter le problème complet.
 
 % --------------------------------------------------
+\section{Mode opératoire}
+\label{sec:modeop}
+% --------------------------------------------------
+
+Cette section décrit comment reproduire nos expériences ou tester les algorithmes sur de nouvelles instances.
+
+\subsection{Prérequis}
+
+Le projet nécessite \textbf{Python 3.10} ou supérieur. Les dépendances pour l'affichage des figures sont installables avec :
+
+\begin{lstlisting}
+pip install matplotlib numpy
+\end{lstlisting}
+
+La résolution exacte (section bonus) nécessite en plus :
+
+\begin{lstlisting}
+pip install ortools
+\end{lstlisting}
+
+\subsection{Organisation des fichiers}
+
+La structure du projet est la suivante :
+
+\begin{lstlisting}
+OptimisationAli-Ayoub/
+  data/                # instances .vrp a placer ici
+    data101.vrp
+    data102.vrp
+    data111.vrp
+    data112.vrp
+    data201.vrp
+    data202.vrp
+    data1101.vrp
+    data1102.vrp
+    data1201.vrp
+    data1202.vrp
+  src/
+    main.py              # point d'entree principal
+    model.py             # structures de donnees
+    io_utils.py          # lecture des fichiers .vrp
+    evaluate.py          # calcul distances et faisabilite
+    construction.py      # construction de solutions initiales
+    neighbors.py         # operateurs de voisinage
+    solver.py            # pilotage des experiences
+    bonus_exact.py       # resolution exacte (OR-Tools)
+    meta/
+      simulated_annealing.py
+      tabu_search.py
+  rapport.pdf
+\end{lstlisting}
+
+Les fichiers d'instances \texttt{.vrp} doivent être placés dans un dossier \texttt{data/} à la racine du projet avant de lancer les commandes.
+
+Toutes les commandes ci-dessous sont à lancer \textbf{depuis la racine du projet} (dossier \texttt{OptimisationAli-Ayoub/}).
+
+\subsection{Mode aperçu (défaut)}
+
+La commande suivante affiche un résumé complet des instances, le nombre minimal de véhicules en CVRP et VRPTW, des solutions aléatoires générées, et une première comparaison rapide des deux métaheuristiques :
+
+\begin{lstlisting}
+python src/main.py
+\end{lstlisting}
+
+\subsection{Mode expérimentation}
+
+\paragraph{CVRP — preset rapide.}
+Lance une campagne sur l'ensemble des instances sans fenêtres de temps, en quelques secondes :
+
+\begin{lstlisting}
+python src/main.py --mode experiment --preset quick
+\end{lstlisting}
+
+\paragraph{CVRP — preset long.}
+Lance la campagne complète avec davantage d'itérations et trois répétitions par instance (quelques minutes) :
+
+\begin{lstlisting}
+python src/main.py --mode experiment --preset long
+\end{lstlisting}
+
+\paragraph{VRPTW.}
+L'option \texttt{--time-windows} active les fenêtres de temps :
+
+\begin{lstlisting}
+python src/main.py --mode experiment --preset long --time-windows
+\end{lstlisting}
+
+\paragraph{Instance unique avec détail run par run.}
+
+\begin{lstlisting}
+python src/main.py --mode experiment --preset quick \
+    --instances data101.vrp --details
+\end{lstlisting}
+
+Les résultats sont enregistrés automatiquement dans \texttt{experiment\_results.log}. Un autre fichier peut être choisi avec \texttt{--output-file nom.log}.
+
+\subsection{Mode bonus — résolution exacte}
+
+Ce mode requiert OR-Tools. Il lance une résolution exacte sur des sous-instances de taille croissante extraites de \texttt{data101.vrp} :
+
+\begin{lstlisting}
+python src/main.py --mode bonus \
+    --sizes 5 10 15 20 25 30 --time-limit 10
+\end{lstlisting}
+
+\subsection{Récapitulatif des options de \texttt{main.py}}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Option & Description \\
+\midrule
+\texttt{--mode} & \texttt{overview} (défaut), \texttt{experiment}, \texttt{bonus} \\
+\texttt{--preset} & \texttt{quick} ou \texttt{long} \\
+\texttt{--instances} & fichiers \texttt{.vrp}, ex.\ \texttt{data101.vrp data202.vrp} \\
+\texttt{--limit} & nombre maximal d'instances à traiter \\
+\texttt{--time-windows} & active les contraintes temporelles (VRPTW) \\
+\texttt{--method} & \texttt{both} (défaut), \texttt{sa} ou \texttt{tabu} \\
+\texttt{--details} & affiche le détail par répétition \\
+\texttt{--output-file} & fichier de sortie pour les résultats \\
+\texttt{--sizes} & tailles des sous-instances (mode bonus) \\
+\texttt{--time-limit} & limite de temps par sous-instance (mode bonus, en s) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% --------------------------------------------------
 \section{Organisation du projet}
 % --------------------------------------------------
 
@@ -297,15 +424,6 @@ OptimisationAli-Ayoub/
     meta/
       simulated_annealing.py
       tabu_search.py
-  data/
-    data101.vrp  data102.vrp  data1101.vrp  data1102.vrp
-    data111.vrp  data112.vrp  data1201.vrp  data1202.vrp
-    data201.vrp  data202.vrp
-  figures/
-    comparison_distances.png   comparison_times.png
-    comparison_vehicles.png    convergence_data101_cvrp.png
-    convergence_data1201_vrptw.png
-    routes_data1201_comparison.png
   rapport.pdf
 \end{lstlisting}
 
@@ -363,69 +481,64 @@ Enfin, cette structure a aussi été pensée en fonction du rapport expérimenta
 Autrement dit, l'organisation du code soutient directement la clarté de l'analyse présentée dans le rapport.
 
 \subsection{\texttt{main.py}}
-Point d'entrée du programme. Il permet de charger une instance, de lancer l'algorithme choisi et d'afficher ou sauvegarder les résultats.
+Point d'entrée unique du programme. Il expose trois modes d'exécution via des arguments en ligne de commande :
+\begin{itemize}
+    \item \textbf{overview} (défaut) : affiche le résumé des instances, la recherche du nombre minimal de véhicules en CVRP et VRPTW, la génération de solutions aléatoires, et une première comparaison des métaheuristiques ;
+    \item \textbf{experiment} : lance une campagne structurée, avec choix du préréglage (\texttt{quick} ou \texttt{long}), de la méthode (\texttt{sa}, \texttt{tabu} ou \texttt{both}), du mode CVRP ou VRPTW, et des instances cibles ;
+    \item \textbf{bonus} : applique un solveur exact (OR-Tools) à des sous-instances de taille croissante pour identifier le seuil de difficulté calculatoire.
+\end{itemize}
 
 \subsection{\texttt{model.py}}
-Ce fichier contient les structures de données principales :
+Définit les trois structures de données fondamentales du projet sous forme de \textit{dataclasses} Python :
 \begin{itemize}
-    \item client ;
-    \item dépôt ;
-    \item instance ;
-    \item solution.
+    \item \texttt{Depot} : coordonnées \((x,y)\) et fenêtre de temps du dépôt ;
+    \item \texttt{Client} : coordonnées, fenêtre de temps \([a_i, b_i]\), demande \(q_i\) et durée de service \(s_i\) ;
+    \item \texttt{VRPTWInstance} : agrégat complet d'une instance (dépôt, dictionnaire de clients indexés, capacité maximale \(Q\)).
 \end{itemize}
+Ces structures sont importées par tous les autres modules, assurant une représentation uniforme des données dans l'ensemble du projet.
 
 \subsection{\texttt{io\_utils.py}}
-Ce module est chargé de la lecture des fichiers \texttt{.vrp} et de la sauvegarde des solutions au format JSON.
+Parse les fichiers texte au format \texttt{.vrp} et retourne un objet \texttt{VRPTWInstance}. Il lit séquentiellement les métadonnées (nom, type, nombre de clients, capacité), les données du dépôt, puis celles de chaque client, et vérifie la cohérence entre le nombre de clients déclaré et le nombre effectivement lu.
 
 \subsection{\texttt{evaluate.py}}
-Ce fichier regroupe les fonctions de calcul :
+Noyau de calcul partagé par tous les modules. Pour une tournée donnée, il calcule :
 \begin{itemize}
-    \item distance totale ;
-    \item faisabilité d'une tournée ;
-    \item respect de la capacité ;
-    \item respect des fenêtres de temps.
+    \item la distance totale euclidienne, avec un cache des distances précalculées pour éviter les recalculs ;
+    \item le profil temporel complet : temps d'arrivée, attente éventuelle, début et fin de service à chaque client, temps de retour au dépôt ;
+    \item la faisabilité en capacité et la faisabilité temporelle, évaluées séparément.
 \end{itemize}
+Ce module joue un rôle central : toutes les décisions d'acceptation ou de rejet d'une solution — construction, voisinage, métaheuristiques — passent exclusivement par ses fonctions.
 
-Dans l'état actuel du projet, ce module joue un rôle central car il sert de base commune à toutes les étapes suivantes. Nous y avons regroupé les calculs de distance d'une tournée, de charge, ainsi que l'évaluation temporelle détaillée d'une route.
-
-Plus précisément, pour une tournée donnée, nous calculons successivement :
+\subsection{\texttt{construction.py}}
+Fournit les heuristiques de construction des solutions initiales. Deux stratégies sont implémentées :
 \begin{itemize}
-    \item le temps d'arrivée à chaque client ;
-    \item le temps d'attente éventuel si le véhicule arrive avant l'ouverture de la fenêtre ;
-    \item l'instant de début de service ;
-    \item l'instant de départ après service ;
-    \item le temps de retour au dépôt.
+    \item une construction \textbf{déterministe par insertion faisable} : insère les clients un par un à la meilleure position admissible ; utilisée comme filet de sécurité sur les instances VRPTW fortement contraintes ;
+    \item une construction \textbf{aléatoire randomisée} : choisit parmi les insertions les moins coûteuses, produisant des solutions variées pour favoriser la diversité des points de départ.
 \end{itemize}
-
-Cette évaluation permet de tester séparément la faisabilité en capacité et la faisabilité temporelle. Elle sera réutilisée directement pour le générateur aléatoire de solutions initiales, puis pour les opérateurs de voisinage et les métaheuristiques.
-
-\subsection{\texttt{solver.py}}
-Interface de haut niveau permettant de lancer les différentes méthodes de résolution.
+Ce module inclut également la fonction \texttt{find\_minimum\_vehicles}, qui incrémente \(k\) depuis la borne inférieure capacitaire jusqu'à trouver un nombre de véhicules faisable.
 
 \subsection{\texttt{neighbors.py}}
-Ce module contiendra les opérateurs de voisinage utilisés par les métaheuristiques, par exemple :
+Implémente les cinq opérateurs de voisinage utilisés par les deux métaheuristiques :
 \begin{itemize}
-    \item déplacement d'un client ;
-    \item échange de clients ;
-    \item inversion de segment (\texttt{2-opt}) ;
-    \item opérateurs intra-route et inter-route.
+    \item \texttt{relocate} : déplace un client vers une autre position, éventuellement dans une autre tournée ; les routes devenues vides sont supprimées automatiquement, permettant de réduire le nombre de véhicules en cours d'optimisation ;
+    \item \texttt{swap} : échange deux clients entre eux, quelle que soit leur tournée d'origine ;
+    \item \texttt{2-opt} : inverse un segment à l'intérieur d'une même tournée, supprimant les croisements locaux ;
+    \item \texttt{or\_opt2} : déplace une paire de clients consécutifs vers une autre position dans la même tournée ou dans une autre, couvrant des restructurations que \texttt{relocate} ne peut pas atteindre ;
+    \item \texttt{2-opt$^*$} : échange les suffixes de deux tournées distinctes, permettant des réorganisations globales entre routes.
 \end{itemize}
+Chaque candidat est validé par \texttt{evaluate.py} avant d'être retenu, garantissant que seules des solutions faisables sont proposées aux métaheuristiques.
 
-Dans l'état actuel du projet, une première version de ce module a été implémentée. Elle permet de générer des voisins faisables à partir de trois opérateurs classiques :
-\begin{itemize}
-    \item \texttt{relocate}, qui déplace un client d'une position à une autre, éventuellement dans une autre tournée ;
-    \item \texttt{swap}, qui échange deux clients ;
-    \item \texttt{2-opt}, qui inverse un segment à l'intérieur d'une tournée.
-\end{itemize}
+\subsection{\texttt{solver.py}}
+Orchestre les campagnes expérimentales. Il définit les deux préréglages (\texttt{quick} et \texttt{long}) comme structures immuables, lance les répétitions avec des graines déterministes, collecte les statistiques (moyenne, min, max) sur les distances et les temps d'exécution, et écrit les résultats dans un fichier de log. Il expose également les fonctions de formatage des tableaux récapitulatifs affichés en fin de campagne.
 
-Chaque voisin généré est filtré par le module \texttt{evaluate.py}, ce qui garantit que seuls des candidats faisables sont conservés. Cette décision simplifie la mise en place des métaheuristiques, qui pourront se concentrer sur la stratégie d'exploration plutôt que sur la gestion locale des contraintes.
+\subsection{\texttt{meta/simulated\_annealing.py}}
+Implémente le recuit simulé. À chaque itération, un voisin faisable est tiré aléatoirement via l'un des trois opérateurs. Il est accepté systématiquement s'il améliore la solution courante, ou avec probabilité $\exp(-\Delta/T)$ sinon — où $T$ décroît géométriquement à chaque itération selon le facteur de refroidissement. La meilleure solution rencontrée est mémorisée tout au long de la recherche, indépendamment de la solution courante.
 
-\subsection{\texttt{meta/}}
-Ce dossier contiendra les deux métaheuristiques retenues dans le projet :
-\begin{itemize}
-    \item recuit simulé ;
-    \item recherche tabou.
-\end{itemize}
+\subsection{\texttt{meta/tabu\_search.py}}
+Implémente la recherche tabou. À chaque itération, un ensemble de voisins est échantillonné aléatoirement, puis le meilleur candidat non tabou est sélectionné. La mémoire tabou est une liste FIFO de signatures de solutions récemment visitées, de taille \textit{tenure}. Un critère d'aspiration permet d'accepter une solution tabou si elle améliore le meilleur résultat global connu.
+
+\subsection{\texttt{bonus\_exact.py}}
+Construit et résout des sous-instances de taille croissante via OR-Tools (solveur SCIP). Pour chaque taille \(n\), les \(n\) premiers clients de l'instance source sont extraits, le CVRP correspondant est modélisé en programme linéaire en nombres entiers, et soumis au solveur avec une limite de temps configurable. Les résultats indiquent le statut (optimal, réalisable ou infaisable) et l'objectif atteint.
 
 % --------------------------------------------------
 \section{Détermination du nombre minimal de véhicules}
@@ -658,7 +771,7 @@ Après ce premier test ciblé, nous avons lancé une première campagne \texttt{
 \begin{center}
 \begin{tabular}{lcccccc}
 \toprule
-Instance & \(k\) & Init. & RS & Tabou & Temps RS & Temps tabou \\
+Instance & \(k\) & Init. & RS & Tabou & Temps RS (s) & Temps tabou (s) \\
 \midrule
 data101.vrp  & 21 & 2127.09 & 1906.31 & 1995.52 & 4.77 & 5.20 \\  % campagne quick
 data102.vrp  & 18 & 1794.68 & 1703.70 & 1766.13 & 1.22 & 1.94 \\
@@ -692,35 +805,34 @@ Nous avons ensuite prolongé cette étude avec une campagne \texttt{long} compl�
 \begin{center}
 \begin{tabular}{lcccccc}
 \toprule
-Instance & \(k\) & Init. moy. & RS moy. & Tabou moy. & Temps RS & Temps tabou \\
+Instance & \(k\) & Init. moy. & RS moy. & Tabou moy. & Temps RS (s) & Temps tabou (s) \\
 \midrule
-data101.vrp  & 21 & 2127.09 & 1744.18 & 1746.76 & 38.22 & 163.55 \\
-data102.vrp  & 18 & 1794.68 & 1624.00 & 1536.16 & 6.23  & 28.60  \\
-data1101.vrp & 18 & 2184.86 & 1800.45 & 1790.35 & 9.42  & 58.78  \\
-data1102.vrp & 16 & 2035.58 & 1692.94 & 1652.58 & 8.23  & 31.51  \\
-data111.vrp  & 14 & 1601.37 & 1321.15 & 1310.27 & 4.13  & 13.85  \\
-data112.vrp  & 12 & 1434.70 & 1167.36 & 1182.16 & 4.27  & 15.17  \\
-data1201.vrp & 5  & 1970.77 & 1704.66 & 1506.00 & 4.13  & 16.49  \\
-data1202.vrp & 4  & 1948.06 & 1604.65 & 1499.79 & 3.67  & 11.09  \\
-data201.vrp  & 5  & 1640.28 & 1513.91 & 1310.55 & 3.71  & 11.54  \\
-data202.vrp  & 5  & 1600.20 & 1514.41 & 1238.85 & 1.92  & 5.04   \\
+data101.vrp  & 21 & 2127.09 & 1706.28 & 1683.01 & 56.81 & 336.61 \\
+data102.vrp  & 18 & 1794.68 & 1584.73 & 1488.40 & 17.78 & 88.36  \\
+data1101.vrp & 18 & 2184.86 & 1740.38 & 1713.19 & 31.90 & 214.38$^*$ \\
+data1102.vrp & 16 & 2029.10 & 1593.91 & 1532.88 & 20.07 & 127.15 \\
+data111.vrp  & 14 & 1601.37 & 1238.83 & 1190.92 & 13.34 & 49.77  \\
+data112.vrp  & 12 & 1434.70 & 1105.87 & 1060.79 & 16.25 & 68.33  \\
+data1201.vrp & 5  & 2027.69 & 1544.00 & 1445.97 & 12.31 & 54.46  \\
+data1202.vrp & 4  & 1904.74 & 1443.74 & 1360.69 & 10.53 & 44.16  \\
+data201.vrp  & 5  & 1653.00 & 1378.63 & 1268.26 &  9.35 & 44.81  \\
+data202.vrp  & 5  & 1498.84 & 1331.76 & 1156.67 &  5.18 & 21.02  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \subsection{Analyse de la campagne VRPTW longue}
-Cette campagne longue confirme et clarifie plusieurs tendances déjà visibles en mode rapide.
+Cette campagne longue confirme et clarifie plusieurs tendances déjà visibles en mode rapide. Les résultats ci-dessus correspondent à des moyennes sur cinq répétitions ; le temps tabou de \texttt{data1101.vrp} est reporté avec un astérisque car le run~3 a enregistré un temps de \(5899\) s dû à une suspension système (la valeur \(214\) s correspond à la moyenne des quatre autres runs).
 
 \begin{itemize}
     \item Le recuit simulé améliore systématiquement les solutions initiales sur l'ensemble du corpus.
-    \item La recherche tabou améliore elle aussi systématiquement les solutions et devient meilleure que le recuit simulé sur huit des dix instances VRPTW.
-    \item Sur \texttt{data101.vrp} (l'instance la plus contrainte, \(k=21\)), les deux méthodes sont quasi-à-parité : recuit simulé \(1744.18\) contre tabou \(1746.76\), soit un écart inférieur à \(3\) unités.
-    \item Sur \texttt{data112.vrp}, le recuit simulé garde un léger avantage (\(1167.36\) contre \(1182.16\)).
-    \item Sur toutes les autres instances, la recherche tabou s'impose clairement, avec des avantages particulièrement nets sur \texttt{data1201.vrp} (\(1506.00\) contre \(1704.66\)), \texttt{data201.vrp} (\(1310.55\) contre \(1513.91\)) et \texttt{data202.vrp} (\(1238.85\) contre \(1514.41\)).
-    \item Le coût en temps de la recherche tabou augmente sensiblement sur les cas difficiles, notamment \texttt{data101.vrp} (\(163.55\) s pour 3 répétitions), mais reste raisonnable sur la majorité du corpus.
+    \item La recherche tabou améliore elle aussi systématiquement les solutions et devient meilleure que le recuit simulé sur la totalité des dix instances VRPTW.
+    \item Sur \texttt{data101.vrp} (l'instance la plus contrainte, \(k=21\)), la tabou l'emporte nettement : \(1683.01\) contre \(1706.28\) pour le recuit simulé.
+    \item Les avantages sont particulièrement nets sur \texttt{data1201.vrp} (\(1445.97\) contre \(1544.00\)), \texttt{data201.vrp} (\(1268.26\) contre \(1378.63\)) et \texttt{data202.vrp} (\(1156.67\) contre \(1331.76\)).
+    \item Le coût en temps de la recherche tabou augmente sensiblement sur les cas difficiles (plusieurs minutes par instance pour \texttt{data101.vrp} et \texttt{data1101.vrp}), mais reste raisonnable sur la majorité du corpus.
 \end{itemize}
 
-Nous observons que la recherche tabou fournit en moyenne de meilleures solutions que le recuit simulé sur huit instances VRPTW sur dix, avec deux exceptions mineures où les deux méthodes sont très proches. Ce comportement s'explique probablement par sa capacité à éviter plus efficacement les cycles tout en maintenant une exploration dirigée de l'espace faisable malgré les blocages locaux. Cette campagne longue confirme donc notre lecture finale du projet : dans le cas VRPTW, une recherche tabou correctement paramétrée devient très compétitive, et souvent meilleure que le recuit simulé, au prix d'un surcoût en temps notable sur les cas les plus contraints.
+Nous observons que la recherche tabou fournit de meilleures solutions que le recuit simulé sur les dix instances VRPTW. Ce comportement s'explique par sa capacité à éviter plus efficacement les cycles tout en maintenant une exploration dirigée de l'espace faisable malgré les blocages locaux, et il est renforcé ici par les opérateurs Or-opt(2) et 2-opt$^*$ qui donnent à la tabou un espace de déplacement plus riche. Cette campagne longue confirme donc notre lecture finale du projet : dans le cas VRPTW, la recherche tabou correctement paramétrée est systématiquement meilleure que le recuit simulé, au prix d'un surcoût en temps notable sur les cas les plus contraints.
 
 Il est important de souligner que cette conclusion ne repose pas sur quelques exemples isolés, mais sur la campagne finale complète menée sur les dix instances du corpus. En revanche, pour garder un rapport lisible, nous ne détaillons pas chaque cas ligne par ligne : nous retenons ensuite quelques instances représentatives ou atypiques, qui permettent d'interpréter plus finement les tendances globales observées sur l'ensemble du corpus.
 
@@ -882,14 +994,14 @@ Le tableau suivant synthétise les paramètres utilisés dans les deux prérégl
 \toprule
 Paramètre & \texttt{quick} & \texttt{long} \\
 \midrule
-Itérations recuit simulé & 300 & 2500 \\
+Itérations recuit simulé & 300 & 3000 \\
 Température initiale & 100.0 & 150.0 \\
 Facteur de refroidissement & 0.98 & 0.997 \\
 Tentatives de voisinage par itération (RS) & 50 & 100 \\
-Itérations recherche tabou & 5 & 40 \\
+Itérations recherche tabou & 5 & 60 \\
 Tenure tabou & 5 & 20 \\
-Voisins max évalués par itération & 40 & 150 \\
-Répétitions par instance & 1 & 3 \\
+Voisins max évalués par itération & 40 & 200 \\
+Répétitions par instance & 1 & 5 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -904,7 +1016,7 @@ Les comparaisons entre recuit simulé et recherche tabou reposent sur quatre ind
 \end{itemize}
 
 \subsection{Répétitions et reproductibilité}
-Le préréglage \texttt{long} effectue deux répétitions par instance. Les graines sont fixées de manière contrôlée et dérivées d'une base commune, ce qui rend les comparaisons reproductibles. Les solutions initiales diffèrent donc d'une répétition à l'autre lorsque la génération aléatoire le permet, tout en conservant un protocole stable d'une campagne à l'autre.
+Le préréglage \texttt{long} effectue cinq répétitions par instance. Les graines sont fixées de manière contrôlée et dérivées d'une base commune, ce qui rend les comparaisons reproductibles. Les solutions initiales diffèrent donc d'une répétition à l'autre lorsque la génération aléatoire le permet, tout en conservant un protocole stable d'une campagne à l'autre.
 
 Les premières tentatives ont toutefois montré que le réglage initial du mode \texttt{long} était trop ambitieux pour la recherche tabou dans l'état actuel de l'implémentation. Nous avons donc recalibré ce préréglage afin d'obtenir un compromis plus réaliste entre profondeur de recherche et temps de calcul.
 
@@ -940,19 +1052,19 @@ Cette différence s'explique directement par les paramètres retenus et par la l
 Ce point complète utilement la comparaison temps/qualité : dans notre implémentation actuelle, la recherche tabou paie son coût en temps par une exploration plus large et plus systématique des voisinages, tandis que le recuit simulé privilégie une progression légère mais très fréquente.
 
 \subsection{Indicateurs de dispersion}
-Comme le préréglage \texttt{long} repose sur seulement deux répétitions, les écarts-types doivent être interprétés avec prudence. Ils donnent néanmoins une première indication de stabilité sur quelques cas représentatifs.
+Comme le préréglage \texttt{long} repose sur cinq répétitions, les indicateurs ci-dessous donnent une estimation fiable de la stabilité sur quelques cas représentatifs.
 
 \begin{center}
 \begin{tabular}{llcccc}
 \toprule
-Cadre & Instance & Méthode & Min & Max & \(\sigma\) \\
+Cadre & Instance & Méthode & Min (u.d.) & Max (u.d.) & \(\sigma\) (u.d.) \\
 \midrule
-CVRP  & data101.vrp & recuit simulé   & 1438.10 & 1568.94 & 70.1 \\
-CVRP  & data101.vrp & recherche tabou & 1697.93 & 1864.55 & 83.7 \\
-VRPTW & data101.vrp & recuit simulé   & 1706.38 & 1774.43 & 34.6 \\
-VRPTW & data101.vrp & recherche tabou & 1742.58 & 1749.66 &  3.7 \\
-VRPTW & data202.vrp & recuit simulé   & 1488.16 & 1559.43 & 39.2 \\
-VRPTW & data202.vrp & recherche tabou & 1197.50 & 1289.42 & 46.6 \\
+CVRP  & data101.vrp & recuit simulé   & 1248.02 & 1328.85 & 29.7 \\
+CVRP  & data101.vrp & recherche tabou & 1284.23 & 1453.67 & 57.8 \\
+VRPTW & data101.vrp & recuit simulé   & 1685.67 & 1718.40 & 11.1 \\
+VRPTW & data101.vrp & recherche tabou & 1675.10 & 1699.42 &  8.9 \\
+VRPTW & data202.vrp & recuit simulé   & 1281.71 & 1392.79 & 39.3 \\
+VRPTW & data202.vrp & recherche tabou & 1099.85 & 1206.47 & 36.4 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1047,7 +1159,7 @@ Comme pour \texttt{data1201.vrp} et \texttt{data1202.vrp}, les temps restent tr�
     \item le recuit simulé améliore systématiquement et fortement les solutions initiales ;
     \item la recherche tabou améliore également nettement les solutions après recalibrage, mais reste globalement en retrait par rapport au recuit simulé dans la version capacitaire ;
     \item le coût de calcul du recuit simulé reste faible sur toutes les instances testées ;
-    \item le coût de calcul de la recherche tabou reste raisonnable, généralement entre \(1.1\) et \(1.9\) secondes par bloc expérimental (3 répétitions).
+    \item le coût de calcul de la recherche tabou reste raisonnable, généralement entre \(4\) et \(17\) secondes par bloc de cinq répétitions.
 \end{itemize}
 
 Le tableau suivant résume les valeurs moyennes observées sur l'ensemble de cette première campagne longue.
@@ -1055,18 +1167,18 @@ Le tableau suivant résume les valeurs moyennes observées sur l'ensemble de cet
 \begin{center}
 \begin{tabular}{lcccccc}
 \toprule
-Instance & \(k\) & Init. moy. & RS moy. & Tabou moy. & Temps RS & Temps tabou \\
+Instance & \(k\) & Init. moy. & RS moy. & Tabou moy. & Temps RS (s) & Temps tabou (s) \\
 \midrule
-data101.vrp  & 8 & 3649.06 & 1488.99 & 1776.59 & 0.51 & 1.19 \\
-data102.vrp  & 8 & 3647.26 & 1572.25 & 1846.33 & 0.56 & 1.33 \\
-data1101.vrp & 9 & 4635.30 & 1971.79 & 2301.35 & 0.76 & 1.77 \\
-data1102.vrp & 9 & 4783.86 & 1988.77 & 2344.61 & 0.74 & 1.94 \\
-data111.vrp  & 8 & 3498.39 & 1531.17 & 1806.32 & 0.54 & 1.44 \\
-data112.vrp  & 8 & 3629.29 & 1484.82 & 1831.06 & 0.70 & 1.62 \\
-data1201.vrp & 2 & 4441.38 & 1531.84 & 1870.48 & 0.54 & 1.29 \\
-data1202.vrp & 2 & 4483.64 & 1594.21 & 1892.68 & 0.62 & 1.43 \\
-data201.vrp  & 2 & 3432.02 & 1276.75 & 1614.32 & 0.45 & 1.11 \\
-data202.vrp  & 2 & 3451.40 & 1313.29 & 1525.08 & 0.52 & 1.21 \\
+data101.vrp  & 8 & 3655.35 & 1305.33 & 1367.68 & 2.55  & 10.45 \\
+data102.vrp  & 8 & 3537.80 & 1293.09 & 1365.31 & 2.58  & 11.09 \\
+data1101.vrp & 9 & 4718.00 & 1698.95 & 1747.80 & 4.01  & 16.24 \\
+data1102.vrp & 9 & 4675.37 & 1630.59 & 1723.34 & 3.90  & 16.35 \\
+data111.vrp  & 8 & 3519.79 & 1303.22 & 1350.86 & 2.23  &  8.94 \\
+data112.vrp  & 8 & 3542.86 & 1278.01 & 1358.68 & 2.23  &  9.05 \\
+data1201.vrp & 2 & 4613.08 & 1348.31 & 1327.67 & 1.34  &  5.27 \\
+data1202.vrp & 2 & 4366.31 & 1310.44 & 1343.73 & 1.31  &  5.51 \\
+data201.vrp  & 2 & 3580.75 & 1136.44 & 1177.15 & 1.04  &  4.51 \\
+data202.vrp  & 2 & 3379.91 & 1116.25 & 1149.75 & 1.22  &  4.72 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1092,9 +1204,9 @@ Comme montré sur cette figure, la recherche tabou reste plus coûteuse en temps
 \subsection{Lecture synthétique du corpus et cas marquants}
 Les campagnes finales \texttt{long} couvrent l'ensemble des dix instances du corpus, en CVRP comme en VRPTW. Nous disposons donc bien d'une base expérimentale complète pour dégager des tendances globales ; en revanche, toutes les instances n'ont pas besoin d'un commentaire détaillé dans le corps du rapport. Nous retenons ici trois cas particulièrement informatifs.
 
-\texttt{data101.vrp} constitue d'abord le cas VRPTW le plus contraint de notre corpus, avec \(21\) véhicules nécessaires contre \(8\) en CVRP. Sur cette instance, les deux méthodes convergent vers des valeurs quasi-identiques (\(1744.18\) pour le recuit simulé contre \(1746.76\) pour la tabou, soit un écart de moins de \(3\) unités), ce qui illustre la difficulté à se distinguer lorsque l'espace faisable est extrêmement contraint. Le coût en temps est en revanche très élevé pour la tabou (\(163.55\) s pour 3 répétitions contre \(38.22\) s pour le recuit simulé). Cette instance joue donc le rôle de cas limite, utile pour comprendre le coût réel des contraintes temporelles les plus sévères. Il est important de noter que nos deux méthodes restent au-dessus des \({\approx}1650\) obtenus par des implémentations incluant des opérateurs de voisinage plus puissants (Or-opt(2), 2-opt inter-routes) ; cet écart d'environ \(5\,\%\) s'explique par nos seuls opérateurs de base (relocate, swap, 2-opt intra-route), et constitue une limite méthodologique discutée dans la section~\ref{sec:limites}.
+\texttt{data101.vrp} constitue d'abord le cas VRPTW le plus contraint de notre corpus, avec \(21\) véhicules nécessaires contre \(8\) en CVRP. Sur cette instance, la recherche tabou l'emporte avec une distance moyenne de \(1683.01\) contre \(1706.28\) pour le recuit simulé (moyenne sur cinq répétitions). L'écart de \(23\) unités (\({\approx}1{,}3\,\%\)) illustre que, même dans un espace faisable très contraint, la mémoire tabou permet d'exploiter plus finement les mouvements disponibles. Le coût en temps reste élevé pour la tabou (\({\approx}337\) s par répétition contre \({\approx}57\) s pour le recuit simulé), ce qui en fait la méthode à privilégier lorsque la qualité prime sur le temps de calcul. Cette instance joue donc le rôle de cas limite, utile pour comprendre le coût réel des contraintes temporelles les plus sévères.
 
-\texttt{data1201.vrp} est ensuite un cas charnière, car il illustre très clairement le changement de régime entre CVRP et VRPTW. Sans fenêtres de temps, \(2\) véhicules suffisent et le recuit simulé domine nettement (\(1531.84\) contre \(1870.48\)). Avec fenêtres de temps, l'instance passe à \(5\) véhicules et la recherche tabou devient meilleure (\(1506.00\) contre \(1704.66\)). La visualisation des tournées montre concrètement cette fragmentation supplémentaire et rend visible l'effet structurel des contraintes temporelles.
+\texttt{data1201.vrp} est ensuite un cas charnière, car il illustre très clairement le changement de régime entre CVRP et VRPTW. Sans fenêtres de temps, \(2\) véhicules suffisent ; la tabou passe devant légèrement (\(1327.67\) contre \(1348.31\) pour le RS). Avec fenêtres de temps, l'instance passe à \(5\) véhicules et l'avantage tabou se creuse nettement (\(1445.97\) contre \(1544.00\)). La visualisation des tournées montre concrètement cette fragmentation supplémentaire et rend visible l'effet structurel des contraintes temporelles.
 
 Enfin, \texttt{data202.vrp} constitue un cas atypique très instructif en VRPTW. Sur cette instance, le recuit simulé améliore modestement la solution initiale (de \(1600.20\) à \(1514.41\) en moyenne), tandis que la recherche tabou descend jusqu'à \(1238.85\). L'écart est particulièrement marqué (\(276\) unités), ce qui suggère que certains bassins locaux nécessitent une mémoire explicite pour être quittés efficacement, et qu'une exploration plus structurée avec mémoire tabou peut alors devenir décisive.
 
@@ -1181,129 +1293,6 @@ Clients & \(k\) & Statut & Objectif & Temps (s) \\
 L'enseignement principal est net : dans notre configuration, le solveur exact reste très efficace jusqu'à \(25\) clients, mais commence à peiner dès \(30\) clients, où il atteint déjà la limite de temps sans certifier l'optimalité. Ce seuil ne constitue pas une frontière théorique universelle, mais il donne un ordre de grandeur concret sur le moment où une approche exacte devient sensiblement plus difficile à exploiter dans ce projet.
 
 % --------------------------------------------------
-\section{Mode opératoire}
-\label{sec:modeop}
-% --------------------------------------------------
-
-Cette section décrit comment reproduire nos expériences ou tester les algorithmes sur de nouvelles instances.
-
-\subsection{Prérequis}
-
-Le projet nécessite \textbf{Python 3.10} ou supérieur. Les dépendances pour l'affichage des figures sont installables avec :
-
-\begin{lstlisting}
-pip install matplotlib numpy
-\end{lstlisting}
-
-La résolution exacte (section bonus) nécessite en plus :
-
-\begin{lstlisting}
-pip install ortools
-\end{lstlisting}
-
-\subsection{Organisation des fichiers}
-
-La structure du projet est la suivante :
-
-\begin{lstlisting}
-OptimisationAli-Ayoub/
-  src/
-    main.py              # point d'entree principal
-    model.py             # structures de donnees
-    io_utils.py          # lecture des fichiers .vrp
-    evaluate.py          # calcul distances et faisabilite
-    construction.py      # construction de solutions initiales
-    neighbors.py         # operateurs de voisinage
-    solver.py            # pilotage des experiences
-    bonus_exact.py       # resolution exacte (OR-Tools)
-    meta/
-      simulated_annealing.py
-      tabu_search.py
-  data/
-    data101.vrp  data102.vrp  data1101.vrp  data1102.vrp
-    data111.vrp  data112.vrp  data1201.vrp  data1202.vrp
-    data201.vrp  data202.vrp
-  figures/
-    comparison_distances.png   comparison_times.png
-    comparison_vehicles.png    convergence_data101_cvrp.png
-    convergence_data1201_vrptw.png
-    routes_data1201_comparison.png
-  rapport.pdf
-\end{lstlisting}
-
-Toutes les commandes ci-dessous sont à lancer \textbf{depuis la racine du projet} (dossier \texttt{OptimisationAli-Ayoub/}).
-
-\subsection{Mode aperçu (défaut)}
-
-La commande suivante affiche un résumé complet des instances, le nombre minimal de véhicules en CVRP et VRPTW, des solutions aléatoires générées, et une première comparaison rapide des deux métaheuristiques :
-
-\begin{lstlisting}
-python src/main.py
-\end{lstlisting}
-
-\subsection{Mode expérimentation}
-
-\paragraph{CVRP — preset rapide.}
-Lance une campagne sur l'ensemble des instances sans fenêtres de temps, en quelques secondes :
-
-\begin{lstlisting}
-python src/main.py --mode experiment --preset quick
-\end{lstlisting}
-
-\paragraph{CVRP — preset long.}
-Lance la campagne complète avec davantage d'itérations et trois répétitions par instance (quelques minutes) :
-
-\begin{lstlisting}
-python src/main.py --mode experiment --preset long
-\end{lstlisting}
-
-\paragraph{VRPTW.}
-L'option \texttt{--time-windows} active les fenêtres de temps :
-
-\begin{lstlisting}
-python src/main.py --mode experiment --preset long --time-windows
-\end{lstlisting}
-
-\paragraph{Instance unique avec détail run par run.}
-
-\begin{lstlisting}
-python src/main.py --mode experiment --preset quick \
-    --instances data101.vrp --details
-\end{lstlisting}
-
-Les résultats sont enregistrés automatiquement dans \texttt{experiment\_results.log}. Un autre fichier peut être choisi avec \texttt{--output-file nom.log}.
-
-\subsection{Mode bonus — résolution exacte}
-
-Ce mode requiert OR-Tools. Il lance une résolution exacte sur des sous-instances de taille croissante extraites de \texttt{data101.vrp} :
-
-\begin{lstlisting}
-python src/main.py --mode bonus \
-    --sizes 5 10 15 20 25 30 --time-limit 10
-\end{lstlisting}
-
-\subsection{Récapitulatif des options de \texttt{main.py}}
-
-\begin{center}
-\begin{tabular}{ll}
-\toprule
-Option & Description \\
-\midrule
-\texttt{--mode} & \texttt{overview} (défaut), \texttt{experiment}, \texttt{bonus} \\
-\texttt{--preset} & \texttt{quick} ou \texttt{long} \\
-\texttt{--instances} & fichiers \texttt{.vrp}, ex.\ \texttt{data101.vrp data202.vrp} \\
-\texttt{--limit} & nombre maximal d'instances à traiter \\
-\texttt{--time-windows} & active les contraintes temporelles (VRPTW) \\
-\texttt{--method} & \texttt{both} (défaut), \texttt{sa} ou \texttt{tabu} \\
-\texttt{--details} & affiche le détail par répétition \\
-\texttt{--output-file} & fichier de sortie pour les résultats \\
-\texttt{--sizes} & tailles des sous-instances (mode bonus) \\
-\texttt{--time-limit} & limite de temps par sous-instance (mode bonus, en s) \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-% --------------------------------------------------
 \section{Limites et perspectives}
 \label{sec:limites}
 % --------------------------------------------------
@@ -1312,11 +1301,10 @@ Le travail réalisé permet de répondre à l'ensemble des points principaux du 
 \begin{itemize}
     \item Dans le cas VRPTW, la génération aléatoire de solutions initiales a été nettement améliorée, mais elle reste moins robuste que dans la version purement capacitaire.
     \item La recherche tabou recalibrée obtient de très bons résultats sur la campagne finale VRPTW, mais son coût de calcul demeure plus élevé sur quelques instances difficiles, en particulier lorsque le nombre de véhicules imposé par les fenêtres de temps devient important.
-    \item Nos opérateurs de voisinage (relocate, swap et 2-opt intra-route) n'incluent pas l'Or-opt(2) ni le 2-opt inter-routes (2-opt$^*$). Sur \texttt{data101.vrp} en VRPTW, nos algorithmes convergent autour de \(1744\) en moyenne, alors que des implémentations intégrant ces opérateurs supplémentaires peuvent atteindre environ \(1650\). Cet écart d'environ \(5\,\%\) est caractéristique d'un voisinage de base ; il ne résulte pas d'un manque d'itérations (doubler le budget ne ferme pas le gap) mais bien de l'expressivité limitée du voisinage.
     \item L'étude exacte avec OR-Tools a volontairement été limitée à des sous-instances de petite taille ; elle fournit donc un ordre de grandeur utile, mais pas une frontière générale de difficulté.
 \end{itemize}
 
-Ces limites ouvrent des perspectives naturelles pour une poursuite du projet : renforcer encore l'initialisation aléatoire en VRPTW, ajouter des opérateurs de voisinage plus puissants (Or-opt(2), 2-opt inter-routes), affiner les paramètres ou la mémoire tabou sur les cas les plus contraints, et élargir l'étude exacte à d'autres familles de sous-instances.
+Ces limites ouvrent des perspectives naturelles pour une poursuite du projet : renforcer encore l'initialisation aléatoire en VRPTW, affiner les paramètres ou la mémoire tabou sur les cas les plus contraints, et élargir l'étude exacte à d'autres familles de sous-instances.
 
 % --------------------------------------------------
 \section{Conclusion}
@@ -1324,8 +1312,40 @@ Ces limites ouvrent des perspectives naturelles pour une poursuite du projet : r
 
 Ce projet aboutit à une chaîne complète de résolution du problème, de la modélisation aux campagnes expérimentales, en passant par la construction de solutions initiales, les voisinages et deux métaheuristiques distinctes.
 
-Trois résultats ressortent nettement. D'abord, sur le corpus CVRP étudié, la borne inférieure capacitaire est atteinte pour toutes les instances et coïncide donc avec le nombre minimal de véhicules observé. Ensuite, l'introduction des fenêtres de temps augmente fortement le nombre de véhicules nécessaires et resserre l'espace des solutions faisables. Enfin, les performances relatives des métaheuristiques dépendent de cette structure : le recuit simulé constitue le meilleur compromis en CVRP, alors que la recherche tabou devient globalement meilleure en VRPTW sur la campagne longue finale.
+Trois résultats ressortent nettement. D'abord, sur le corpus CVRP étudié, la borne inférieure capacitaire est atteinte pour toutes les instances et coïncide donc avec le nombre minimal de véhicules observé. Ensuite, l'introduction des fenêtres de temps augmente fortement le nombre de véhicules nécessaires et resserre l'espace des solutions faisables. Enfin, les performances relatives des métaheuristiques dépendent de cette structure : le recuit simulé constitue le meilleur compromis en CVRP (9 instances sur 10), alors que la recherche tabou devient systématiquement meilleure en VRPTW sur la totalité du corpus dans la campagne longue finale.
 
-Ces conclusions reposent sur l'ensemble du corpus final et non sur quelques exemples isolés ; les études de cas détaillées servent seulement à interpréter les comportements les plus marquants. Les principales limites concernent la robustesse encore partielle du générateur aléatoire en VRPTW et le coût plus élevé de la recherche tabou sur certains cas extrêmes. Des améliorations naturelles incluent l'ajout d'opérateurs de voisinage plus puissants tels que l'Or-opt(2) ou le 2-opt inter-routes, des stratégies hybrides et des approches exactes sur de petits sous-problèmes.
+\subsection{Comment nous cherchons l'optimum}
+
+Notre stratégie de résolution repose sur une décomposition en trois couches.
+
+\textbf{Couche 1 — Construction.} Nous déterminons d'abord le nombre minimal de véhicules $k$ par une heuristique gloutonne géographique, en incrémentant depuis la borne inférieure capacitaire $LB$ jusqu'à obtenir une solution faisable. En VRPTW, une construction déterministe par insertion prend le relais lorsque la construction aléatoire échoue. Cette solution initiale fournit un point de départ réaliste mais sous-optimal.
+
+\textbf{Couche 2 — Voisinage local.} À partir de la solution initiale, nous explorons un voisinage défini par cinq opérateurs : \textit{relocate} (déplacement d'un client vers une autre position ou tournée), \textit{swap} (échange de deux clients quelle que soit leur tournée), \textit{2-opt} intra-route (inversion d'un segment dans une même tournée), \textit{Or-opt(2)} (déplacement d'une paire de clients consécutifs) et \textit{2-opt$^*$} (échange des suffixes de deux tournées distinctes). Chaque candidat est validé par le module \texttt{evaluate.py} avant d'être proposé à la métaheuristique, garantissant que seules des solutions faisables sont examinées.
+
+\textbf{Couche 3 — Métaheuristiques.} Les deux métaheuristiques pilotent l'exploration à l'échelle globale :
+\begin{itemize}
+    \item le recuit simulé accepte des mouvements dégradants avec probabilité $\exp(-\Delta/T)$, ce qui permet d'échapper aux minima locaux ; la température $T$ décroît géométriquement selon le facteur de refroidissement $\alpha = 0{,}997$, réduisant progressivement l'exploration au profit de l'exploitation ;
+    \item la recherche tabou interdit les solutions récemment visitées (mémoire FIFO de taille \textit{tenure} = 20) et sélectionne toujours le meilleur voisin non tabou, avec un critère d'aspiration pour ne pas bloquer une amélioration globale.
+\end{itemize}
+
+Ces conclusions reposent sur l'ensemble du corpus final et non sur quelques exemples isolés ; les études de cas détaillées servent seulement à interpréter les comportements les plus marquants.
+
+\subsection{Améliorations envisageables}
+
+Plusieurs directions permettraient encore d'améliorer la qualité des résultats.
+
+\textbf{Heuristique de construction plus performante.} L'algorithme Solomon I1, qui insère les clients un par un en maximisant un critère combinant économie de distance et urgence temporelle, fournirait des solutions initiales de meilleure qualité que notre greedy géographique, notamment en VRPTW fortement contraint. Une meilleure initialisation réduirait également la dépendance aux répétitions multiples.
+
+\textbf{Refroidissement adaptatif.} Plutôt qu'un facteur de refroidissement géométrique fixe ($\alpha = 0{,}997$), un refroidissement adaptatif qui ajuste la température en fonction du taux d'acceptation des dernières itérations permettrait de mieux calibrer l'exploration sans réglage manuel des paramètres.
+
+\textbf{Séquence d'opérateurs guidée.} Plutôt qu'un tirage uniforme parmi les cinq opérateurs, une stratégie adaptative qui favorise les opérateurs ayant récemment produit des améliorations (bandit multi-bras) exploiterait plus efficacement le budget de calcul disponible.
+
+\subsection{Critique du protocole expérimental}
+
+\textbf{Diversité des solutions initiales en VRPTW.} En VRPTW fortement contraint, la construction aléatoire échoue presque systématiquement (taux d'échec supérieur à $97\,\%$ sur \texttt{data101.vrp}). Notre filet de sécurité — la construction déterministe — retourne alors toujours la même solution initiale pour toutes les répétitions. Conséquence directe : les répétitions démarrent du même point et la variabilité observée ne reflète que les fluctuations stochastiques intra-run, et non une vraie diversité inter-runs. Une initialisation basée sur plusieurs heuristiques déterministes différentes (greedy géographique, greedy temporel, Solomon I1) corrigerait ce biais.
+
+\textbf{Nombre de répétitions et significativité statistique.} Notre préréglage \texttt{long} utilise cinq répétitions. L'erreur standard sur la moyenne est $\sigma/\sqrt{n}$ : avec $n = 5$ on obtient $\sigma/2{,}24$, contre $\sigma/3{,}16$ avec $n = 10$. Augmenter à dix répétitions diviserait l'incertitude par $1{,}41$ supplémentaire, au prix d'un facteur $\times 2$ sur le temps de calcul. C'est un compromis raisonnable pour une étude définitive.
+
+\textbf{Mémoire tabou par signature globale.} Nous encodons chaque solution par sa signature complète (tuple trié des routes), qui est une représentation grossière : deux solutions très différentes topologiquement peuvent produire la même signature si elles visitent les mêmes clients dans des ordres différents. Une mémoire tabou basée sur les mouvements eux-mêmes (paire de clients concernés, type d'opérateur) serait plus précise et permettrait un tenure plus long sans sur-interdire de bons candidats.
 
 \end{document}

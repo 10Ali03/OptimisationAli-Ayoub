@@ -29,7 +29,7 @@ def tabu_search(
     k=None,
     seed=None,
     check_time_windows=False,
-    operators=("relocate", "swap", "2opt"),
+    operators=("relocate", "swap", "2opt", "or_opt2", "2opt_star"),
     max_iterations=200,
     tabu_tenure=25,
     max_neighbors=500,

@@ -1193,3 +1193,100 @@ Diagnostic confirmé par tests :
 - Vérifier que la page de garde a les bons noms (El Bouazzaoui Ali / Nadir Ayoub ✓)
 - Créer le ZIP pour Moodle
 - Nettoyer les fichiers temporaires dans `tmp/` si voulu
+
+---
+
+# 24. Mise à jour du 2026-05-01
+
+## Nouveaux opérateurs de voisinage
+
+Deux nouveaux opérateurs ajoutés dans `src/neighbors.py` :
+
+- **Or-opt(2)** : déplace une paire de clients consécutifs vers n'importe quelle position d'une tournée quelconque. Plus puissant que `relocate` car il préserve la structure locale des paires et permet de réorganiser des blocs.
+- **2-opt\*** : échange les suffixes de deux tournées distinctes (`route_i[:cut_i] + route_j[cut_j:]` et vice-versa). Opérateur inter-routes le plus expressif du projet.
+
+Fonctions ajoutées :
+- `or_opt2_neighbors` (version exhaustive)
+- `two_opt_star_neighbors` (version exhaustive)
+- `random_or_opt2_neighbor` (version stochastique)
+- `random_two_opt_star_neighbor` (version stochastique)
+
+Les dispatchers `random_neighbor`, `generate_neighbors` et `generate_sampled_neighbors` ont été mis à jour avec les branches `or_opt2` et `2opt_star`.
+
+Les deux métaheuristiques (`simulated_annealing.py` et `tabu_search.py`) utilisent maintenant les cinq opérateurs par défaut :
+`("relocate", "swap", "2opt", "or_opt2", "2opt_star")`
+
+## Preset `long` recalibré
+
+```python
+LONG_PRESET = ExperimentPreset(
+    name="long",
+    sa_iterations=3000,
+    sa_temperature=150.0,
+    sa_cooling_rate=0.997,
+    sa_neighbor_attempts=100,
+    tabu_iterations=60,
+    tabu_tenure=20,
+    tabu_max_neighbors=200,
+    repetitions=5,
+)
+```
+
+Effets : RS explore utilement pendant ~1857 itérations (T passe sous 1e-3 à l'itération 1857 avec α=0.997 et T0=150). Tabou : 60×200 = 12 000 évaluations par run, contre 6000 avant.
+
+## Affichage par run individuel
+
+`format_experiment_table` et `format_generation_table` dans `src/solver.py` affichent désormais une ligne par run individuel (avec index R), au lieu de moyennes agrégées. Permet d'identifier les runs atypiques directement dans la sortie console.
+
+## Résultats CVRP `long` — 5 répétitions (2026-05-01)
+
+| Instance | k | SA moy. | Tabou moy. | Temps RS (s) | Temps tabou (s) |
+|---|---|---|---|---|---|
+| data101.vrp  | 8 | 1305.33 | 1367.68 | 2.55  | 10.45 |
+| data102.vrp  | 8 | 1293.09 | 1365.31 | 2.58  | 11.09 |
+| data1101.vrp | 9 | 1698.95 | 1747.80 | 4.01  | 16.24 |
+| data1102.vrp | 9 | 1630.59 | 1723.34 | 3.90  | 16.35 |
+| data111.vrp  | 8 | 1303.22 | 1350.86 | 2.23  |  8.94 |
+| data112.vrp  | 8 | 1278.01 | 1358.68 | 2.23  |  9.05 |
+| data1201.vrp | 2 | 1348.31 | 1327.67 | 1.34  |  5.27 |
+| data1202.vrp | 2 | 1310.44 | 1343.73 | 1.31  |  5.51 |
+| data201.vrp  | 2 | 1136.44 | 1177.15 | 1.04  |  4.51 |
+| data202.vrp  | 2 | 1116.25 | 1149.75 | 1.22  |  4.72 |
+
+Lecture CVRP : SA meilleure sur 9/10 instances (exception : data1201 où Tabou=1327 < SA=1348).
+
+## Résultats VRPTW `long` — 5 répétitions (2026-05-01)
+
+| Instance | k | SA moy. | Tabou moy. | Temps RS (s) | Temps tabou (s) |
+|---|---|---|---|---|---|
+| data101.vrp  | 21 | 1706.28 | 1683.01 |  56.81 | 336.61 |
+| data102.vrp  | 18 | 1584.73 | 1488.40 |  17.78 |  88.36 |
+| data1101.vrp | 18 | 1740.38 | 1713.19 |  31.90 | 214.38$^*$ |
+| data1102.vrp | 16 | 1593.91 | 1532.88 |  20.07 | 127.15 |
+| data111.vrp  | 14 | 1238.83 | 1190.92 |  13.34 |  49.77 |
+| data112.vrp  | 12 | 1105.87 | 1060.79 |  16.25 |  68.33 |
+| data1201.vrp | 5  | 1544.00 | 1445.97 |  12.31 |  54.46 |
+| data1202.vrp | 4  | 1443.74 | 1360.69 |  10.53 |  44.16 |
+| data201.vrp  | 5  | 1378.63 | 1268.26 |   9.35 |  44.81 |
+| data202.vrp  | 5  | 1331.76 | 1156.67 |   5.18 |  21.02 |
+
+$^*$ data1101 VRPTW run 3 : temps tabou = 5899 s (suspension OS), résultat (1713.00) valide. Valeur 214.38 s = moyenne des 4 autres runs.
+
+Lecture VRPTW : **Tabou meilleure sur 10/10 instances** (score parfait, contre 8/10 avant les nouveaux opérateurs).
+
+## État en fin de session (2026-05-01)
+
+- `src/neighbors.py` : 5 opérateurs complets (relocate, swap, 2-opt, or-opt(2), 2-opt*)
+- `src/meta/simulated_annealing.py` : 5 opérateurs par défaut
+- `src/meta/tabu_search.py` : 5 opérateurs par défaut
+- `src/solver.py` : preset long recalibré, affichage par run individuel
+- `generate_figures.py` : données mises à jour avec résultats 5-répétitions
+- `rapport.tex` : unités (s) ajoutées aux colonnes Temps RS/tabou dans les 3 tableaux de résultats ; (u.d.) ajouté aux colonnes Min/Max/σ de la table de dispersion ; mention "cinq répétitions" dans le texte de dispersion
+- `rapport.pdf` : recompilé avec nouvelles figures et unités
+
+## Ce qui reste avant rendu
+
+- Relire visuellement `rapport.pdf` une dernière fois
+- Vérifier que la page de garde a les bons noms (El Bouazzaoui Ali / Nadir Ayoub ✓)
+- Créer le ZIP pour Moodle
+- Nettoyer les fichiers temporaires dans `tmp/` si voulu

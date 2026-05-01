@@ -39,14 +39,14 @@ QUICK_PRESET = ExperimentPreset(
 
 LONG_PRESET = ExperimentPreset(
     name="long",
-    sa_iterations=2500,
+    sa_iterations=3000,
     sa_temperature=150.0,
     sa_cooling_rate=0.997,
     sa_neighbor_attempts=100,
-    tabu_iterations=40,
+    tabu_iterations=60,
     tabu_tenure=20,
-    tabu_max_neighbors=150,
-    repetitions=3,
+    tabu_max_neighbors=200,
+    repetitions=5,
 )
 
 
@@ -300,38 +300,43 @@ def run_experiment_suite(
 def format_experiment_table(suite_result):
     lines = []
     preset = suite_result["preset"]
-    lines.append(f"\n=== Comparaison métaheuristiques ({preset.name}) ===")
+    lines.append(f"\n=== Résultats par run ({preset.name}) ===")
     lines.append(
-        f"{'Nom':15} {'k':>4} {'Init(avg)':>12} {'SA(avg)':>12} {'Tabou(avg)':>12} {'SA t(s)':>10} {'Tabou t(s)':>12}"
+        f"{'Nom':15} {'R':>3} {'k':>4} {'Initial':>12} {'SA':>12} {'Tabou':>12} {'SA t(s)':>10} {'Tabou t(s)':>12}"
     )
 
     for item in suite_result["results"]:
-        summary = item["summary"]
-        if summary["runs"] == 0:
+        raw = item["raw"]
+        instance_name = raw["instance"]
+        k = raw["vehicles"]
+
+        if not raw["runs"]:
             lines.append(
-                f"{summary['instance']:15} {'-':>4} {'échec':>12} {'-':>12} {'-':>12} {'-':>10} {'-':>12}"
+                f"{instance_name:15} {'-':>3} {'-':>4} {'échec':>12} {'-':>12} {'-':>12} {'-':>10} {'-':>12}"
             )
             continue
 
-        initial_avg = summary["initial_distance"]["avg"]
-        sa_avg = summary["simulated_annealing"]["best_distance"]["avg"] if summary["simulated_annealing"] else None
-        tabu_avg = summary["tabu_search"]["best_distance"]["avg"] if summary["tabu_search"] else None
-        sa_time = summary["simulated_annealing"]["runtime_seconds"]["avg"] if summary["simulated_annealing"] else None
-        tabu_time = summary["tabu_search"]["runtime_seconds"]["avg"] if summary["tabu_search"] else None
+        for run_index, run in enumerate(raw["runs"], start=1):
+            if not run["initial_feasible"]:
+                k_s = str(k) if k is not None else "-"
+                lines.append(
+                    f"{instance_name:15} {run_index:3d} {k_s:>4} {'échec':>12} {'-':>12} {'-':>12} {'-':>10} {'-':>12}"
+                )
+                continue
 
-        sa_avg_s = f"{sa_avg:12.2f}" if sa_avg is not None else f"{'—':>12}"
-        tabu_avg_s = f"{tabu_avg:12.2f}" if tabu_avg is not None else f"{'—':>12}"
-        sa_time_s = f"{sa_time:10.2f}" if sa_time is not None else f"{'—':>10}"
-        tabu_time_s = f"{tabu_time:12.2f}" if tabu_time is not None else f"{'—':>12}"
-        lines.append(
-            f"{summary['instance']:15} "
-            f"{summary['vehicles']:4d} "
-            f"{initial_avg:12.2f} "
-            f"{sa_avg_s} "
-            f"{tabu_avg_s} "
-            f"{sa_time_s} "
-            f"{tabu_time_s}"
-        )
+            initial = run["initial_distance"]
+            sa = run["simulated_annealing"]
+            tabu = run["tabu_search"]
+
+            sa_dist_s = f"{sa['best_distance']:12.2f}" if sa else f"{'—':>12}"
+            sa_time_s = f"{sa['runtime_seconds']:10.2f}" if sa else f"{'—':>10}"
+            tabu_dist_s = f"{tabu['best_distance']:12.2f}" if tabu else f"{'—':>12}"
+            tabu_time_s = f"{tabu['runtime_seconds']:12.2f}" if tabu else f"{'—':>12}"
+
+            lines.append(
+                f"{instance_name:15} {run_index:3d} {k:4d} {initial:12.2f} "
+                f"{sa_dist_s} {tabu_dist_s} {sa_time_s} {tabu_time_s}"
+            )
 
     return "\n".join(lines)
 
@@ -376,36 +381,32 @@ def format_experiment_details(suite_result):
 def format_generation_table(suite_result):
     lines = []
     preset = suite_result["preset"]
-    lines.append(f"\n=== Voisins générés/explorés ({preset.name}) ===")
+    lines.append(f"\n=== Voisins générés/explorés par run ({preset.name}) ===")
     lines.append(
-        f"{'Nom':15} {'k':>4} {'SA gen(avg)':>12} {'SA acc(avg)':>12} {'Tabou exp(avg)':>15} {'Tabou acc(avg)':>15}"
+        f"{'Nom':15} {'R':>3} {'k':>4} {'SA gen':>10} {'SA acc':>10} {'Tabou exp':>12} {'Tabou acc':>12}"
     )
 
     for item in suite_result["results"]:
-        summary = item["summary"]
-        if summary["runs"] == 0:
+        raw = item["raw"]
+        instance_name = raw["instance"]
+        k = raw["vehicles"]
+
+        for run_index, run in enumerate(raw["runs"], start=1):
+            if not run["initial_feasible"]:
+                continue
+
+            sa = run["simulated_annealing"]
+            tabu = run["tabu_search"]
+
+            sa_gen_s = f"{sa['generated_neighbors']:10d}" if sa else f"{'—':>10}"
+            sa_acc_s = f"{sa['accepted_moves']:10d}" if sa else f"{'—':>10}"
+            tabu_exp_s = f"{tabu['explored_neighbors']:12d}" if tabu else f"{'—':>12}"
+            tabu_acc_s = f"{tabu['accepted_moves']:12d}" if tabu else f"{'—':>12}"
+
             lines.append(
-                f"{summary['instance']:15} {'-':>4} {'-':>12} {'-':>12} {'-':>15} {'-':>15}"
+                f"{instance_name:15} {run_index:3d} {k:4d} "
+                f"{sa_gen_s} {sa_acc_s} {tabu_exp_s} {tabu_acc_s}"
             )
-            continue
-
-        sa_gen = summary["simulated_annealing"]["generated_neighbors"]["avg"] if summary["simulated_annealing"] else None
-        sa_acc = summary["simulated_annealing"]["accepted_moves"]["avg"] if summary["simulated_annealing"] else None
-        tabu_exp = summary["tabu_search"]["explored_neighbors"]["avg"] if summary["tabu_search"] else None
-        tabu_acc = summary["tabu_search"]["accepted_moves"]["avg"] if summary["tabu_search"] else None
-
-        sa_gen_s = f"{sa_gen:12.2f}" if sa_gen is not None else f"{'—':>12}"
-        sa_acc_s = f"{sa_acc:12.2f}" if sa_acc is not None else f"{'—':>12}"
-        tabu_exp_s = f"{tabu_exp:15.2f}" if tabu_exp is not None else f"{'—':>15}"
-        tabu_acc_s = f"{tabu_acc:15.2f}" if tabu_acc is not None else f"{'—':>15}"
-        lines.append(
-            f"{summary['instance']:15} "
-            f"{summary['vehicles']:4d} "
-            f"{sa_gen_s} "
-            f"{sa_acc_s} "
-            f"{tabu_exp_s} "
-            f"{tabu_acc_s}"
-        )
 
     return "\n".join(lines)
 

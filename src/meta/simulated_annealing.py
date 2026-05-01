@@ -28,7 +28,7 @@ def simulated_annealing(
     k=None,
     seed=None,
     check_time_windows=False,
-    operators=("relocate", "swap", "2opt"),
+    operators=("relocate", "swap", "2opt", "or_opt2", "2opt_star"),
     max_iterations=2000,
     initial_temperature=100.0,
     cooling_rate=0.995,
