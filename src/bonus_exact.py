@@ -52,7 +52,7 @@ def solve_cvrp_mip(instance, time_limit_seconds=30):
     solver.SetTimeLimit(int(time_limit_seconds * 1000))
 
     n = instance.nb_clients
-    k = lower_bound_vehicles(instance)
+    lb = lower_bound_vehicles(instance)
     nodes = list(range(n + 1))
     clients = list(range(1, n + 1))
 
@@ -77,8 +77,8 @@ def solve_cvrp_mip(instance, time_limit_seconds=30):
         solver.Add(sum(x[i, j] for i in nodes if i != j) == 1)
         solver.Add(sum(x[j, i] for i in nodes if i != j) == 1)
 
-    solver.Add(sum(x[0, j] for j in clients) == k)
-    solver.Add(sum(x[j, 0] for j in clients) == k)
+    solver.Add(sum(x[0, j] for j in clients) >= lb)
+    solver.Add(sum(x[j, 0] for j in clients) >= lb)
 
     demands = {i: instance.clients[i].demand for i in clients}
     for i in clients:
@@ -110,9 +110,14 @@ def solve_cvrp_mip(instance, time_limit_seconds=30):
         pywraplp.Solver.NOT_SOLVED: "NOT_SOLVED",
     }
 
+    if status in (pywraplp.Solver.OPTIMAL, pywraplp.Solver.FEASIBLE):
+        actual_vehicles = sum(1 for j in clients if x[0, j].solution_value() > 0.5)
+    else:
+        actual_vehicles = lb
+
     return ExactRunResult(
         num_clients=n,
-        num_vehicles=k,
+        num_vehicles=actual_vehicles,
         status=status_map.get(status, str(status)),
         objective=objective.Value() if status in (pywraplp.Solver.OPTIMAL, pywraplp.Solver.FEASIBLE) else None,
         runtime_seconds=solver.wall_time() / 1000.0,

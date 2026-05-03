@@ -23,6 +23,7 @@
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\graphicspath{{./}{../../}}
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -155,7 +156,7 @@ pip install ortools
 La structure du projet est la suivante :
 
 \begin{lstlisting}
-OptimisationAli-Ayoub/
+Projet_optimisation_El_Bouazzaoui_Ali-Nadir_Ayoub/
   data/                # instances .vrp a placer ici
     data101.vrp
     data102.vrp
@@ -184,7 +185,7 @@ OptimisationAli-Ayoub/
 
 Les fichiers d'instances \texttt{.vrp} doivent être placés dans un dossier \texttt{data/} à la racine du projet avant de lancer les commandes.
 
-Toutes les commandes ci-dessous sont à lancer \textbf{depuis la racine du projet} (dossier \texttt{OptimisationAli-Ayoub/}).
+Toutes les commandes ci-dessous sont à lancer \textbf{depuis la racine du projet} (dossier \path{Projet_optimisation_El_Bouazzaoui_Ali-Nadir_Ayoub/}).
 
 \subsection{Mode aperçu (défaut)}
 
@@ -411,7 +412,7 @@ Nous avons choisi d'utiliser OR-Tools uniquement pour des \textbf{tests sur peti
 La structure du code a été pensée de manière modulaire, afin de séparer clairement les rôles de chaque composant.
 
 \begin{lstlisting}
-OptimisationAli-Ayoub/
+Projet_optimisation_El_Bouazzaoui_Ali-Nadir_Ayoub/
   src/
     main.py              # point d'entree principal
     model.py             # structures de donnees

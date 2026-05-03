@@ -1290,3 +1290,85 @@ Lecture VRPTW : **Tabou meilleure sur 10/10 instances** (score parfait, contre 8
 - Vérifier que la page de garde a les bons noms (El Bouazzaoui Ali / Nadir Ayoub ✓)
 - Créer le ZIP pour Moodle
 - Nettoyer les fichiers temporaires dans `tmp/` si voulu
+
+---
+
+# 25. Audit complet des algorithmes Python (2026-05-02)
+
+Suite à une remarque d'un collègue sur les bornes inférieures, audit complet de tous les fichiers Python du projet.
+
+## Résultats de l'audit
+
+### Fichiers corrects (aucune modification)
+
+- `src/evaluate.py` : formule LB = ceil(Σq_i / Q) correcte ; évaluation VRPTW correcte (départ dépôt ready_time, retour contrôlé sur due_time)
+- `src/io_utils.py` : lecture colonnes dans le bon ordre (id x y readyTime dueTime demand service)
+- `src/construction.py` : find_minimum_vehicles part de la borne LB et incrémente jusqu'à faisabilité — correct
+- `src/meta/simulated_annealing.py` : logique SA correcte
+- `src/meta/tabu_search.py` : logique tabou correcte
+- `src/solver.py` : correct
+- `src/main.py` : correct
+- `src/model.py` : correct
+
+### Bugs trouvés et corrigés
+
+#### Bug 1 — or_opt2 : voisin dupliqué (neighbors.py)
+
+**Localisation** : `or_opt2_neighbors` et `random_or_opt2_neighbor` (même faute dans les deux).
+
+**Description** : Pour un déplacement intra-route, `insert_pos == start_pos + 1` n'était pas filtré. Cette position (à l'intérieur de la paire extraite) est physiquement équivalente à `insert_pos == start_pos + 3` après insertion, produisant le même voisin en double. De plus, le seuil d'ajustement de position était `> start_pos + 1` au lieu de `> start_pos + 2`.
+
+**Avant** :
+```python
+if source_index == target_index:
+    if insert_pos == start_pos or insert_pos == start_pos + 2:
+        continue
+# ...
+if source_index == target_index and insert_pos > start_pos + 1:
+    adjusted_insert -= 2
+```
+
+**Après** :
+```python
+if source_index == target_index and insert_pos in (
+    start_pos, start_pos + 1, start_pos + 2
+):
+    continue
+# ...
+if source_index == target_index and insert_pos > start_pos + 2:
+    adjusted_insert -= 2
+```
+
+**Impact** : Suppression d'un voisin parasite intra-route ; les explorations précédentes restaient correctes (le voisin dupliqué était évalué deux fois mais ne changeait pas la solution optimale obtenue, juste le comptage des voisins).
+
+#### Bug 2 — Code mort dans random_two_opt_neighbor (neighbors.py)
+
+**Description** : `if start == end: continue` après `sorted(rng.sample(..., 2))` — impossible car `rng.sample` sans replacement garantit deux indices distincts.
+
+**Correction** : ligne supprimée.
+
+#### Bug 3 — Formulation MIP trop contraignante (bonus_exact.py)
+
+**Description** : Le nombre de routes était fixé à `== lower_bound_vehicles(instance)`. Pour des instances où la borne LB n'est pas atteinte (ex. contraintes de capacité qui forcent k > LB), le problème est déclaré INFEASIBLE à tort.
+
+**Avant** :
+```python
+k = lower_bound_vehicles(instance)
+solver.Add(sum(x[0, j] for j in clients) == k)
+solver.Add(sum(x[j, 0] for j in clients) == k)
+```
+
+**Après** :
+```python
+lb = lower_bound_vehicles(instance)
+solver.Add(sum(x[0, j] for j in clients) >= lb)
+solver.Add(sum(x[j, 0] for j in clients) >= lb)
+```
+
+De plus, `num_vehicles` dans `ExactRunResult` renvoie maintenant le nombre réel de routes utilisées (compté depuis la solution) plutôt que la borne LB.
+
+**Impact** : Le bonus MIP peut maintenant trouver des solutions optimales sur des instances où LB n'est pas atteinte. Les résultats précédents (testés sur sous-instances de data101 où LB était atteinte) restaient numériquement corrects.
+
+## Note sur les bornes inférieures du rapport
+
+La borne inférieure `LB = ceil(Σq_i / Q)` est une borne de bin-packing sur la capacité seule. Elle est présentée comme telle dans le rapport (borne sur le nombre de véhicules, pas sur la distance). Les valeurs dans les tableaux du rapport sont toutes correctes. Le rapport distingue bien LB, k_min CVRP et k_min VRPTW.

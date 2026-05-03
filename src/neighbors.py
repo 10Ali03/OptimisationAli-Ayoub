@@ -113,16 +113,17 @@ def or_opt2_neighbors(instance, routes, check_time_windows=False):
         for start_pos in range(len(source_route) - 1):
             for target_index in range(len(routes)):
                 for insert_pos in range(len(routes[target_index]) + 1):
-                    if source_index == target_index:
-                        if insert_pos == start_pos or insert_pos == start_pos + 2:
-                            continue
+                    if source_index == target_index and insert_pos in (
+                        start_pos, start_pos + 1, start_pos + 2
+                    ):
+                        continue
 
                     candidate = clone_routes(routes)
                     pair = candidate[source_index][start_pos : start_pos + 2]
                     del candidate[source_index][start_pos : start_pos + 2]
 
                     adjusted_insert = insert_pos
-                    if source_index == target_index and insert_pos > start_pos + 1:
+                    if source_index == target_index and insert_pos > start_pos + 2:
                         adjusted_insert -= 2
 
                     candidate[target_index][adjusted_insert:adjusted_insert] = pair
@@ -276,8 +277,6 @@ def random_two_opt_neighbor(
         route_index = rng.choice(eligible_routes)
         route = routes[route_index]
         start, end = sorted(rng.sample(range(len(route)), 2))
-        if start == end:
-            continue
 
         candidate = clone_routes(routes)
         candidate[route_index] = (
@@ -313,16 +312,17 @@ def random_or_opt2_neighbor(
         target_index = rng.randrange(len(routes))
         insert_pos = rng.randrange(len(routes[target_index]) + 1)
 
-        if source_index == target_index:
-            if insert_pos == start_pos or insert_pos == start_pos + 2:
-                continue
+        if source_index == target_index and insert_pos in (
+            start_pos, start_pos + 1, start_pos + 2
+        ):
+            continue
 
         candidate = clone_routes(routes)
         pair = candidate[source_index][start_pos : start_pos + 2]
         del candidate[source_index][start_pos : start_pos + 2]
 
         adjusted_insert = insert_pos
-        if source_index == target_index and insert_pos > start_pos + 1:
+        if source_index == target_index and insert_pos > start_pos + 2:
             adjusted_insert -= 2
 
         candidate[target_index][adjusted_insert:adjusted_insert] = pair

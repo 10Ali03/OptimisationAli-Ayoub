@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.3.29)  1 MAY 2026 15:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.3.29)  1 MAY 2026 15:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -511,8 +511,8 @@ Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: listings package is loaded.
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 50.
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 81
+Package hyperref Info: Option `colorlinks' set `true' on input line 51.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 82
 .
  (C:\Users\etulyon1\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -524,24 +524,24 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (rapport.aux)
 \openout1 = `rapport.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 81.
-LaTeX Font Info:    ... okay on input line 81.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -603,7 +603,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 s.cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-Package hyperref Info: Link coloring ON on input line 81.
+Package hyperref Info: Link coloring ON on input line 82.
  (rapport.out) (rapport.out)
 \@outlinefile=\write3
 \openout3 = `rapport.out'.
@@ -612,42 +612,42 @@ Package hyperref Info: Link coloring ON on input line 81.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 9
-4.
+5.
 
 (C:\Users\etulyon1\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 9
-4.
+5.
 
 (C:\Users\etulyon1\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-94.
+95.
 
 (C:\Users\etulyon1\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-94.
+95.
 
 (C:\Users\etulyon1\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 94.
+(Font)              <10.95> on input line 95.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 94.
+(Font)              <8> on input line 95.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 94.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 94.
+(Font)              <6> on input line 95.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 95.
 
 
 (C:\Users\etulyon1\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 94.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 95.
 
 
 (C:\Users\etulyon1\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
@@ -676,27 +676,20 @@ pData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}])
 
  [3]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-22.
+23.
 
 (C:\Users\etulyon1\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 [4{C:/Users/etulyon1/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.en
-c}]
-Overfull \hbox (74.22218pt too wide) in paragraph at lines 187--188
-[]\T1/lmr/m/n/10.95 Toutes les com-man-des ci-dessous sont à lancer \T1/lmr/bx/
-n/10.95 depuis la racine du pro-jet \T1/lmr/m/n/10.95 (dossier \T1/lmtt/m/n/10.
-95 OptimisationAli-Ayoub/\T1/lmr/m/n/10.95 ). 
- []
-
-[5]
+c}] [5]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 238.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 239.
  [6] [7{C:/Users/etulyon1/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-r
 m.enc}{C:/Users/etulyon1/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ma
 thsy.enc}] [8{C:/Users/etulyon1/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/l
 m/lm-mathex.enc}]
-Overfull \hbox (18.04355pt too wide) in paragraph at lines 397--399
+Overfull \hbox (18.04355pt too wide) in paragraph at lines 398--400
 \T1/lmr/m/n/10.95 où $\OML/lmm/m/it/10.95 M$ \T1/lmr/m/n/10.95 est une con-stan
 te suff-isam-ment grande. Cette écri-t-ure pré-cise que la con-trainte d'enchaî
 nement
@@ -705,95 +698,95 @@ nement
 [9] [10] [11] [12] [13] [14]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 594.
+(hyperref)                removing `math shift' on input line 595.
 
 [15] [16]
-<figures/comparison_vehicles.png, id=654, 1053.9375pt x 602.25pt>
-File: figures/comparison_vehicles.png Graphic file (type png)
-<use figures/comparison_vehicles.png>
-Package pdftex.def Info: figures/comparison_vehicles.png  used on input line 69
-9.
+<../../figures/comparison_vehicles.png, id=654, 1053.9375pt x 602.25pt>
+File: ../../figures/comparison_vehicles.png Graphic file (type png)
+<use ../../figures/comparison_vehicles.png>
+Package pdftex.def Info: ../../figures/comparison_vehicles.png  used on input l
+ine 700.
 (pdftex.def)             Requested size: 455.24411pt x 260.13872pt.
- [17] [18 <./figures/comparison_vehicles.png>]
-Overfull \hbox (15.81775pt too wide) in paragraph at lines 756--757
+ [17] [18 <../../figures/comparison_vehicles.png>]
+Overfull \hbox (15.81775pt too wide) in paragraph at lines 757--758
 \T1/lmr/m/n/10.95 Nous avons en-suite lancé un pre-mier es-sai ex-péri-men-tal 
 en mode rapide sur l'instance \T1/lmtt/m/n/10.95 data1201.vrp\T1/lmr/m/n/10.95 
 ,
  []
 
 [19] [20]
-Overfull \hbox (2.73872pt too wide) in paragraph at lines 832--833
+Overfull \hbox (2.73872pt too wide) in paragraph at lines 833--834
 []\T1/lmr/m/n/10.95 Le coût en temps de la recherche tabou aug-mente sen-si-ble
 -ment sur les cas dif-fi-ciles (plusieurs
  []
 
 [21] [22] [23] [24] [25] [26]
-Overfull \hbox (4.89815pt too wide) in paragraph at lines 1023--1024
+Overfull \hbox (4.89815pt too wide) in paragraph at lines 1024--1025
 \T1/lmr/m/n/10.95 Pour le re-cuit simulé, la tem-péra-ture ini-tiale, le fac-te
 ur de re-froidisse-ment et le nom-bre d'itérations
  []
 
 
-Overfull \hbox (2.10023pt too wide) in paragraph at lines 1023--1024
+Overfull \hbox (2.10023pt too wide) in paragraph at lines 1024--1025
 \T1/lmr/m/n/10.95 déter-mi-nent di-recte-ment le niveau d'exploration : une tem
 -péra-ture trop faible lim-ite l'acceptation
  []
 
 [27] [28]
-<figures/convergence_data101_cvrp.png, id=735, 722.7pt x 361.35pt>
-File: figures/convergence_data101_cvrp.png Graphic file (type png)
-<use figures/convergence_data101_cvrp.png>
-Package pdftex.def Info: figures/convergence_data101_cvrp.png  used on input li
-ne 1090.
+<../../figures/convergence_data101_cvrp.png, id=735, 722.7pt x 361.35pt>
+File: ../../figures/convergence_data101_cvrp.png Graphic file (type png)
+<use ../../figures/convergence_data101_cvrp.png>
+Package pdftex.def Info: ../../figures/convergence_data101_cvrp.png  used on in
+put line 1091.
 (pdftex.def)             Requested size: 455.24411pt x 227.62413pt.
-<figures/convergence_data1201_vrptw.png, id=736, 722.7pt x 361.35pt>
-File: figures/convergence_data1201_vrptw.png Graphic file (type png)
-<use figures/convergence_data1201_vrptw.png>
-Package pdftex.def Info: figures/convergence_data1201_vrptw.png  used on input 
-line 1101.
+<../../figures/convergence_data1201_vrptw.png, id=736, 722.7pt x 361.35pt>
+File: ../../figures/convergence_data1201_vrptw.png Graphic file (type png)
+<use ../../figures/convergence_data1201_vrptw.png>
+Package pdftex.def Info: ../../figures/convergence_data1201_vrptw.png  used on 
+input line 1102.
 (pdftex.def)             Requested size: 455.24411pt x 227.62413pt.
- [29 <./figures/convergence_data101_cvrp.png>]
-Overfull \hbox (12.35101pt too wide) in paragraph at lines 1115--1116
+ [29 <../../figures/convergence_data101_cvrp.png>]
+Overfull \hbox (12.35101pt too wide) in paragraph at lines 1116--1117
 \T1/lmr/m/n/10.95 Nous avons en-suite ap-pliqué le même pro-to-cole \T1/lmtt/m/
 n/10.95 long \T1/lmr/m/n/10.95 aux in-stances \T1/lmtt/m/n/10.95 data1101.vrp \
 T1/lmr/m/n/10.95 et \T1/lmtt/m/n/10.95 data1102.vrp\T1/lmr/m/n/10.95 ,
  []
 
-[30 <./figures/convergence_data1201_vrptw.png>] [31]
-<figures/comparison_distances.png, id=754, 1156.32pt x 433.62pt>
-File: figures/comparison_distances.png Graphic file (type png)
-<use figures/comparison_distances.png>
-Package pdftex.def Info: figures/comparison_distances.png  used on input line 1
-190.
+[30 <../../figures/convergence_data1201_vrptw.png>] [31]
+<../../figures/comparison_distances.png, id=754, 1156.32pt x 433.62pt>
+File: ../../figures/comparison_distances.png Graphic file (type png)
+<use ../../figures/comparison_distances.png>
+Package pdftex.def Info: ../../figures/comparison_distances.png  used on input 
+line 1191.
 (pdftex.def)             Requested size: 455.24411pt x 170.71231pt.
- [32 <./figures/comparison_distances.png>]
-<figures/comparison_times.png, id=761, 1156.32pt x 433.62pt>
-File: figures/comparison_times.png Graphic file (type png)
-<use figures/comparison_times.png>
-Package pdftex.def Info: figures/comparison_times.png  used on input line 1198.
-
+ [32 <../../figures/comparison_distances.png>]
+<../../figures/comparison_times.png, id=761, 1156.32pt x 433.62pt>
+File: ../../figures/comparison_times.png Graphic file (type png)
+<use ../../figures/comparison_times.png>
+Package pdftex.def Info: ../../figures/comparison_times.png  used on input line
+ 1199.
 (pdftex.def)             Requested size: 455.24411pt x 170.71231pt.
- [33 <./figures/comparison_times.png>]
-<figures/routes_data1201_comparison.png, id=768, 1011.78pt x 433.62pt>
-File: figures/routes_data1201_comparison.png Graphic file (type png)
-<use figures/routes_data1201_comparison.png>
-Package pdftex.def Info: figures/routes_data1201_comparison.png  used on input 
-line 1222.
+ [33 <../../figures/comparison_times.png>]
+<../../figures/routes_data1201_comparison.png, id=768, 1011.78pt x 433.62pt>
+File: ../../figures/routes_data1201_comparison.png Graphic file (type png)
+<use ../../figures/routes_data1201_comparison.png>
+Package pdftex.def Info: ../../figures/routes_data1201_comparison.png  used on 
+input line 1223.
 (pdftex.def)             Requested size: 455.24411pt x 195.10735pt.
- [34 <./figures/routes_data1201_comparison.png>] [35]
-Overfull \hbox (1.85765pt too wide) in paragraph at lines 1302--1303
+ [34 <../../figures/routes_data1201_comparison.png>] [35]
+Overfull \hbox (1.85765pt too wide) in paragraph at lines 1303--1304
 []\T1/lmr/m/n/10.95 Dans le cas VRPTW, la généra-tion aléa-toire de so-lu-tions
  ini-tiales a été net-te-ment améliorée,
  []
 
 
-Overfull \hbox (1.67476pt too wide) in paragraph at lines 1303--1304
+Overfull \hbox (1.67476pt too wide) in paragraph at lines 1304--1305
 []\T1/lmr/m/n/10.95 La recherche tabou re-cal-i-brée ob-tient de très bons ré-s
 ul-tats sur la cam-pagne fi-nale VRPTW,
  []
 
 [36]
-Overfull \hbox (2.64992pt too wide) in paragraph at lines 1345--1346
+Overfull \hbox (2.64992pt too wide) in paragraph at lines 1346--1347
 \T1/lmr/m/n/10.95 tion aléa-toire échoue presque sys-té-ma-tique-ment (taux d'é
 chec supérieur à $\OT1/lmr/m/n/10.95 97 %$ \T1/lmr/m/n/10.95 sur \T1/lmtt/m/n/1
 0.95 data101.vrp\T1/lmr/m/n/10.95 ).
@@ -808,10 +801,10 @@ Package rerunfilecheck Info: File `rapport.out' has not changed.
 (rerunfilecheck)             Checksum: FDC2AAFCA36E21E472D809855F27DF27;20872.
  ) 
 Here is how much of TeX's memory you used:
- 15623 strings out of 467871
- 244107 string characters out of 5416924
- 880645 words of memory out of 5000000
- 44037 multiletter control sequences out of 15000+600000
+ 15635 strings out of 467871
+ 244907 string characters out of 5416924
+ 880659 words of memory out of 5000000
+ 44049 multiletter control sequences out of 15000+600000
  684979 words of font info for 76 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,12n,79p,906b,1979s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -830,7 +823,7 @@ nts/type1/public/lm/lmsy10.pfb><C:/Users/etulyon1/AppData/Local/Programs/MiKTeX
 /fonts/type1/public/lm/lmsy8.pfb><C:/Users/etulyon1/AppData/Local/Programs/MiKT
 eX/fonts/type1/public/lm/lmtk10.pfb><C:/Users/etulyon1/AppData/Local/Programs/M
 iKTeX/fonts/type1/public/lm/lmtt10.pfb>
-Output written on rapport.pdf (39 pages, 942315 bytes).
+Output written on rapport.pdf (39 pages, 942405 bytes).
 PDF statistics:
  933 PDF objects out of 1000 (max. 8388607)
  256 named destinations out of 1000 (max. 500000)
