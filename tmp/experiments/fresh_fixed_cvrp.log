@@ -1,0 +1,93 @@
+
+# Run started 2026-05-03T15:21:29
+preset=long time_windows=False instances=10
+
+## data101.vrp | preset=long | time_windows=False
+vehicles=8 successful_runs=5
+summary initial_avg=3655.35 sa_avg=1266.78 sa_time=1.25 sa_generated=3000.00 tabu_avg=1339.08 tabu_time=5.05 tabu_explored=12000.00
+run=1 seed=1000 initial=3726.26 sa=1288.86 sa_time=1.12 sa_generated=3000 tabu=1357.35 tabu_time=5.13 tabu_explored=12000
+run=2 seed=1001 initial=3713.42 sa=1277.65 sa_time=1.22 sa_generated=3000 tabu=1300.42 tabu_time=4.91 tabu_explored=12000
+run=3 seed=1002 initial=3507.51 sa=1250.58 sa_time=1.33 sa_generated=3000 tabu=1327.02 tabu_time=4.78 tabu_explored=12000
+run=4 seed=1003 initial=3711.89 sa=1319.05 sa_time=1.40 sa_generated=3000 tabu=1363.04 tabu_time=5.13 tabu_explored=12000
+run=5 seed=1004 initial=3617.66 sa=1197.75 sa_time=1.21 sa_generated=3000 tabu=1347.57 tabu_time=5.29 tabu_explored=12000
+
+## data102.vrp | preset=long | time_windows=False
+vehicles=8 successful_runs=5
+summary initial_avg=3537.80 sa_avg=1292.25 sa_time=1.11 sa_generated=3000.00 tabu_avg=1309.82 tabu_time=4.57 tabu_explored=12000.00
+run=1 seed=1005 initial=3612.23 sa=1174.33 sa_time=1.12 sa_generated=3000 tabu=1241.37 tabu_time=4.62 tabu_explored=12000
+run=2 seed=1006 initial=3608.18 sa=1298.59 sa_time=1.13 sa_generated=3000 tabu=1370.26 tabu_time=4.51 tabu_explored=12000
+run=3 seed=1007 initial=3508.19 sa=1230.34 sa_time=1.10 sa_generated=3000 tabu=1310.46 tabu_time=4.63 tabu_explored=12000
+run=4 seed=1008 initial=3379.68 sa=1381.02 sa_time=1.11 sa_generated=3000 tabu=1282.32 tabu_time=4.59 tabu_explored=12000
+run=5 seed=1009 initial=3580.71 sa=1377.00 sa_time=1.10 sa_generated=3000 tabu=1344.69 tabu_time=4.52 tabu_explored=12000
+
+## data1101.vrp | preset=long | time_windows=False
+vehicles=9 successful_runs=5
+summary initial_avg=4718.00 sa_avg=1634.58 sa_time=2.07 sa_generated=3000.00 tabu_avg=1686.47 tabu_time=8.33 tabu_explored=12000.00
+run=1 seed=1010 initial=4917.72 sa=1626.41 sa_time=2.16 sa_generated=3000 tabu=1735.44 tabu_time=8.28 tabu_explored=12000
+run=2 seed=1011 initial=4859.76 sa=1575.62 sa_time=2.07 sa_generated=3000 tabu=1745.19 tabu_time=8.32 tabu_explored=12000
+run=3 seed=1012 initial=4532.21 sa=1743.99 sa_time=2.02 sa_generated=3000 tabu=1658.44 tabu_time=8.24 tabu_explored=12000
+run=4 seed=1013 initial=4670.12 sa=1629.51 sa_time=2.10 sa_generated=3000 tabu=1690.87 tabu_time=8.22 tabu_explored=12000
+run=5 seed=1014 initial=4610.22 sa=1597.38 sa_time=1.98 sa_generated=3000 tabu=1602.43 tabu_time=8.57 tabu_explored=12000
+
+## data1102.vrp | preset=long | time_windows=False
+vehicles=9 successful_runs=5
+summary initial_avg=4675.37 sa_avg=1611.01 sa_time=2.06 sa_generated=3000.00 tabu_avg=1720.14 tabu_time=8.41 tabu_explored=12000.00
+run=1 seed=1015 initial=4746.94 sa=1617.83 sa_time=2.23 sa_generated=3000 tabu=1772.15 tabu_time=8.60 tabu_explored=12000
+run=2 seed=1016 initial=4690.73 sa=1636.69 sa_time=2.09 sa_generated=3000 tabu=1682.03 tabu_time=8.34 tabu_explored=12000
+run=3 seed=1017 initial=4425.08 sa=1649.70 sa_time=1.96 sa_generated=3000 tabu=1725.39 tabu_time=8.26 tabu_explored=12000
+run=4 seed=1018 initial=4498.26 sa=1682.02 sa_time=1.95 sa_generated=3000 tabu=1558.13 tabu_time=8.41 tabu_explored=12000
+run=5 seed=1019 initial=5015.85 sa=1468.79 sa_time=2.09 sa_generated=3000 tabu=1863.01 tabu_time=8.44 tabu_explored=12000
+
+## data111.vrp | preset=long | time_windows=False
+vehicles=8 successful_runs=5
+summary initial_avg=3519.79 sa_avg=1250.95 sa_time=1.20 sa_generated=3000.00 tabu_avg=1312.29 tabu_time=4.84 tabu_explored=12000.00
+run=1 seed=1020 initial=3518.14 sa=1283.10 sa_time=1.26 sa_generated=3000 tabu=1327.95 tabu_time=4.73 tabu_explored=12000
+run=2 seed=1021 initial=3419.88 sa=1294.21 sa_time=1.15 sa_generated=3000 tabu=1290.42 tabu_time=4.72 tabu_explored=12000
+run=3 seed=1022 initial=3498.74 sa=1345.69 sa_time=1.19 sa_generated=3000 tabu=1274.39 tabu_time=5.06 tabu_explored=12000
+run=4 seed=1023 initial=3605.63 sa=1159.58 sa_time=1.17 sa_generated=3000 tabu=1358.62 tabu_time=4.99 tabu_explored=12000
+run=5 seed=1024 initial=3556.58 sa=1172.15 sa_time=1.20 sa_generated=3000 tabu=1310.09 tabu_time=4.72 tabu_explored=12000
+
+## data112.vrp | preset=long | time_windows=False
+vehicles=8 successful_runs=5
+summary initial_avg=3542.86 sa_avg=1245.11 sa_time=1.14 sa_generated=3000.00 tabu_avg=1305.21 tabu_time=4.56 tabu_explored=12000.00
+run=1 seed=1025 initial=3409.24 sa=1247.28 sa_time=1.25 sa_generated=3000 tabu=1250.18 tabu_time=4.84 tabu_explored=12000
+run=2 seed=1026 initial=3492.27 sa=1282.71 sa_time=1.14 sa_generated=3000 tabu=1318.24 tabu_time=4.55 tabu_explored=12000
+run=3 seed=1027 initial=3537.66 sa=1210.60 sa_time=1.05 sa_generated=3000 tabu=1244.87 tabu_time=4.44 tabu_explored=12000
+run=4 seed=1028 initial=3540.54 sa=1265.52 sa_time=1.08 sa_generated=3000 tabu=1344.31 tabu_time=4.37 tabu_explored=12000
+run=5 seed=1029 initial=3734.60 sa=1219.46 sa_time=1.15 sa_generated=3000 tabu=1368.48 tabu_time=4.57 tabu_explored=12000
+
+## data1201.vrp | preset=long | time_windows=False
+vehicles=2 successful_runs=5
+summary initial_avg=4613.08 sa_avg=1311.63 sa_time=0.65 sa_generated=3000.00 tabu_avg=1301.29 tabu_time=2.68 tabu_explored=12000.00
+run=1 seed=1030 initial=4813.11 sa=1315.96 sa_time=0.66 sa_generated=3000 tabu=1384.76 tabu_time=2.82 tabu_explored=12000
+run=2 seed=1031 initial=4592.24 sa=1284.62 sa_time=0.65 sa_generated=3000 tabu=1262.11 tabu_time=2.69 tabu_explored=12000
+run=3 seed=1032 initial=4699.85 sa=1320.02 sa_time=0.68 sa_generated=3000 tabu=1329.68 tabu_time=2.60 tabu_explored=12000
+run=4 seed=1033 initial=4568.87 sa=1250.15 sa_time=0.63 sa_generated=3000 tabu=1268.99 tabu_time=2.60 tabu_explored=12000
+run=5 seed=1034 initial=4391.34 sa=1387.38 sa_time=0.66 sa_generated=3000 tabu=1260.90 tabu_time=2.71 tabu_explored=12000
+
+## data1202.vrp | preset=long | time_windows=False
+vehicles=2 successful_runs=5
+summary initial_avg=4366.31 sa_avg=1327.29 sa_time=0.65 sa_generated=3000.00 tabu_avg=1335.45 tabu_time=2.66 tabu_explored=12000.00
+run=1 seed=1035 initial=4139.07 sa=1256.29 sa_time=0.65 sa_generated=3000 tabu=1297.13 tabu_time=2.68 tabu_explored=12000
+run=2 seed=1036 initial=4487.70 sa=1351.52 sa_time=0.64 sa_generated=3000 tabu=1347.35 tabu_time=2.69 tabu_explored=12000
+run=3 seed=1037 initial=4176.01 sa=1395.81 sa_time=0.64 sa_generated=3000 tabu=1316.85 tabu_time=2.65 tabu_explored=12000
+run=4 seed=1038 initial=4595.88 sa=1265.79 sa_time=0.63 sa_generated=3000 tabu=1390.27 tabu_time=2.68 tabu_explored=12000
+run=5 seed=1039 initial=4432.87 sa=1367.06 sa_time=0.67 sa_generated=3000 tabu=1325.64 tabu_time=2.61 tabu_explored=12000
+
+## data201.vrp | preset=long | time_windows=False
+vehicles=2 successful_runs=5
+summary initial_avg=3580.75 sa_avg=1197.26 sa_time=0.62 sa_generated=3000.00 tabu_avg=1163.18 tabu_time=2.36 tabu_explored=12000.00
+run=1 seed=1040 initial=3650.50 sa=1163.18 sa_time=0.54 sa_generated=3000 tabu=1148.69 tabu_time=2.39 tabu_explored=12000
+run=2 seed=1041 initial=3451.80 sa=1282.52 sa_time=0.54 sa_generated=3000 tabu=1130.02 tabu_time=2.21 tabu_explored=12000
+run=3 seed=1042 initial=3532.34 sa=1133.22 sa_time=0.54 sa_generated=3000 tabu=1118.15 tabu_time=2.25 tabu_explored=12000
+run=4 seed=1043 initial=3653.44 sa=1241.97 sa_time=0.56 sa_generated=3000 tabu=1178.69 tabu_time=2.41 tabu_explored=12000
+run=5 seed=1044 initial=3615.68 sa=1165.43 sa_time=0.90 sa_generated=3000 tabu=1240.33 tabu_time=2.54 tabu_explored=12000
+
+## data202.vrp | preset=long | time_windows=False
+vehicles=2 successful_runs=5
+summary initial_avg=3379.91 sa_avg=1151.47 sa_time=0.55 sa_generated=3000.00 tabu_avg=1115.68 tabu_time=2.29 tabu_explored=12000.00
+run=1 seed=1045 initial=3482.90 sa=1173.24 sa_time=0.55 sa_generated=3000 tabu=1118.93 tabu_time=2.50 tabu_explored=12000
+run=2 seed=1046 initial=3051.82 sa=1192.91 sa_time=0.52 sa_generated=3000 tabu=1068.12 tabu_time=2.22 tabu_explored=12000
+run=3 seed=1047 initial=3287.90 sa=1180.15 sa_time=0.54 sa_generated=3000 tabu=1122.47 tabu_time=2.21 tabu_explored=12000
+run=4 seed=1048 initial=3618.66 sa=1092.45 sa_time=0.55 sa_generated=3000 tabu=1156.30 tabu_time=2.20 tabu_explored=12000
+run=5 seed=1049 initial=3458.30 sa=1118.62 sa_time=0.57 sa_generated=3000 tabu=1112.59 tabu_time=2.30 tabu_explored=12000

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from construction import (
     build_solution_with_k_vehicles,
-    find_minimum_vehicles,
+    find_first_feasible_vehicle_count,
     generate_random_solution,
 )
 from evaluate import evaluate_solution
@@ -84,7 +84,7 @@ def run_metaheuristics_on_instance(
     check_time_windows=False,
     method="both",
 ):
-    found_k, _ = find_minimum_vehicles(
+    found_k, _ = find_first_feasible_vehicle_count(
         instance,
         max_extra=25 if check_time_windows else 10,
         check_time_windows=check_time_windows,

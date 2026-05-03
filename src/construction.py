@@ -371,9 +371,10 @@ def build_solution_with_k_vehicles(instance, k, check_time_windows=False):
     return routes
 
 
-def find_minimum_vehicles(instance, max_extra=10, check_time_windows=False):
+def find_first_feasible_vehicle_count(instance, max_extra=10, check_time_windows=False):
     """
-    Cherche le premier nombre de véhicules faisable à partir de la borne inférieure.
+    Cherche le premier nombre de véhicules pour lequel notre construction
+    heuristique trouve une solution faisable à partir de la borne inférieure.
     """
     lb = lower_bound_vehicles(instance)
 
@@ -387,6 +388,22 @@ def find_minimum_vehicles(instance, max_extra=10, check_time_windows=False):
             return k, routes
 
     return None, None
+
+
+def find_minimum_vehicles(instance, max_extra=10, check_time_windows=False):
+    """
+    Alias historique conservé pour compatibilité.
+
+    Attention : cette fonction ne prouve pas toujours la minimalité. En CVRP,
+    si elle trouve une solution avec k = LB, la borne capacitaire certifie ce k.
+    En VRPTW, le résultat doit être lu comme le premier k trouvé faisable par
+    notre heuristique de construction.
+    """
+    return find_first_feasible_vehicle_count(
+        instance,
+        max_extra=max_extra,
+        check_time_windows=check_time_windows,
+    )
 
 
 def generate_random_solution(

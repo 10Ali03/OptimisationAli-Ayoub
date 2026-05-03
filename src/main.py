@@ -3,7 +3,7 @@ from pathlib import Path
 
 from io_utils import parse_vrp_file
 from evaluate import evaluate_solution, lower_bound_vehicles, solution_distance, total_demand
-from construction import find_minimum_vehicles, generate_random_solution
+from construction import find_first_feasible_vehicle_count, generate_random_solution
 from solver import (
     format_experiment_details,
     format_generation_table,
@@ -40,12 +40,12 @@ def print_instances_summary(instances):
 
 
 def print_vehicle_search(instances):
-    print("\n=== Recherche du nombre de véhicules ===")
+    print("\n=== Recherche du nombre de véhicules (premier k faisable trouvé) ===")
     print(f"{'Nom':15} {'LB':>6} {'Trouvé':>8} {'Distance':>12}")
 
     for inst in instances:
         lb = lower_bound_vehicles(inst)
-        found_k, routes = find_minimum_vehicles(inst)
+        found_k, routes = find_first_feasible_vehicle_count(inst)
 
         if found_k is None:
             found_str = "échec"
@@ -58,12 +58,13 @@ def print_vehicle_search(instances):
 
 
 def print_vehicle_search_with_time_windows(instances, limit=5):
-    print("\n=== Recherche du nombre de véhicules avec fenêtres de temps ===")
+    print("\n=== Recherche du nombre de véhicules avec fenêtres de temps (aperçu, premier k faisable trouvé) ===")
     print(f"{'Nom':15} {'LB':>6} {'Trouvé':>8} {'Distance':>12}")
 
-    for inst in instances[:limit]:
+    selected_instances = instances if limit is None else instances[:limit]
+    for inst in selected_instances:
         lb = lower_bound_vehicles(inst)
-        found_k, routes = find_minimum_vehicles(
+        found_k, routes = find_first_feasible_vehicle_count(
             inst,
             max_extra=25,
             check_time_windows=True,
@@ -84,7 +85,7 @@ def print_random_initial_solutions(instances, seed=42):
     print(f"{'Nom':15} {'k':>4} {'Faisable':>10} {'Distance':>12}")
 
     for index, inst in enumerate(instances):
-        found_k, _ = find_minimum_vehicles(inst)
+        found_k, _ = find_first_feasible_vehicle_count(inst)
 
         if found_k is None:
             print(f"{inst.name:15} {'-':>4} {'échec':>10} {'-':>12}")
@@ -185,7 +186,7 @@ def parse_args():
     parser.add_argument(
         "--time-windows",
         action="store_true",
-        help="active la version avec fenêtres de temps en mode experiment",
+        help="active la version avec fenêtres de temps en mode experiment ; en overview, affiche aussi la recherche heuristique VRPTW",
     )
     parser.add_argument(
         "--method",
@@ -244,7 +245,11 @@ def main():
 
     print_instances_summary(instances)
     print_vehicle_search(instances)
-    print_vehicle_search_with_time_windows(instances)
+    if args.time_windows:
+        print_vehicle_search_with_time_windows(selected_instances, limit=args.limit)
+    else:
+        print("\n=== Recherche VRPTW ===")
+        print("Non lancée en mode aperçu par défaut (coût élevé). Utiliser --time-windows ou le mode experiment.")
     print_random_initial_solutions(instances)
     print_metaheuristics_comparison(instances, preset_name="quick", limit=1)
 

@@ -7,19 +7,19 @@
 \contentsline {paragraph}{CVRP — preset rapide.}{5}{subsection.2.4}%
 \contentsline {paragraph}{CVRP — preset long.}{5}{lstnumber.-5.1}%
 \contentsline {paragraph}{VRPTW.}{5}{lstnumber.-6.1}%
-\contentsline {paragraph}{Instance unique avec détail run par run.}{5}{lstnumber.-7.1}%
+\contentsline {paragraph}{Instance unique avec détail run par run.}{6}{lstnumber.-7.1}%
 \contentsline {subsection}{\numberline {2.5}Mode bonus — résolution exacte}{6}{subsection.2.5}%
 \contentsline {subsection}{\numberline {2.6}Récapitulatif des options de \texttt {main.py}}{6}{subsection.2.6}%
 \contentsline {section}{\numberline {3}Organisation du projet}{6}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Phase 1 : Fondations du projet}{6}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Phase 2 : Détermination du nombre minimal de véhicules}{6}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Phase 3 : Génération de solutions initiales}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.2}Phase 2 : Détermination du nombre de véhicules}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Phase 3 : Génération de solutions initiales}{7}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Phase 4 : Première métaheuristique}{7}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Phase 5 : Deuxième métaheuristique}{7}{subsection.3.5}%
 \contentsline {subsection}{\numberline {3.6}Phase 6 : Protocole expérimental et comparaison}{7}{subsection.3.6}%
 \contentsline {section}{\numberline {4}Modélisation du problème}{7}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Description générale}{7}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Ensembles}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.2}Ensembles}{8}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Paramètres}{8}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}Variables de décision}{8}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}Fonction objectif}{8}{subsection.4.5}%
@@ -32,72 +32,67 @@
 \contentsline {section}{\numberline {5}Structure du code}{9}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Évolution de l'architecture}{10}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Justification des choix de fichiers}{10}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Pourquoi cette structure nous a semblé adaptée}{11}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Lien entre structure logicielle et démarche scientifique}{11}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}\texttt {main.py}}{12}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}\texttt {model.py}}{12}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}\texttt {io\_utils.py}}{12}{subsection.5.7}%
-\contentsline {subsection}{\numberline {5.8}\texttt {evaluate.py}}{12}{subsection.5.8}%
-\contentsline {subsection}{\numberline {5.9}\texttt {construction.py}}{13}{subsection.5.9}%
-\contentsline {subsection}{\numberline {5.10}\texttt {neighbors.py}}{13}{subsection.5.10}%
-\contentsline {subsection}{\numberline {5.11}\texttt {solver.py}}{13}{subsection.5.11}%
-\contentsline {subsection}{\numberline {5.12}\texttt {meta/simulated\_annealing.py}}{13}{subsection.5.12}%
-\contentsline {subsection}{\numberline {5.13}\texttt {meta/tabu\_search.py}}{14}{subsection.5.13}%
-\contentsline {subsection}{\numberline {5.14}\texttt {bonus\_exact.py}}{14}{subsection.5.14}%
-\contentsline {section}{\numberline {6}Détermination du nombre minimal de véhicules}{14}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Principe général}{14}{subsection.6.1}%
+\contentsline {subsection}{\numberline {5.3}Justification du découpage modulaire}{11}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}\texttt {main.py}}{11}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}\texttt {model.py}}{11}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}\texttt {io\_utils.py}}{11}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}\texttt {evaluate.py}}{11}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}\texttt {construction.py}}{12}{subsection.5.8}%
+\contentsline {subsection}{\numberline {5.9}\texttt {neighbors.py}}{12}{subsection.5.9}%
+\contentsline {subsection}{\numberline {5.10}\texttt {solver.py}}{13}{subsection.5.10}%
+\contentsline {subsection}{\numberline {5.11}\texttt {meta/simulated\_annealing.py}}{13}{subsection.5.11}%
+\contentsline {subsection}{\numberline {5.12}\texttt {meta/tabu\_search.py}}{13}{subsection.5.12}%
+\contentsline {subsection}{\numberline {5.13}\texttt {bonus\_exact.py}}{13}{subsection.5.13}%
+\contentsline {section}{\numberline {6}Détermination du nombre de véhicules}{13}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Principe général}{13}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Borne inférieure théorique}{14}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Choix méthodologique}{15}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Heuristique utilisée pour tester une valeur de \(k\)}{15}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Critère de faisabilité}{16}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}Remarque}{16}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}Résultats obtenus sans fenêtres de temps}{16}{subsection.6.7}%
-\contentsline {subsection}{\numberline {6.8}Influence des fenêtres de temps sur la borne inférieure}{17}{subsection.6.8}%
-\contentsline {subsection}{\numberline {6.9}Première intégration effective des fenêtres de temps}{18}{subsection.6.9}%
-\contentsline {subsection}{\numberline {6.10}Premiers résultats VRPTW}{18}{subsection.6.10}%
-\contentsline {subsection}{\numberline {6.11}Limites observées à ce stade}{19}{subsection.6.11}%
-\contentsline {subsection}{\numberline {6.12}Première extension des métaheuristiques au cas VRPTW}{19}{subsection.6.12}%
-\contentsline {subsection}{\numberline {6.13}Premier essai expérimental VRPTW}{19}{subsection.6.13}%
-\contentsline {subsection}{\numberline {6.14}Campagne VRPTW en mode rapide}{20}{subsection.6.14}%
-\contentsline {subsection}{\numberline {6.15}Analyse de cette première campagne VRPTW}{20}{subsection.6.15}%
-\contentsline {subsection}{\numberline {6.16}Campagne VRPTW en mode long}{21}{subsection.6.16}%
-\contentsline {subsection}{\numberline {6.17}Analyse de la campagne VRPTW longue}{21}{subsection.6.17}%
-\contentsline {section}{\numberline {7}Génération d'une solution initiale}{22}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Choix retenu}{22}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Cas sans fenêtres de temps}{22}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Cas avec fenêtres de temps}{23}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Intérêt de cette construction}{23}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Rôle de cette solution}{23}{subsection.7.5}%
-\contentsline {section}{\numberline {8}Choix des méthodes de résolution}{23}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Voisinages envisagés}{23}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Première implémentation des voisinages}{24}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Première implémentation du recuit simulé}{24}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Pseudo-code simplifié du recuit simulé}{25}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Résultats préliminaires}{25}{subsection.8.5}%
-\contentsline {subsection}{\numberline {8.6}Première implémentation de la recherche tabou}{25}{subsection.8.6}%
-\contentsline {subsection}{\numberline {8.7}Observation importante sur le coût de calcul}{25}{subsection.8.7}%
-\contentsline {subsection}{\numberline {8.8}Résultats préliminaires de la recherche tabou}{26}{subsection.8.8}%
-\contentsline {subsection}{\numberline {8.9}Mise en place du protocole expérimental}{26}{subsection.8.9}%
-\contentsline {subsection}{\numberline {8.10}Paramètres retenus}{26}{subsection.8.10}%
-\contentsline {subsection}{\numberline {8.11}Critères de comparaison retenus}{26}{subsection.8.11}%
-\contentsline {subsection}{\numberline {8.12}Répétitions et reproductibilité}{27}{subsection.8.12}%
-\contentsline {subsection}{\numberline {8.13}Premiers résultats comparatifs}{27}{subsection.8.13}%
-\contentsline {subsection}{\numberline {8.14}Indicateurs de dispersion}{28}{subsection.8.14}%
-\contentsline {subsection}{\numberline {8.15}Premier essai en mode long}{28}{subsection.8.15}%
-\contentsline {subsection}{\numberline {8.16}Courbe de convergence}{29}{subsection.8.16}%
-\contentsline {subsection}{\numberline {8.17}Courbe de convergence en VRPTW}{29}{subsection.8.17}%
-\contentsline {subsection}{\numberline {8.18}Extension du test long à \texttt {data102.vrp}}{30}{subsection.8.18}%
-\contentsline {subsection}{\numberline {8.19}Résultats sur \texttt {data1101.vrp} et \texttt {data1102.vrp}}{30}{subsection.8.19}%
-\contentsline {subsection}{\numberline {8.20}Résultats sur \texttt {data111.vrp} et \texttt {data112.vrp}}{31}{subsection.8.20}%
-\contentsline {subsection}{\numberline {8.21}Résultats sur \texttt {data1201.vrp} et \texttt {data1202.vrp}}{31}{subsection.8.21}%
-\contentsline {subsection}{\numberline {8.22}Résultats sur \texttt {data201.vrp} et \texttt {data202.vrp}}{31}{subsection.8.22}%
-\contentsline {subsection}{\numberline {8.23}Synthèse de la première campagne longue}{32}{subsection.8.23}%
-\contentsline {subsection}{\numberline {8.24}Lecture synthétique du corpus et cas marquants}{33}{subsection.8.24}%
-\contentsline {subsection}{\numberline {8.25}Exemple de visualisation de tournées}{34}{subsection.8.25}%
-\contentsline {section}{\numberline {9}Format des données}{34}{section.9}%
-\contentsline {section}{\numberline {10}Bonus : résolution exacte sur sous-instances}{35}{section.10}%
-\contentsline {section}{\numberline {11}Limites et perspectives}{36}{section.11}%
-\contentsline {section}{\numberline {12}Conclusion}{36}{section.12}%
-\contentsline {subsection}{\numberline {12.1}Comment nous cherchons l'optimum}{36}{subsection.12.1}%
-\contentsline {subsection}{\numberline {12.2}Améliorations envisageables}{37}{subsection.12.2}%
-\contentsline {subsection}{\numberline {12.3}Critique du protocole expérimental}{37}{subsection.12.3}%
+\contentsline {subsection}{\numberline {6.3}Choix méthodologique}{14}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Heuristique utilisée pour tester une valeur de \(k\)}{14}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Critère de faisabilité}{15}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Remarque}{15}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Résultats obtenus sans fenêtres de temps}{15}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}Influence des fenêtres de temps sur la borne inférieure}{16}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}Première intégration effective des fenêtres de temps}{17}{subsection.6.9}%
+\contentsline {subsection}{\numberline {6.10}Premiers résultats VRPTW}{17}{subsection.6.10}%
+\contentsline {subsection}{\numberline {6.11}Limites observées : générateur aléatoire VRPTW}{18}{subsection.6.11}%
+\contentsline {subsection}{\numberline {6.12}Première extension des métaheuristiques au cas VRPTW}{18}{subsection.6.12}%
+\contentsline {subsection}{\numberline {6.13}Premier essai expérimental VRPTW}{18}{subsection.6.13}%
+\contentsline {section}{\numberline {7}Génération d'une solution initiale}{19}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Choix retenu}{19}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Cas sans fenêtres de temps}{19}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Cas avec fenêtres de temps}{19}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Intérêt de cette construction}{20}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Rôle de cette solution}{20}{subsection.7.5}%
+\contentsline {section}{\numberline {8}Choix des méthodes de résolution}{20}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Implémentation du recuit simulé}{20}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Pseudo-code simplifié du recuit simulé}{21}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Résultats préliminaires}{21}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Première implémentation de la recherche tabou}{21}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Observation importante sur le coût de calcul}{22}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Résultats préliminaires de la recherche tabou}{22}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Mise en place du protocole expérimental}{22}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}Paramètres retenus}{22}{subsection.8.8}%
+\contentsline {subsection}{\numberline {8.9}Analyse des opérateurs de voisinage}{23}{subsection.8.9}%
+\contentsline {subsection}{\numberline {8.10}Étude de sensibilité aux paramètres}{24}{subsection.8.10}%
+\contentsline {subsection}{\numberline {8.11}Comparaison du nombre de solutions explorées}{25}{subsection.8.11}%
+\contentsline {subsection}{\numberline {8.12}Critères de comparaison retenus}{25}{subsection.8.12}%
+\contentsline {subsection}{\numberline {8.13}Protocole expérimental détaillé}{26}{subsection.8.13}%
+\contentsline {subsection}{\numberline {8.14}Comparaison du nombre de voisins explorés}{26}{subsection.8.14}%
+\contentsline {subsection}{\numberline {8.15}Indicateurs de dispersion}{27}{subsection.8.15}%
+\contentsline {subsection}{\numberline {8.16}Courbe de convergence}{27}{subsection.8.16}%
+\contentsline {subsection}{\numberline {8.17}Courbe de convergence en VRPTW}{28}{subsection.8.17}%
+\contentsline {subsection}{\numberline {8.18}Synthèse de la première campagne longue}{28}{subsection.8.18}%
+\contentsline {subsection}{\numberline {8.19}Campagne VRPTW en mode rapide}{29}{subsection.8.19}%
+\contentsline {subsection}{\numberline {8.20}Campagne VRPTW en mode long}{29}{subsection.8.20}%
+\contentsline {subsection}{\numberline {8.21}Analyse de la campagne VRPTW longue}{30}{subsection.8.21}%
+\contentsline {subsection}{\numberline {8.22}Lecture synthétique du corpus et cas marquants}{31}{subsection.8.22}%
+\contentsline {subsection}{\numberline {8.23}Exemple de visualisation de tournées}{32}{subsection.8.23}%
+\contentsline {section}{\numberline {9}Format des données}{32}{section.9}%
+\contentsline {section}{\numberline {10}Bonus : résolution exacte sur sous-instances}{33}{section.10}%
+\contentsline {section}{\numberline {11}Limites et perspectives}{34}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Discussion sur la validité des résultats}{34}{subsection.11.1}%
+\contentsline {section}{\numberline {12}Conclusion}{34}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Comment nous cherchons l'optimum}{35}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Synthèse globale des résultats}{35}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Améliorations envisageables}{36}{subsection.12.3}%
+\contentsline {subsection}{\numberline {12.4}Critique du protocole expérimental}{36}{subsection.12.4}%

@@ -1372,3 +1372,109 @@ De plus, `num_vehicles` dans `ExactRunResult` renvoie maintenant le nombre réel
 ## Note sur les bornes inférieures du rapport
 
 La borne inférieure `LB = ceil(Σq_i / Q)` est une borne de bin-packing sur la capacité seule. Elle est présentée comme telle dans le rapport (borne sur le nombre de véhicules, pas sur la distance). Les valeurs dans les tableaux du rapport sont toutes correctes. Le rapport distingue bien LB, k_min CVRP et k_min VRPTW.
+
+---
+
+# 26. Révision structurelle du rapport (2026-05-03)
+
+## Problèmes corrigés
+
+### Incohérences (priorité haute)
+- **Sections instance-par-instance CVRP supprimées** : les §"Extension du test long à data102", §"Résultats sur data1101/1102", §"Résultats sur data111/112", §"Résultats sur data1201/1202", §"Résultats sur data201/202" contenaient des chiffres d'une ancienne campagne (ex. RS=1572.25 sur data102 alors que le tableau final indique 1293.09) et concluaient "RS > tabou" partout, ce qui contredit les résultats CVRP finaux. Supprimées.
+- **§"Premier essai en mode long" supprimée** : chiffres anciens (RS=1488.99 sur data101 vs 1305.33 dans le tableau final), conclusion incorrecte.
+- **"deux répétitions" → "cinq répétitions"** dans l'introduction de la campagne VRPTW longue (contradisait la ligne d'analyse juste en dessous).
+
+### Redondances (priorité moyenne)
+- **Lstlisting dupliqué** : arborescence des fichiers apparaissait à l'identique en §"Mode opératoire" (section 2) et §"Structure du code" (section 5). Supprimée de la section 5, remplacée par une référence.
+- **Formule LB = ⌈Σq/Q⌉ répétée 3 fois** : conservée uniquement à sa première occurrence (§"Borne inférieure théorique"). Les occurrences suivantes remplacées par "$LB$ définie à la section précédente".
+- **Tableau VRPTW partiel (5 instances)** : sous-ensemble exact du tableau complet (10 instances) placé juste au-dessus. Supprimé, remplacé par une phrase de référence.
+- **§"Voisinages envisagés" + §"Première implémentation des voisinages"** : décrivaient 3 opérateurs préliminaires déjà entièrement couverts par §"Structure du code" (5 opérateurs finaux). Supprimées, la section repart directement sur l'implémentation du recuit simulé.
+- **Paragraphes redondants sur "TW ne changent pas LB"** : deux paragraphes successifs disant la même chose fusionnés en un.
+
+### État après révision
+- rapport.tex : 35 pages (était 39), recompilé sans erreur
+- Toutes les valeurs numériques dans le rapport correspondent aux résultats des campagnes finales (5 répétitions, preset long)
+
+---
+
+# 27. Approfondissement analytique du rapport (2026-05-03)
+
+Suite à un retour critique identifiant 8 points d'incohérence et de généricité, la structure et le contenu du rapport ont été fortement enrichis.
+
+## Problèmes adressés
+
+### Problème 1 — Analyse des opérateurs manquante
+Aucun chiffre concret sur les taux de faisabilité par opérateur. Le rapport décrivait les opérateurs en termes génériques sans ancrage dans les données mesurées.
+
+**Ajout** : nouvelle sous-section §"Analyse des opérateurs de voisinage" dans la section 8 (avant les critères de comparaison), avec :
+- tableau des taux de faisabilité mesurés sur data101.vrp (500 tentatives par opérateur) :
+  - relocate : 55 % CVRP → 3 % VRPTW
+  - swap : 74 % CVRP → 1 % VRPTW
+  - 2-opt : 100 % CVRP → 0 % VRPTW
+  - or-opt(2) : 30 % CVRP → 1 % VRPTW
+  - 2-opt* : 17 % CVRP → 6 % VRPTW
+- explication algorithmique du lien entre effondrement de la densité de voisinage et performance relative RS vs tabou en VRPTW
+
+### Problème 2 — Sensibilité aux paramètres absente
+Aucune discussion sur le choix des hyperparamètres.
+
+**Ajout** : nouvelle sous-section §"Étude de sensibilité aux paramètres", avec trois tables :
+- Sensibilité SA à T0 : T0=50 → dist=1398, T0=100 → 1342, T0=150 → 1305, T0=200 → 1312 (optimum à T0=150)
+- Sensibilité SA à α : α=0.990 → dist=1382 (trop court), α=0.997 → 1305 (optimal), α=0.999 → 1335 (trop long)
+- Sensibilité tabou à max_neighbors : 50→1604, 100→1476, 150→1421, 200→1368, 250→1368 (plateau à 150+)
+- Note sur tenure : aucun effet observé entre 5 et 30 (la structure mémorisée est la solution complète, pas un arc)
+
+### Problème 3 — Comparaison du volume d'exploration trop légère
+Le tableau de voisins traités existait mais sans profil d'acceptation SA ni effet VRPTW quantifié.
+
+**Complétion** : la sous-section §"Comparaison du nombre de solutions explorées" a été enrichie avec :
+- table du volume d'exploration par mode (quick / long, CVRP / VRPTW) pour les deux métaheuristiques
+- profil d'acceptation SA mesuré sur data101 CVRP (preset long, seed=42) :
+  - 3000 itérations → 2845 voisins trouvés, 512 mouvements améliorants acceptés, 334 dégradants acceptés, 846 total
+- effet VRPTW : densité de voisinage chute de ~60 % en CVRP à ~5 % en VRPTW, forçant le RS à s'appuyer quasi exclusivement sur des sauts aléatoires dans un espace quasi-vide
+
+### Problème 4 — Campagnes VRPTW dans la mauvaise section
+Les §"Campagne VRPTW quick" et §"Campagne VRPTW long" étaient dans la section 6 ("Détermination du nombre de véhicules") alors qu'elles appartiennent à la section 8 ("Méthodes de résolution").
+
+**Correction** : déplacement des deux sous-sections dans la section 8, après la synthèse CVRP. La section 6 contient maintenant uniquement le tableau LB/k_CVRP/k_VRPTW et une référence : "Les campagnes expérimentales VRPTW sont présentées dans la section~\ref{sec:metaheuristiques}."
+
+### Labels ajoutés pour cross-références
+- `\label{sec:det_vehicules}` sur la section 6
+- `\label{sec:metaheuristiques}` sur la section 8
+- `\label{sec:vrptw_quick}` sur la sous-section campagne VRPTW quick
+- `\label{sec:operateurs}` sur la sous-section analyse des opérateurs
+
+## État après approfondissement
+- rapport.tex : 36 pages (était 35), recompilé proprement (3 passes, aucune référence non définie)
+- tmp_experiments.py : fichier de travail à supprimer avant rendu
+
+---
+
+# 28. Vérification de cohérence globale (2026-05-03)
+
+## Problème découvert : bug or_opt2 avait changé les résultats CVRP
+La correction du bug or_opt2 (ajout du skip `insert_pos == start_pos + 1`) avait modifié la séquence aléatoire, changeant les résultats CVRP de ~3-5%. La campagne CVRP long a donc été relancée entièrement avec le code corrigé.
+
+## Nouvelles valeurs CVRP (5 répétitions, graine 1000-1004)
+Le tableau CVRP long a été entièrement mis à jour. Changements clés :
+- SA gagne maintenant sur 7/10 instances (était présenté comme 9/10 avec l'ancien code)
+- Tabou gagne sur data1201, data201, data202 (instances à grande capacité Q=1000, k=2)
+- Les valeurs data1201 : SA=1311.63 vs Tabu=1301.29 (tabou devant légèrement)
+
+## Erreurs textuelles corrigées dans rapport.tex
+1. "le voisinage faisable est beaucoup plus dense en VRPTW" → "plus restreint" (logiquement incorrect)
+2. "résultat absent en CVRP" (ligne 1147) → "résultat rare en CVRP (3 instances sur 10, Q=1000, k=2)"
+3. "le recuit simulé domine nettement le corpus CVRP" → "le RS est majoritaire en CVRP (7/10)"
+4. Conclusion "9 instances sur 10" → "7 instances sur 10"
+5. Dispersion data101 CVRP : SA min/max/σ = 1197.75/1319.05/40.9 ; Tabu = 1300.42/1363.04/22.9
+6. Valeurs case study data1201 CVRP : (1327.67 → 1301.29) vs (1348.31 → 1311.63)
+7. Sensibilité T0 : texte réécrit (T0=50 n'est pas "trop froid", T0 ∈ [50,200] comparables)
+
+## Figures régénérées
+generate_figures.py mis à jour avec les nouvelles moyennes CVRP. Toutes les figures (comparison_distances.png, comparison_times.png, convergence, routes) régénérées.
+
+## État après vérification
+- rapport.tex : 37 pages, recompilé proprement
+- Toutes valeurs numériques vérifiées cohérentes avec src/ (solver.py : LONG_PRESET = T0=150, alpha=0.997, iter=3000, tenure=20, max_neighbors=200, reps=5)
+- Fichiers temporaires supprimés : tmp_sensitivity.py, tmp_sensitivity2.py, tmp_calc.py
+- rapport.pdf copié à la racine
